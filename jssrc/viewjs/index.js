@@ -817,7 +817,7 @@ function callProcess(responce){
 		if(user_outcall_popup == 1)
 		{
 			var title_phone = _called;
-			if(!power_phone_view)
+			if(power_phone_view != 1)
 			{
 				title_phone     = hidden_part_number(title_phone);
 			}
@@ -861,7 +861,7 @@ function callProcess(responce){
 
 		//来电弹屏
 		var title_phone = _caller;
-		if(!power_phone_view)
+		if(power_phone_view != 1)
 		{
 			title_phone = hidden_part_number(title_phone);
 		}
@@ -933,7 +933,7 @@ function callProcess(responce){
 		var _caller = wincall.fn_getParam('Caller');
 		//来电弹屏
 		var title_phone = _caller;
-		if(!power_phone_view)
+		if(power_phone_view != 1)
 		{
 			title_phone = hidden_part_number(title_phone);
 		}
@@ -1098,7 +1098,7 @@ function _user_callin(user_id,coustom_number) //坐席来电，得到坐席名�
 				$('#callin_number').html(coustom_number);
 				//来电弹屏
 				var title_phone = coustom_number;
-				if(!power_phone_view)
+				if(power_phone_view != 1)
 				{
 					title_phone = hidden_part_number(title_phone);
 				}
@@ -1472,11 +1472,14 @@ function _set_number_loc(number)
 			{
 				if(wincall.fn_getParam('CallId'))
 				{
-					if(power_phone_view)
-					$('#caller_loc').text(number+' '+responce['city']);
+					if(power_phone_view != 1)
+					{
+						$('#caller_loc').text(hidden_part_number(number)+' '+responce['city']);
+					}
 					else
-					$('#caller_loc').text(hidden_part_number(number)+' '+responce['city']);
-
+					{
+						$('#caller_loc').text(number+' '+responce['city']);
+					}
 					$('#calling_loc').text(responce['city']);
 				}
 			}
