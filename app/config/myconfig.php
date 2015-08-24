@@ -1,7 +1,7 @@
 <?php
 
 //系统名称
-$config["system_name"] = "德汇信呼叫中心";
+$config["system_name"] = "德汇信呼叫中心"; 
 
 //系统版本
 $config['version'] = "";
