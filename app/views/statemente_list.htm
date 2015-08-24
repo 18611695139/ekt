@@ -1,0 +1,84 @@
+<{include file="pageheader.htm"}>
+<div id='_search_panel' class='form-div'>
+    <table>
+        <tr>
+            <td>
+        <form action="index.php?c=statemente&m=search" name="searchForm" id="searchForm" class="form-inline" method="post">
+            <img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH"/>
+
+            受理日期
+            <div class="input-append">
+                <input type="text" name="accept_start" id="accept_start" value="<{$accept_start}>"
+                       style="width:100px;" readonly>
+                <button type="button" role="date" class="btn" onclick="WdatePicker({el: 'accept_start'})">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </button>
+            </div>
+            ~
+            <div class="input-append">
+                <input type="text" name="accept_end" id="accept_end" value="<{$accept_end}>"
+                       style="width:100px;" readonly>
+                <button type="button" role="date" class="btn" onclick="WdatePicker({el: 'accept_end'})">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </button>
+            </div>
+          
+            <button class="btn btn-primary" onclick="$('#searchForm').submit();">
+                <span class="glyphicon glyphicon-search"></span> 搜索
+            </button>
+        </form>
+            </td>
+            <td>
+        <form action="index.php?c=statemente&m=export" id="data_out" class="form-inline" method="post">
+            <input type="hidden" id="tabledata" name="export" value=""/>
+            <button class="btn btn-primary" type="button" onclick="exp_out()">
+            <span class="glyphicon glyphicon-search"></span> 导出
+            </button>
+        </form>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<div id="data">
+    <table class="table table-bordered" style="text-align: center">
+        <caption><h5>业务报表统计</h5></caption>
+        <thead>
+        <tr class="success" style="text-align: center">
+            <th style="text-align: center">板块</th>
+            <th>业务</th>
+            <th style="text-align: center">数量</th>
+            <th style="text-align: center">比重</th>
+        </tr>
+        </thead>
+        <tbody>
+            <{foreach key=key item=item from=$checkbox_data[1]}>
+                <tr style="text-align: center">
+                    <td rowspan="<{$item.soncount}>" style="width: 7%;text-align: center" ><h5><{ $item.name}></h5></td>
+                </tr>
+                <{foreach key=kk item=con from=$checkbox_data[2]}>
+                    <{if $con.p_id == $key}>
+                    <tr class="info" style="text-align: center">
+                        <td style="width: 30%" id="1"><{$con.name}></td>
+                        <td style="width: 10% ;text-align: center"><{$con.num}></td>
+                        <td style="width: 10% ;text-align: center"><{$con.ratio}></td>
+                    </tr>
+                    <{/if}>
+                <{/foreach}>
+            <{/foreach}>
+        </tbody>
+
+    </table>
+
+</div>
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+    function exp_out()
+    {
+       var date_out = $("#data").html();
+       $("#tabledata").val(date_out);
+       $("#data_out").submit();
+    }
+</script>

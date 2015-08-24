@@ -1,0 +1,88 @@
+<form action="javascript:quick_search()" method="POST" name="searchForm" id="searchForm">
+  <table>
+  	<tbody>
+    <tr>
+     <td> <img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" /> 产品名称 </td>
+     <td align='left'><input type="text" id="product_name_search" name="product_name_search" /></td>
+     <td> 产品编号 </td>
+     <td align='left'><input type="text" id="product_num_search" name="product_num_search" /></td>
+     <td> 产品分类 </td>
+     <td align='left' colspan='2'><input id="product_class_search" name="product_class_search" /></td>
+    </tr>
+    <tr>
+    	 <td  style='padding-left:30px;'> 产品状态 </td>
+    	 <td align='left'><select style='width:152px;' id='product_state_search' name='product_state_search'><option value=''>--请选择--</option><option value='1'>上架</option><option value='2'>下架</option></select></td>
+    	 <td> 产品价格(元) </td>
+    	 <td align='left' colspan='2'><input id='price1' name='price1' style='width:80px;' /> ~ <input id='price2' name='price2' style='width:80px;' /></td>
+    	 
+    </tr>
+ 
+    
+     </tbody></table>
+     <table></tbody>
+     <tr>
+     	<td style='padding-left:28px;font-weight:bold;'>自定义字段(选择搜索)：</td>
+     </tr>
+  <tr>
+     	<td style='padding-left:36px;'>
+	     	<input name='field_confirm_box[]' id='check_1' type='checkbox'/>
+	   		<select name='field_confirm1' id='field_confirm1'   onchange='show_field_detail(1)' style='width:100px;'>
+	   			<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+	   		</select>
+	    	<select id='make1' name='make' style="width:60px;"><{html_options options=$condition}></select>
+	    	<span id='field_content1'><input type="text" id="f_c_1" name="f_c_1" value="" /></span>
+	  	</td>
+     	<td style='padding-left:30px;'>
+     	<input name='field_confirm_box[]' id='check_2' type='checkbox'/>
+     	<select name='field_confirm2' id='field_confirm2'   onchange='show_field_detail(2)' style='width:100px;'>
+     		<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+     	</select>
+     	<select id='make2' name='make' style="width:60px;"><{html_options options=$condition}></select>
+     	<span id='field_content2'><input type="text" id="f_c_2" name="f_c_2" value="" /></span>
+     	</td>
+     </tr>
+     <tr>
+     	<td style='padding-left:36px;'>
+     		<input name='field_confirm_box[]' id='check_3' type='checkbox'/>
+     		<select name='field_confirm3' id='field_confirm3'  onchange='show_field_detail(3)' style='width:100px;'>
+     			<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+     		</select>
+     		<select id='make3' name='make' style="width:60px;"><{html_options options=$condition}></select>
+     		<span id='field_content3'><input type="text" id="f_c_3" name="f_c_3" value="" /></span>
+     	</td>
+   		<td style='padding-left:30px;'>
+   			<input name='field_confirm_box[]' id='check_4' type='checkbox'/>
+     		<select name='field_confirm4' id='field_confirm4'   onchange='show_field_detail(4)' style='width:100px;'>
+     			<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+     		</select>
+     		<select id='make4' name='make' style="width:60px;"><{html_options options=$condition}></select>
+     	 	<span id='field_content4'><input type="text" id="f_c_4" name="f_c_4" value="" /></span>
+     	</td>
+     </tr>
+     <tr>
+     	<td style='padding-left:36px;'>
+     		<input name='field_confirm_box[]' id='check_5' type='checkbox'/>
+    	 	<select name='field_confirm5' id='field_confirm5'   onchange='show_field_detail(5)' style='width:100px;'>
+    	 		<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+    	 	</select>
+     		<select id='make5' name='make' style="width:60px;"><{html_options options=$condition}></select>
+     	 	<span id='field_content5'><input type="text" id="f_c_5" name="f_c_5" value="" /></span>
+     	</td>
+     <td style='padding-left:30px;'>
+     	<input name='field_confirm_box[]' id='check_6' type='checkbox'/>
+     	<select name='field_confirm6' id='field_confirm6'   onchange='show_field_detail(6)' style='width:100px;'>
+     		<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+     	</select> 
+     	<select id='make6' name='make' style="width:60px;"><{html_options options=$condition}></select>
+     	<span id='field_content6'><input type="text" id="f_c_6" name="f_c_6" value=""/></span>
+  	 </td>
+  	</tr>
+     </tbody>
+   
+    </table>
+    <span style='padding-left:30px;'>&nbsp;</span>
+     <a class="easyui-linkbutton" iconCls="icon-search" href="javascript:void(0)"  onclick="$('#searchForm').submit();" >搜索</a>
+     <img alt='基本搜索' src='image/switch.png'>
+     <a href='###' onclick='base_search()' title='基本搜索' style='color:red;'>基本搜索</a>
+	    </form>
+<script src="./jssrc/viewjs/product_search_advan.js?1.1" type="text/javascript"></script>

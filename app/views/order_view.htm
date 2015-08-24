@@ -1,0 +1,163 @@
+<div id="tab_order_base">
+<div class="main-div"  title="订单基本信息">
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0" align="center" border="0" style="width:98%">
+ <tbody>
+	 <tr>
+         <td class="narrow-label"><label for="order_num">订单编号：</label></td>		           
+         <td ><{$order_info.order_num}></td>  
+          <td class="narrow-label"><label for="order_state">订单状态：</label></td>		           
+         <td ><{$order_info.order_state}></td>
+            
+      </tr>
+      <tr>
+       <td class="narrow-label"><label for="order_price">订单总价：</label></td>		           
+         <td ><{$order_info.order_price}>&nbsp;元</td>   
+          <td class="narrow-label"><label for="order_accept_time">下单时间：</label></td>		           
+         <td ><{$order_info.order_accept_time}></td>
+      </tr>
+      
+      
+       <!--自定义字段  -----begin-------->
+    <{foreach from=$order_confirm item=confirm_info key=ckey name=list_Name}>
+       <{if $smarty.foreach.list_Name.index%2 == 0 }>
+        <tr>
+       <{/if}>
+       <{if $confirm_info.state == 1 }>
+       <td class="narrow-label"  >  <label for="<{$confirm_info.fields}>"  ><{$confirm_info.name}>：<label></td><td > 
+        <{assign var="parent_id" value=$confirm_info.id}>
+        <{assign var="real_field" value=$confirm_info.fields}>
+         <{$order_info.$real_field}>
+        </td>   
+         <{else}>
+          <td colspan="2"></td>
+          <{/if}>
+       <{if $smarty.foreach.list_Name.index%2 != 0 }>
+        </tr>
+       <{/if}>
+    <{/foreach}>
+    <!--自定义字段  ------end--------->
+       <tr>
+         <td class="narrow-label"><label for="cle_name">客户名称：</label></td>		           
+         <td ><{if $order_info.cle_name}><a href='###' onclick=window.parent.addTab("业务受理","index.php?c=client&m=accept&system_pagination=1&cle_id=<{$order_info.cle_id}>","menu_icon"); title='客户详情'><{$order_info.cle_name}><img src='image/file.png' /></a><{/if}></td>      
+         <td class="narrow-label"><label for="cle_phone">客户电话：</label></td>		           
+         <td ><{$order_info.cle_phone}></td>        
+      </tr>
+      <tr>
+         <td class="narrow-label"><label for="cle_address">客户地址：</label></td>		           
+         <td colspan="3"><{$order_info.cle_address}></td>
+      </tr>
+      <tr>
+         <td class="narrow-label"><label for="order_remark">备注：</label></td>		           
+         <td colspan="3"><{$order_info.order_remark}></td>	      
+      </tr>
+  </tbody>
+ </table>
+</div>
+<div   title="其他信息" href="index.php?c=order&m=get_order_log&order_id=<{$order_info.order_id}>"></div>
+</div>
+
+<!--订单产品信息-->
+<div class='easyui-panel' title='订单产品'>
+<table id="order_product_list" width="100%" style="height:auto" rownumbers="true" iconCls="icon-search" singleSelect="true" idField="op_id" url="">
+	<thead>
+		<tr>
+		    <th field="op_id"  hidden="true" ></th> 
+		    <th field="product_id"  hidden="true" >产品ID</th> 
+		    <th field="product_num" width="100" align="center" >产品编号</th> 
+            <th field="product_name_view" width="100" align="center">产品名称</th>
+            <th field="product_thum_pic" width="100" align="center" >产品图片</th>
+            <th field="product_thum_value" hidden="true" ></th>
+			<th field="product_class" width="150" align="center">产品分类</th>			
+			<th field="product_price" width="100" align="center">单价(元)</th>
+			<th field="product_discount" width="60" align="center" >折扣(%)</th>
+			<th field="product_number" width="60" align="center" >数量</th>
+		</tr>
+	</thead>
+</table>
+</div>
+<div style='text-align:right;padding:10px;'>
+<div><span style='font-weight:bold;'>累加总额：</span><span id='product_total' name='product_total'></span>元</div>
+</div>
+<script type="text/javascript" src="./jssrc/jquery.preview.js"></script>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	$('#tab_order_base').tabs({
+		tools:'#tab-tools'
+	});
+
+
+	//产品列表
+	var lastIndex;
+	$('#order_product_list').datagrid({
+		fitColumns:true,
+		onBeforeLoad:function(){
+			$(this).datagrid('rejectChanges');
+		},
+		onLoadSuccess:function(data){
+			//图片检测到鼠标焦点，预览图片
+			if($('a.preview').length){
+				var img = preloadIm();
+				imagePreview(img);
+			}
+		}
+	});
+
+	/*编辑*/
+	<{if $order_info.order_product_info}>
+	$('#order_state').val('<{$order_info.order_state}>');
+	var ids = '';
+	<{section name=loop loop = $order_info.order_product_info}>
+	var pppic = '<{$order_info.order_product_info[loop].product_thum_pic}>';
+	if(pppic.length!=0)
+	{
+		var thum_pic = "<a href='###' title='查看产品详情' onclick=show_order_product_detail('<{$order_info.order_product_info[loop].product_id}>')><img src='<{$order_info.order_product_info[loop].product_thum_pic}>' border='0' align='absmiddle' /></a>";
+	}
+	else
+	{
+		var thum_pic = "<img src='./image/no_picture.jpg' title='无图' border='0' align='absmiddle' />";
+	}
+
+	$('#order_product_list').datagrid('appendRow',{
+		op_id:'<{$order_info.order_product_info[loop].op_id}>',
+		product_id:'<{$order_info.order_product_info[loop].product_id}>',
+		product_num:'<{$order_info.order_product_info[loop].product_num}>',
+		product_name_view:"<{$order_info.order_product_info[loop].product_name}><a href='###' title='查看产品详情' onclick=show_order_product_detail('<{$order_info.order_product_info[loop].product_id}>')><img src='image/file.png' /></a>",
+		product_name:'<{$order_info.order_product_info[loop].product_name}>',
+		product_thum_pic:thum_pic,
+		product_thum_value:'<{$order_info.order_product_info[loop].product_thum_pic}>',
+		product_class:'<{$order_info.order_product_info[loop].product_class}>',
+		product_price:'<{$order_info.order_product_info[loop].product_price}>',
+		product_number:'<{$order_info.order_product_info[loop].product_number}>',
+		product_discount:'<{$order_info.order_product_info[loop].product_discount}>'
+	});
+	<{/section}>
+	confirm_products_info();
+	<{/if}>
+});
+
+
+//确认订单产品
+function confirm_products_info()
+{
+	$('#order_product_list').datagrid('acceptChanges');
+	var rows = $('#order_product_list').datagrid('getRows');
+	if(rows.length == 0)
+	{
+		$('#product_info').val("");
+	}
+	else
+	{
+		var total = 0;
+		var result = {};
+		$.each(rows,function(i,selected){
+			result[i] = {'op_id':selected.op_id,'product_id':selected.product_id,'product_num':selected.product_num,'product_name':selected.product_name,'product_number':selected.product_number,'product_discount':selected.product_discount,'product_thum_pic':selected.product_thum_value,'product_class':selected.product_class,'product_price':selected.product_price};
+
+			total = parseInt(total) + parseInt(parseInt(selected.product_price)*parseInt(selected.product_number)*parseInt(selected.product_discount)*0.01);
+		});
+
+		$('#order_price').val(total);
+		$('#product_total').html(total);
+	}
+}
+
+</script>

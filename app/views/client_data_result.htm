@@ -1,0 +1,488 @@
+<div style='color:red;padding:10px;'>温馨提示：以下操作都不可逆转，请确定好再使用！</div>
+<div class="main-div">
+<fieldset>
+   <legend>字段内容代替</legend>
+   <div>
+   将 字段为 <select id="replace_field" style="width:100px;">
+      <option value=""  ></option>
+     <{foreach from=$field_info item=info key=skey}>
+ 	 <option value="<{$info.fields}>"  ><{$info.name}></option>
+ 	 <{/foreach}>
+   </select>
+   &nbsp;&nbsp;
+   原内容为
+   <input id="org_string"  name="org_string" value="" style="width:100px;"/>
+   &nbsp;&nbsp;
+   替换成
+   <input id="new_string"  name="new_string" value="" style="width:100px;"/>
+   &nbsp;&nbsp;
+    <a class="easyui-linkbutton" iconCls="icon-replace" id='replace_btn' href="###" onclick="find_replace()"  >查找替换</a><img id="replace_loading" src="./image/loading.gif" style="display:none;">
+   </div>
+</fieldset> 
+</div>
+
+<div class="main-div">
+<fieldset>
+   <legend>字段内容合并</legend>
+   <div>
+    字段A <select id="merger_result" style="width:80px;">
+      <option value=""  ></option>
+     <{foreach from=$field_info item=info key=skey}>
+ 	 <option value="<{$info.fields}>"  ><{$info.name}></option>
+ 	 <{/foreach}>
+   </select>
+   内容变为 由
+  字段B <select id="merger_one" style="width:80px;">
+      <option value=""  ></option>
+     <{foreach from=$field_info item=info key=skey}>
+ 	 <option value="<{$info.fields}>"  ><{$info.name}></option>
+ 	 <{/foreach}>
+   </select>
+   +
+  字段C <select id="merger_two" style="width:80px;">
+      <option value=""  ></option>
+     <{foreach from=$field_info item=info key=skey}>
+ 	 <option value="<{$info.fields}>"  ><{$info.name}></option>
+ 	 <{/foreach}>
+   </select>
+   +
+   字段D <select id="merger_three" style="width:80px;">
+      <option value=""  ></option>
+     <{foreach from=$field_info item=info key=skey}>
+ 	 <option value="<{$info.fields}>"  ><{$info.name}></option>
+ 	 <{/foreach}>
+   </select>
+   的内容
+   </div>
+   <div style="padding-top:5px;">
+  以 间隔字符为<input id="merger_interval" name="merger_interval" value="" style='width:30px;'/>合并组成
+   &nbsp;&nbsp;&nbsp;&nbsp;
+   <a class="easyui-linkbutton" iconCls="icon-add" href="###" id='confirm_btn' onclick="merger_confirm()"  >合并确定</a><img id="confirm_loading" src="./image/loading.gif" style="display:none;">
+   操作说明：字段B、字段C、字段D 可以任选1~3个<span style='color:red'>注：【客户电话】请确定好再合并，合并错了会影响到外呼！</span>
+  <!-- &nbsp;&nbsp;合并前：<img src='./image/merger_before.jpg'> 合并后：<img src='./image/merger_after.jpg'>-->
+  
+   </div>
+</fieldset> 
+</div>
+
+<div class="main-div">
+<fieldset>
+   <legend>字段内容清空</legend>
+   <div>
+      字段 <select id="empty_filed" style="width:100px;">
+      <option value=""  ></option>
+     <{foreach from=$field_info item=info key=skey}>
+ 	 <option value="<{$info.fields}>"  ><{$info.name}></option>
+ 	 <{/foreach}>
+    </select>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+   <a class="easyui-linkbutton" iconCls="icon-del" href="###" id='empty_btn' onclick="empty_field()"  >清空确定</a><img id="empty_loading" src="./image/loading.gif" style="display:none;"> 操作说明：将列表中所选择的字段内容请空
+   </div>
+</fieldset> 
+</div>
+
+<div class="main-div">
+<fieldset>
+   <legend>查重</legend>
+     <div>
+       <b>第一步：</b> <input type="radio" name="repeat_condition" value="1" checked/>客户姓名相同
+        <input type="radio" name="repeat_condition" value="2" />客户电话相同
+     </div>
+     <div style="padding-top:10px;">
+        <b>第二步：</b> <a class="easyui-linkbutton" iconCls="icon-search" href="###" id='search_repeat_btn' onclick="search_repeat_data();"  >开始查重</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <b>第三步：</b> <a class="easyui-linkbutton" iconCls="icon-del" href="###" id='del_one_btn' onclick="delete_repeat_single();"  >选定删重</a><img id="del_one_loading" src="./image/loading.gif" style="display:none;">
+        &nbsp;<a class="easyui-linkbutton" iconCls="icon-del" href="###" id='del_batch_btn' onclick="delete_repeat_batch();"  >一次性删重</a><img id="del_batch_loading" src="./image/loading.gif" style="display:none;">
+     </div>
+     <div style="padding-top:5px;">
+       
+     </div>
+</fieldset> 
+</div>
+
+<div class="main-div">
+<fieldset>
+   <legend>批量删除</legend>
+<div >
+<a class="easyui-linkbutton" iconCls="icon-del" href="###" onclick="delete_all_data()"  >批量删除</a><img id="del_all_loading" src="./image/loading.gif" style="display:none;">
+&nbsp;&nbsp;操作说明：批量删除当前列表搜到的所有客户数据
+</div>
+</fieldset> 
+</div>
+<script language="JavaScript" type="text/javascript">
+//开始查查重
+function search_repeat_data()
+{
+	var repeat_condition = $("input:radio[name='repeat_condition']:checked").val();
+
+	var table_options = $('#client_list').datagrid('options');
+	if( repeat_condition == 1 )
+	{
+		table_options.sortName = "cle_name";
+	}
+	else if( repeat_condition == 2 )
+	{
+		table_options.sortName = "cle_phone";
+	}
+
+	var queryParams = table_options.queryParams;
+	queryParams.repeat_condition = repeat_condition;
+	$('#client_list').datagrid('load');
+}
+
+//选定删重
+function delete_repeat_single()
+{
+	var ids = getSelections();
+	if(ids == '')
+	{
+		$.messager.alert('提示','<br>请选择要删除的客户数据','info');
+		return;
+	}
+	$.messager.confirm('提示', '删除'+selected_num+'条数据：'+selected_name, function(r){
+		if(r)
+		{
+			//删除客户数据
+			delete_client(ids);
+		}
+		else
+		{
+			return false;
+		}
+	});
+}
+
+//得到选中项的 客户ID
+var selected_name = "";
+var selected_num  = 0;
+function getSelections()
+{
+	selected_name = "";
+	selected_num  = 0;
+	var ids = [];
+	var rows = $('#client_list').datagrid('getChecked');
+	for(var i=0;i<rows.length;i++)
+	{
+		if(i<7){
+			selected_name +="【"+ rows[i].cle_name+"】 ";
+		}
+		ids.push(rows[i].cle_id);
+		selected_num++;
+	}
+	selected_name += "......";
+	return ids.join(',');
+}
+
+//删除客户数据
+function delete_client(cle_id)
+{
+	$.ajax({
+		type:'POST',
+		url: "index.php?c=client&m=delete_client",
+		data: {"cle_id":cle_id},
+		dataType: "json",
+		success: function(responce){
+			if(responce["error"] == 0)
+			{
+				$('#client_list').datagrid('load');
+			}
+			else
+			{
+				$.messager.alert('错误',responce["message"],'error');
+			}
+		}
+	});
+}
+
+//一次性删重
+function delete_repeat_batch()
+{
+	var total = $('#client_list').datagrid('getData').total;
+	if( total <= 0 )
+	{
+		$.messager.alert("提示","<br>没有重复数据！","info");
+		return false;
+	}
+
+	$.messager.confirm('提示', '您确认要对当前的客户记录进行一次性删重？将保持重复的第一条记录，重复的第二条记录后将被删除！', function(r){
+		if(r)
+		{
+			var queryParams = $('#client_list').datagrid('options').queryParams;
+
+			$.ajax({
+				type:'POST',
+				url: "index.php?c=client_data_deal&m=delete_all_repeat",
+				data: queryParams,
+				dataType: "json",
+				success: function(responce){
+					if(responce["error"] == 0)
+					{
+						$('#client_list').datagrid('load');
+					}
+					else
+					{
+						$.messager.alert('错误',responce["message"],'error');
+					}
+				}
+			});
+		}
+		else
+		{
+			return false;
+		}
+	});
+}
+
+/**
+* 字段查找替换
+*/
+function find_replace()
+{
+	$('#replace_loading').show();
+	var total = $('#client_list').datagrid('getData').total;
+	if( total <= 0 )
+	{
+		$.messager.alert("提示","<br>列表中没有数据！","info");
+		return false;
+	}
+
+	var replace_field = $("#replace_field").val();
+	var org_string    = $("#org_string").val();
+	var new_string    = $("#new_string").val();
+	if( replace_field == "" )
+	{
+		$.messager.alert("提示","<br>请选择替换字段！","info");
+		return false;
+	}
+	if( org_string == "" && new_string =="" )
+	{
+		$.messager.alert("提示","<br>原字串和新字串不能同时为空！","info");
+		return false;
+	}
+
+	
+	$.messager.confirm('提示', '您确认要对当前的查询记录执行字段内容代替操作吗？', function(r){
+		if(r)
+		{
+			var queryParams = $('#client_list').datagrid('options').queryParams;
+
+			queryParams.replace_field = replace_field;
+			queryParams.org_string    = org_string;
+			queryParams.new_string    = new_string;
+
+			var field_name = '';
+			<{foreach from=$field_info item=info key=skey}>
+			if('<{$info.fields}>'==replace_field)
+			{
+				field_name = '<{$info.name}>';
+			}
+			<{/foreach}>
+			$.messager.confirm('提示', '此操作会将列表里所有数据【'+field_name+'】为'+org_string+'都替换为'+new_string+',确定要继续操作吗？', function(r){
+				if(r)
+				{
+					$('#replace_btn').linkbutton({'disabled':true});
+					$.ajax({
+						type:'POST',
+						url: "index.php?c=client_data_deal&m=find_replace",
+						data: queryParams,
+						dataType: "json",
+						success: function(responce){
+							$('#replace_btn').linkbutton({'disabled':false});
+							$('#replace_loading').hide();
+							if(responce["error"] == 0)
+							{
+								$.messager.alert("提示","<br>操作成功，共替换"+responce["content"]+"条数据！","info");
+								$('#client_list').datagrid('load');
+							}
+							else
+							{
+								$.messager.alert('错误',responce["message"],'error');
+							}
+						}
+					});
+				}
+				else
+				{
+					$('#replace_loading').hide();
+					return false;
+				}
+			});
+		}
+		else
+		{
+			$('#replace_loading').hide();
+			return false;
+		}
+	})
+}
+
+//合并确定
+function merger_confirm()
+{
+	$('#confirm_loading').show();
+	var merger_result = $("#merger_result").val();
+	var merger_one    = $("#merger_one").val();
+	var merger_two    = $("#merger_two").val();
+	var merger_three  = $("#merger_three").val();
+
+	var merger_interval = $("#merger_interval").val();
+
+	if( merger_result == "" )
+	{
+		$.messager.alert("提示","<br>请选择字段！","info");
+		return false;
+	}
+
+	if(  merger_one =="" && merger_two == "" && merger_three == "" )
+	{
+		$.messager.alert("提示","<br>请选择要合并的字段内容！","info");
+		return false;
+	}
+
+	$.messager.confirm('提示', '您确认要对当前查询的记录进行字段内容合并吗？', function(r){
+		if(r)
+		{
+			$.messager.confirm('提示', '此操作直接将列表所有数据字段A的内容都变成字段B~D(任意1~3)内容合并。<br/>例子：列表有一条数据【客户编号】1234【客户名称】客户1；<br/>若将字段A为【客户姓名】，字段B为【客户姓名】，字段C为【客户编号】，间隔符为&，<br/>则结果数据【客户名称】变为客户1&1234,其他不变', function(r){
+				if(r)
+				{
+					var queryParams = $('#client_list').datagrid('options').queryParams;
+					$('#confirm_btn').linkbutton({'disabled':true});
+					$.ajax({
+						type:'POST',
+						url: "index.php?c=client_data_deal&m=merger_confirm",
+						data: {"queryParams":queryParams,"merger_result":merger_result,"merger_one":merger_one,"merger_two":merger_two,"merger_three":merger_three,"merger_interval":merger_interval},
+						dataType: "json",
+						success: function(responce){
+							$('#confirm_btn').linkbutton({'disabled':false});
+							$('#confirm_loading').hide();
+							if(responce["error"] == 0)
+							{
+								$.messager.alert("提示","<br>操作成功，共合并"+responce["content"]+"条数据对应字段！","info");
+								$('#client_list').datagrid('load');
+							}
+							else
+							{
+								$.messager.alert('错误',responce["message"],'error');
+							}
+						}
+					});
+				}
+				else
+				{
+					$('#confirm_loading').hide();
+					return false;
+				}
+			});
+		}
+		else
+		{
+			$('#confirm_loading').hide();
+			return false;
+		}
+	})
+}
+
+//清空确定
+function empty_field()
+{
+	$('#empty_loading').show();
+	var empty_filed = $("#empty_filed").val();
+	if( empty_filed =="" )
+	{
+		$.messager.alert("提示","<br>请选择需要清空的字段！","info");
+		return false;
+	}
+
+	$.messager.confirm('提示', '您确认要对当前查询的记录进行字段清空吗？', function(r){
+		if(r)
+		{
+			var field_name = '';
+			<{foreach from=$field_info item=info key=skey}>
+			if('<{$info.fields}>'==empty_filed)
+			{
+				field_name = '<{$info.name}>';
+			}
+			<{/foreach}>
+			$.messager.confirm('提示', '您确认要对以下列表所有数据【'+field_name+'】的内容清空吗？', function(r){
+				if(r)
+				{
+					$('#empty_btn').linkbutton({'disabled':true});
+					var queryParams = $('#client_list').datagrid('options').queryParams;
+					$.ajax({
+						type:'POST',
+						url: "index.php?c=client_data_deal&m=empty_field",
+						data: {"queryParams":queryParams,"empty_filed":empty_filed},
+						dataType: "json",
+						success: function(responce){
+							$('#empty_btn').linkbutton({'disabled':false});
+							$('#empty_loading').hide();
+							if(responce["error"] == 0)
+							{
+								$.messager.alert("提示","<br>操作成功，共清空"+responce["content"]+"条数据对应字段！","info");
+								$('#client_list').datagrid('load');
+							}
+							else
+							{
+								$.messager.alert('错误',responce["message"],'error');
+							}
+						}
+					});
+				}
+				else
+				{
+					$('#empty_loading').hide();
+					return false;
+				}
+			});
+		}
+		else
+		{
+			$('#empty_loading').hide();
+			return false;
+		}
+	})
+}
+
+/*批量删除 列表数据*/
+function delete_all_data()
+{
+	$.messager.confirm('提示', '您确认要删除当前列表的所有数据？', function(r){
+		if(r)
+		{
+			var total = $('#list_total').val();
+			$.messager.confirm('提示', '当前列表有'+total+'条数据，确定删除？', function(r){
+				if(r)
+				{
+					var queryParams = $('#client_list').datagrid('options').queryParams;
+					$.ajax({
+						type:'POST',
+						url: "index.php?c=client_data_deal&m=delete_all_data",
+						data: {"queryParams":queryParams},
+						dataType: "json",
+						success: function(responce){
+							if(responce["error"] == 0)
+							{
+								$.messager.alert("提示","<br>操作成功，共删除了"+responce["content"]+"条数据！","info");
+								$('#client_list').datagrid('load');
+								$('#data_accordion').accordion('select',"第一步 搜索要处理的数据");
+							}
+							else
+							{
+								$.messager.alert('错误',responce["message"],'error');
+							}
+						}
+					});
+				}
+				else
+				{
+					return false;
+				}
+			});
+		}
+		else
+		{
+			return false;
+		}
+	});
+}
+
+</script>

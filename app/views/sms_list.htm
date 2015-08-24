@@ -1,0 +1,40 @@
+<{include file="pageheader.htm"}>
+<div class="form-div" id="_search_panel">
+<form action="javascript:quick_search()" method="POST" name="searchForm" id="searchForm">
+	<img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+	接收号码：
+	<input id="receiver_phone" name="receiver_phone"  type="text" value="" size="15"  />
+	&nbsp;&nbsp;&nbsp;
+	发送时间：
+	  <span class="combo datebox" style="width:165px;"><input type="text" class="combo-text validatebox-text" id='send_start_time' name='send_start_time'  style="width: 145px;" ><span><span class="combo-arrow combo-arrow-hover" onclick="WdatePicker({el: 'send_start_time',dateFmt:'yyyy-MM-dd HH:mm:ss' })" ></span></span></span> 
+	~
+	  <span class="combo datebox" style="width:165px;"><input type="text" class="combo-text validatebox-text" id='send_end_time' name='send_end_time'  style="width: 145px;" ><span><span class="combo-arrow combo-arrow-hover" onclick="WdatePicker({el: 'send_end_time',dateFmt:'yyyy-MM-dd HH:mm:ss' })" ></span></span></span> 
+	&nbsp;&nbsp;&nbsp;
+	<a class="easyui-linkbutton" iconCls="icon-search" href="javascript:void(0)"  onclick="$('#searchForm').submit();" >搜索</a>
+	<IMG style="VERTICAL-ALIGN: middle" border="0" alt="分类" src="image/icon_listsearch.png">
+	<FONT color="#cc0066" >快速查找 </FONT>
+	<A id=sd0  href="javascript:sql_type_st='1';set_color_sms('sd0');quick_search();">全部数据</A>&nbsp;<FONT color=#99cc00 face=Wingdings>w</FONT>
+	
+	<A id=st0  href="javascript:sql_type_st='2';set_color_sms('st0');quick_search();">今月</A>&nbsp;<FONT color=#99cc00 face=Wingdings>w</FONT>
+	<A id=st1  href="javascript:sql_type_st='3';set_color_sms('st1');quick_search();"  style="color:red;">今周</A>&nbsp;<FONT color=#99cc00 face=Wingdings>w</FONT>
+	<A id=st2  href="javascript:sql_type_st='4';set_color_sms('st2');quick_search();">今日</A>
+	&nbsp;<FONT color=#99cc00 face=Wingdings>w</FONT>
+	<A id=ss0  href="javascript:sql_type_ss='5';set_color_sms('ss0');quick_search();">成功</A>&nbsp;<FONT color=#99cc00 face=Wingdings>w</FONT>
+	<A id=ss1  href="javascript:sql_type_ss='6';set_color_sms('ss1');quick_search();">失败</A>&nbsp;
+</form>
+</div>
+<div id="window" title="详细信息" style="width:600px;height:300px;padding:10px;display:none">
+		<div style="padding-top:5px;padding-bottom:5px;background:#fff;">
+					<label>详细信息：</label>
+					<textarea id="SR_content" style="border:1px solid #ccc;width:100%;height:200px;font-family:verdana;padding-top:5px"   onpropertychange="calculation()"    readonly></textarea>
+					<input type="text" id="cal" name="cal" value="" size="3" style="border:0;color:red" readonly>字(共<input  id="SR_tiaoshu"  name="SR_tiaoshu"  value="" style="border:0;color:red" size="3" readonly/>条)
+		</div>
+</div>
+<table id="sms_list"></table>
+<{include file="pagefooter.htm"}>  
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+var EACH_smsLength = <{$EACH_smsLength}>;
+var power_phone_view = '<{$power_phone_view}>';//显示全部号码权限
+</script>
+<script src="./jssrc/viewjs/sms_list.js?1.1" type="text/javascript"></script>

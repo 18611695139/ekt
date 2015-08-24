@@ -1,0 +1,30 @@
+<{include file="pageheader.htm"}>
+<div class="main-div">
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0"  style="width:100%;border-width:0px">
+<tbody >
+   <tr>
+     <td colspan="2"><h2 align="center"><font color="red">您没有该数据处理权限</font></h2></td>
+   </tr>
+   <tr>
+     <td class="narrow-label" ><label>客户名称：<label></td>  <td style="width: 30%"><{$client_info.cle_name}></td>
+   </tr>
+   <tr>
+     <td class="narrow-label" ><label>客户电话：<label></td>  <td style="width: 30%"><label id="cle_phone"><{$client_info.cle_phone}></label></td>
+   </tr>
+    <tr>
+     <td class="narrow-label" ><label>所属部门：<label></td>  <td style="width: 30%"><{$client_info.dept_name}></td>
+   </tr>
+    <tr>
+     <td class="narrow-label" ><label>所属人：<label></td>  <td style="width: 30%"><{$client_info.user_name}></td>
+   </tr>
+</tbody>
+</table>
+</div>
+<{include file="pagefooter.htm"}>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	<{if !$power_phone_view && $client_info.cle_phone }>
+	$('#cle_phone').html(hidden_part_number("<{$client_info.cle_phone|default:''}>"));
+	<{/if}>
+});
+</script>

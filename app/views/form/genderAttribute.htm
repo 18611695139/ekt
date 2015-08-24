@@ -1,0 +1,95 @@
+<table class="table table-hover table-bordered table-condensed">
+    <tr><th>组件【性别】属性</th></tr>
+    <tr>
+        <td>
+            <label>标签</label>
+            <input id="label" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="标签" value="性别">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="radio">
+                <input type="checkbox" id="required" value="1"> 是否必填项
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>默认值</label>
+            <label class="checkbox"><input name="defaultVal" type="radio" value="" checked> 不使用默认值 </label>
+            <label class="checkbox"><input name="defaultVal" type="radio" value="0"> 不知 </label>
+            <label class="checkbox"><input name="defaultVal" type="radio" value="1"> 男 </label>
+            <label class="checkbox"><input name="defaultVal" type="radio" value="2"> 女 </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>选项排列</label>
+            <label class="checkbox inline">
+                <input type="radio" class="radio" name="arrange" id="arrange1" value="checkbox inline" checked> 横向
+            </label>
+            <label class="checkbox inline">
+                <input type="radio" class="radio" name="arrange" id="arrange2" value="checkbox"> 纵向
+            </label>
+        </td>
+    </tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+    var selectedWidget = selectedWidget || $();
+    var wgid = selectedWidget.attr('title');
+
+    //设置初始属性值
+    var label = selectedWidget.attr('label') || '性别';
+    var required = selectedWidget.attr('required') || '';
+    var defaultVal = selectedWidget.attr('defaultval') || '';
+    var arrange = selectedWidget.attr('arrange') || 'radio inline';
+
+    //标签
+    $('#label').val(label)
+            .on('keyup', function() {
+                selectedWidget.find('.control-label').text($(this).val());
+                selectedWidget.attr('label', $(this).val());
+                if (required) {
+        			selectedWidget.find('.control-label').text($(this).val());
+                	selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+    			}
+            });
+
+    //是否必填
+    $('#required').on('click', function() {
+        if($(this).attr('checked')) {
+            selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+            selectedWidget.find('.control-label').attr('require', 'true');
+            selectedWidget.attr('required', 'required');
+            required = 'required';
+        } else {
+            selectedWidget.find('.control-label').text(selectedWidget.attr('label') || '性别');
+            selectedWidget.removeAttr('required');
+            selectedWidget.find('.control-label').removeAttr('require');
+            required = '';
+        }
+    });
+    if (required) {
+        $('#required').attr('checked', 'checked');
+    } else {
+        $('#required').removeAttr('checked');
+    }
+   
+   //选项排列
+    $('input[name=arrange]').on('click', function() {
+        $('input[name="'+wgid+'"]').parent().removeClass().addClass($(this).val());
+        selectedWidget.attr('arrange', $(this).val());
+    });
+    $('input[name="arrange"][value="'+arrange+'"]').attr('checked', 'checked');
+    
+    //默认值
+    $('input[name=defaultVal]').on('click', function() {
+    	if($(this).val()=='')
+    	$('input[name="'+wgid+'"]').removeAttr('checked');
+    	else
+        $('input[name="'+wgid+'"][value="'+$(this).val()+'"]').attr('checked', 'checked');
+        selectedWidget.attr('defaultval', $(this).val());
+    });
+    $('input[name="defaultVal"][value="'+defaultVal+'"]').attr('checked', 'checked');
+
+</script>

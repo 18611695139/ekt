@@ -1,0 +1,129 @@
+<div class="main-div" style='background:#ffffff;'>
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0" align="center"  style="width:98%">
+ <tbody>
+ 	<tr>
+ 		<td  class="narrow-label"  align="right">指定部门：</td> 
+        <td style="width: 30%"><input id="dept_id_chart" type='text' name="dept_id_chart" value="<{$dept_id}>" /></td>
+ 	</tr>
+ 	<tr>
+ 		<td  class="narrow-label"  align="right">分配条数：</td> 
+        <td style="width: 30%"><input id='batch_chart_num' type='text' name='batch_chart_num' value='' onkeyup="can_sure_chart()"/></td>
+ 	</tr>
+ </tbody>
+</table>
+</div>
+<div style="text-align:right;padding-right:20px">
+	<span style='color:red;' id='_chart_msg'></span>
+	<input id='datch_total' name='datch_total' value='0' type='hidden' />
+	<button type="button" class="btn btn-primary" id="batch_chart_btn" onclick="client_batch_chart()">
+   		<span class="glyphicon glyphicon-ok"></span> 确定
+	</button>
+</div>
+<div style="padding-top:3px;"> </div>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	$('#batch_chart_btn').attr('disabled',true);
+	$('#dept_id_chart').combotree({
+		url:'index.php?c=department&m=get_department_tree',
+		onClick:function(node){
+			$(this).tree('expand', node.target);
+			$('#dept_user_list').treegrid('expand',node.id);
+			setTimeout(function(){
+				get_can_batch_total(node.id);
+			},800);
+		},
+		onBeforeLoad : function(node, param){
+			if (node){
+				return false;
+			} else {
+				$('#dept_id_chart').combotree('options').url = "index.php?c=department&m=get_department_tree";
+			}
+		}
+	});
+	$('#dept_id_chart').combotree('setValue','<{$dept_id}>');
+	get_can_batch_total('<{$dept_id}>');
+});
+
+/*获取可分配坐席总数*/
+function get_can_batch_total(id)
+{
+	var datch_total = 0; //要分配的员工总数
+	var child_info = {};
+	child_info = $('#dept_user_list').treegrid('getChildren',id);
+	$.each(child_info,function(key,value){
+		if(value.attributes=='last' && value.pid==id)
+		{
+			if(value.data_amount!='0')
+			{
+				datch_total += 1;
+			}
+		}
+	});
+	$('#datch_total').val(datch_total);
+	$('#_chart_msg').html("该部门下可分配数据的坐席有 "+datch_total+" 个");
+}
+
+/*平均分配*/
+function client_batch_chart()
+{
+	var datch_total = $('#datch_total').val();//可分配数据的坐席数
+	var chart_num = $('#batch_chart_num').val();//分配条数
+	if(chart_num.length==0 || datch_total==0)
+	{
+		return false;
+	}
+	chart_num = parseInt(chart_num);
+	if(chart_num > current)
+	{
+		return false;
+	}
+	var num = parseInt(chart_num/datch_total);
+	var dept_id_chart = $("#dept_id_chart").combotree('getValue');//执行部门
+	var child_info = $('#dept_user_list').treegrid('getChildren',dept_id_chart);//获取部门底下坐席信息
+	$.each(child_info,function(key,value){
+		if(value.attributes=='last' && value.pid==dept_id_chart)
+		{
+			if(value.data_amount=='无限制')
+			{
+				$('#'+value.id).val(num);
+			}
+			else if(value.data_amount!='0')
+			{
+				if(num > value.data_amount)
+				{
+					$('#'+value.id).val(value.data_amount);
+				}
+				else
+				{
+					$('#'+value.id).val(num);
+				}
+			}
+		}
+	});
+	set_total_num();
+	$('#batch_chart').window('close');//关闭
+}
+//判断是否可义亮确定按钮
+function can_sure_chart()
+{
+	var chart_num = $('#batch_chart_num').val();//分配条数
+	var datch_total = $('#datch_total').val();//可分配数据的坐席数
+	if(chart_num.length==0 || datch_total==0)
+	{
+		return;
+	}
+	chart_num = parseInt(chart_num);
+	if(chart_num > current)
+	{
+		//$.messager.alert('提示','<br>平均分配的数据总数：'+chart_num+'条<br>大于本次可分配数量：'+current+'条','info');
+		$("#_chart_msg").html('分配总数:'+chart_num+'条大于可分配数:'+current+'条');
+		return false;
+	}
+	var num = parseInt(chart_num/datch_total);
+	if(num>0)
+	{
+		$('#batch_chart_btn').attr('disabled',false);
+	}
+}
+
+</script>

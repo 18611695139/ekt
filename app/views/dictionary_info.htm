@@ -1,0 +1,28 @@
+<{if $type == 'client' && !$client_base.cle_stage&&!$client_base.cle_stat&&!$client_base.cle_info_source}>
+<div class="alert alert-warning" style="margin-bottom: 0">客户模块没有需要设置数据字典的字段</div>
+<{else}>
+<div id="tab_dictionary" class="easyui-tabs">
+<{if $type == 'client'}>
+	<{if $client_base.cle_stage}>
+	<div title="客户阶段" href='index.php?c=dictionary&m=get_dictionary_detail&p_id=2'></div>
+	<{/if}>
+	<{if $client_base.cle_stat}>
+	<div title="号码状态" href='index.php?c=dictionary&m=get_dictionary_detail&p_id=6'></div>
+	<{/if}>
+	<{if $client_base.cle_info_source}>
+	<div title="信息来源" href='index.php?c=dictionary&m=get_dictionary_detail&p_id=1'></div>
+	<{/if}>
+<{elseif $type == 'order'}>
+	<div title="订单状态" href='index.php?c=dictionary&m=get_dictionary_detail&p_id=3'></div>
+	<div title="配送方式" href='index.php?c=dictionary&m=get_dictionary_detail&p_id=5'></div>
+<{elseif $type == 'service'}>
+	<div title="服务类型" href='index.php?c=dictionary&m=get_dictionary_detail&p_id=4'></div>
+<{/if}>
+</div>
+<{/if}>
+<script src="./jssrc/json2.js" type="text/javascript"></script>
+<script src="./jssrc/viewjs/dictionary_info.js" type="text/javascript"></script>
+<script language="javascirpt" type="text/javascript">
+var type = "<{$type}>";
+var client_type_option_str = '<{foreach from=$client_type item=cle_type key=cykey}><option value="<{$cykey}>" ><{$cle_type}></option><{/foreach}>';
+</script>

@@ -1,0 +1,61 @@
+<input  id="user_id_note" name="user_id_note" value="<{$user_id}>" type="hidden" />
+<textarea id="note_book_pad"  name="note_book_pad" style="width: 99%;height:98%;overflow-x:hidden; overflow:scroll"    onpropertychange="on_change()"  oninput="on_change()"   onblur="lose_focus()"   ><{$note_book}></textarea>
+
+<input  type="hidden" id="on_change" name="on_change"  value="0" />  <!--  标记文本域是否发生改变   0未改变    1已改变-->
+<script language="JavaScript" type="text/javascript">
+
+//文本内容改变时响应
+function on_change()
+{
+	$("#on_change").val(1);
+}
+
+
+//文本域失去焦点时响应
+function lose_focus()
+{
+	var on_change = $('#on_change').val();
+	if(on_change==1)//文本域内容改变
+	{
+		$.messager.defaults.ok = "  是  ";
+		$.messager.defaults.cancel = "  否  "
+		$.messager.confirm('提示', '<br>文本内容已改变，是否保存？', function(r){
+			if(r)
+			{
+				get_msg();
+			}
+			else
+			{
+				$("#notepad_text").window('close');
+			}
+		});
+	}
+	
+}
+
+//获取数据，保存
+function get_msg()
+{
+	var _data = {};
+	_data.user_id = $('#user_id_note').val();
+	_data.note_book_pad = $('#note_book_pad').val();
+
+	$.ajax({
+		url:      "index.php?c=user&m=update_note_book",
+		type:     "post",
+		data:	  _data,
+		dataType: "json",
+		success: function(responce){
+			if(responce["error"] == 0)
+			{
+				
+			}
+			else
+			{
+				$.messager.alert("错误","<br>"+responce["message"],'error');
+			}
+			$("#notepad_text").window('close');
+		}
+	});
+}
+</script>

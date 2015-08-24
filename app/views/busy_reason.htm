@@ -1,0 +1,102 @@
+<{include file="pageheader.htm"}>
+<div class="main-div">
+<form id="busyForm" action="index.php?c=busy&m=save_busy_reason" method="post">
+<table id="busyTable" borderColor="#ffffff" cellSpacing="0" cellPadding="0"  style="width:100%;border-width:0px;">
+ <tbody >
+ <{if $reason_info}>
+	<{foreach from=$reason_info item=info key=dkey}>
+	<tr>
+		<td class="narrow-label" ><{$dkey+1}>.</td>
+		<td style="width:30%">
+			<input type="text" id="option<{$dkey+1}>" name="option[]" value="<{$info.stat_reason}>" readonly/>
+			<button type="button" name="btn-minus" class="btn btn-mini btn-danger">
+               	<span class="glyphicon glyphicon-minus"></span>
+            </button>
+		</td>
+	</tr>
+	<input type="hidden" name="old_option[<{$info.id}>]" value="<{$info.stat_reason}>">
+	<{/foreach}>
+	<{else}>
+    <tr>
+		<td class="narrow-label" >1.</td>
+		<td style="width:30%">
+			<input type="text" id="option1" name="option[]" value="" />
+			<button type="button" name="btn-minus" class="btn btn-mini btn-danger">
+               	<span class="glyphicon glyphicon-minus"></span>
+            </button>
+		</td>
+	</tr>
+	<tr>
+		<td class="narrow-label" >2.</td>
+		<td style="width:30%">
+			<input type="text" id="option2" name="option[]" value="" />
+			<button type="button" name="btn-minus" class="btn btn-mini btn-danger">
+               	<span class="glyphicon glyphicon-minus"></span>
+            </button>
+		</td>
+	</tr>
+	<tr>
+		<td class="narrow-label" >3.</td>
+		<td style="width:30%">
+			<input type="text" id="option3" name="option[]" value="" />
+			<button type="button" name="btn-minus" class="btn btn-mini btn-danger">
+               	<span class="glyphicon glyphicon-minus"></span>
+            </button>
+		</td>
+	</tr>
+	<{/if}>
+	</tbody>
+</table>
+</form>
+<div style="width:90%;text-align:center;padding-top:10px;padding-bottom:10px;">
+	  <button type="button" class="btn"  onclick="add_option()">
+    	<span class="glyphicon glyphicon-plus"></span> 添加
+	 </button>
+	 <button type="button" class="btn btn-primary"  onclick="save_reason()">
+    	<span class="glyphicon glyphicon-saved"></span> 保存设置
+	 </button>
+</div>
+</div>
+
+
+<script language="JavaScript" type="text/javascript">
+$('button[name="btn-minus"]').on('click', function() {
+	$(this).parent().parent().remove();
+});
+/*添加*/
+function add_option()
+{
+	var obj = document.getElementById("busyTable");
+	var id = obj.rows.length +1+'';
+	if(id<=5)
+	{
+		var tr = $('\
+		<tr>\
+			<td class="narrow-label">'+id+'.</td>\
+			<td style="width:30%">\
+				<input type="text" id="option'+id+'" name="option[]" value="" />\
+				<button type="button" name="btn-minus" class="btn btn-mini btn-danger">\
+               		<span class="glyphicon glyphicon-minus"></span>\
+            	</button>\
+            </td>\
+		</tr>');
+		$('#busyTable').append(tr);
+		$('button[name="btn-minus"]').on('click', function() {
+			$(this).parent().parent().remove();
+		});
+	}
+	else
+	{
+		$.messager.alert('错误','不能超过5个置忙原因','error');
+	}
+}
+
+
+
+/*保存设置*/
+function save_reason()
+{
+	$('#busyForm').submit();
+}
+</script>
+<{include file="pagefooter.htm"}>

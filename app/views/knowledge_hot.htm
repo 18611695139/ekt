@@ -1,0 +1,7 @@
+<div>
+<ul>
+<{foreach item=hot from=$art_hot}>
+<li><a href="###" onclick="art_detail(<{$hot.k_art_id}>,'<{$hot.k_art_title}>',<{$hot.k_class_id}>)"><{$hot.k_art_title}></a></li>
+<{/foreach}>
+</ul>
+</div>

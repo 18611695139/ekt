@@ -1,0 +1,328 @@
+<div class="main-div" >
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0" align="center" border="0" style="width:100%">
+<tbody>
+<tr style="padding-top:10px">
+
+<td style="width:200px;">
+<div style="height:180px;overflow: auto ;width:180px;">
+<ul id="k_tree" class="easyui-tree"  data-options="dnd:true"></ul>
+</div>
+</td>
+
+<td style="width:300px;" align="center">
+<div class="easyui-tabs" style="width:290px;height:180px;"  data-options="border:false,plain:true">
+
+<div id="add_k_class" title="添加栏目" >
+<table border="0">
+<tbody>
+<tr>
+<td style="width:30%" align="right" ><label for="before_name">上级栏目：</label></td>
+<td align="left"><input type="text" name="before_name" id="before_name" disabled /></td>
+</tr>
+<tr>
+<td style="width:30%" align="right" ><label for="add_k_name">栏目名称：</label></td>
+<td align="left"><input type="text" name="add_k_name" id="add_k_name"/></td>
+</tr>
+<tr>
+<td align="right">&nbsp;</td><td align="left">
+<button type="button" onclick="add_k()" id="add_k_btn">保存</button>
+<button type="button" onclick="cansal_action()" id="add_btn">取消</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div id="edit_k_class"  title="修改栏目">
+<table border="0">
+<tbody>
+<tr>
+<td  align="right" ><label for="this_name">当前名称：</label></td>
+<td align="left"><input type="text" name="this_name" id="this_name" disabled /></td>
+</tr>
+<tr>
+<td  align="right" ><label for="edit_k_name">修改名称：</label></td>
+<td align="left"><input type="text" name="edit_k_name" id="edit_k_name"/></td>
+</tr>
+<tr>
+<td align="right">&nbsp;</td><td align="left">
+<button type="button" onclick="edit_k()" id="edit_k_btn">保存</button>
+<button type="button" onclick="cansal_action()" id="edit_btn">取消</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div id="delete_k_class" title="删除栏目">
+<table border="0">
+<tbody>
+<tr>
+<td  align="right" ><label for="this_name">当前名称：</label></td>
+<td align="left"><input id="del_this_name"  name="del_this_name" value="" disabled /></td>
+</tr>
+<tr>
+<td align="right">&nbsp;</td>
+<td align="left"><button type="button" onclick="del_k()" id="delete_K">删除</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+<!--
+<div style='text-align:right;padding:5px;'>
+	<a class='easyui-linkbutton' iconCls="icon-del" href='javascript:void(0)'  onclick="$('#class_window').window('close');return false;">关  闭</a>
+</div>-->
+</td>
+
+</tr>
+</tbody>
+</table>
+</div>
+
+<script type="text/javascript" language="javascript">
+var tmp_select_tree = 0;
+$(document).ready(function() {
+	$('#k_tree').tree({
+		url : "index.php?c=knowledge&m=get_class_tree",
+		lines:true,
+		onClick : function(k){
+			$('#k_tree').tree('expand',k.target);//改变目录状态
+			var select_name = ($('#k_tree').tree('getSelected')).text;
+			/*添加 - 栏目名称*/
+			$('#add_k_name').val('');
+			/*添加 -  上级栏目*/
+			$('#before_name').val(select_name);
+			/*编辑 - 当前名称*/
+			$('#this_name').val(select_name);
+			/*编辑 - 修改名称*/
+			$('#edit_k_name').val('');
+			/*删除 - 当前名称*/
+			$("#del_this_name").val(select_name);
+		},
+		onLoadSuccess:function(){
+			var node = "";
+			if( tmp_select_tree == 0 )
+			{
+				node = $('#k_tree').tree('find', 1);
+			}
+			else
+			{
+				node = tmp_select_tree;
+			}
+
+			$('#k_tree').tree('select', node.target);
+			var select_name = ($('#k_tree').tree('getSelected')).text;
+			/*添加 - 栏目名称*/
+			$('#add_k_name').val('');
+			/*添加 -  上级栏目*/
+			$('#before_name').val(select_name);
+			/*编辑 - 当前名称*/
+			$('#this_name').val(select_name);
+			/*编辑 - 修改名称*/
+			$('#edit_k_name').val('');
+			/*删除 - 当前名称*/
+			$("#del_this_name").val(select_name);
+		},
+		onStopDrag:function(node)
+		{
+			if( node.attributes == 0 )
+			{
+				return false;
+			}
+			
+			//移动结束后的父节点
+			var parent_node = $("#k_tree").tree("getParent",node.target);
+			var patent_id   = parent_node.id;
+			var parent_deep = parent_node.attributes;
+			//当前节点
+			var current_id = node.id;
+
+			//移动结束后，与移动节点所有平级的节点(包括被移动的节点)
+			var children  = $("#k_tree").tree("getChildren",parent_node.target);
+			var child_ids = [];
+			var temp_deep = parseInt(parent_deep)+1;
+			$.each(children, function(property,value) {
+				//针对对象
+				if( value.attributes == temp_deep || value.id == current_id )
+				{
+					child_ids.push(value.id);
+				}
+			});
+			child_ids = child_ids.join(",");
+			
+			$.ajax({
+				url : "index.php?c=knowledge&m=drag_node_update",
+				data : {"patent_id":patent_id,"current_id": current_id,"child_ids":child_ids},
+				type : 'post',
+				dataType : 'json',
+				success : function(responce){
+					if(responce['error'] === 0)
+					{
+					}
+					else
+					{
+						$.messager.alert('Notice','失败','warning');
+					}
+				}
+			});
+		}
+	});
+});
+/**
+*取消
+*/
+function cansal_action()
+{
+	/*添加 - 栏目名称*/
+	$('#add_k_name').val('');
+	/*编辑 - 修改名称*/
+	$('#edit_k_name').val('');
+}
+
+/**
+* 添加栏目
+*/
+function add_k()
+{
+	var k_p = $('#k_tree').tree('getSelected');
+	if(!k_p)
+	{
+		$.messager.alert('Notice','<br>请指定上级栏目','warning');
+		return;
+	}
+	tmp_select_tree = k_p;
+
+	var k_pid = ($('#k_tree').tree('getSelected')).id;
+	var k_deep = ($('#k_tree').tree('getSelected')).attributes;
+	k_deep = parseInt(k_deep);
+	var  k_class_name = $('#add_k_name').val();
+	if( k_class_name )
+	{
+		$.ajax({
+			url : "index.php?c=knowledge&m=insert_class",
+			data : {k_pid:k_pid,k_class_name: k_class_name},
+			type : 'post',
+			dataType : 'json',
+			success : function(responce){
+				if(responce['error'] === 0)
+				{
+					var k_class_id = responce['content'];
+					$('#k_tree').tree('append',{
+						parent : k_p ? k_p.target : null,
+						data : [{id:k_class_id,text:k_class_name,attributes:k_deep+1}]
+					});
+					/*添加 - 栏目名称*/
+					$('#add_k_name').val('');
+
+					$('#k_tree').tree('expand',k_p.target);
+				}
+				else
+				{
+					$.messager.alert('Notice','失败','warning');
+				}
+				/*添加 - 栏目名称*/
+				$('#add_k_name').val('');
+			}
+		});
+	}
+	else
+	{
+		$.messager.alert('Notice','<br>栏目名称不能为空！','warning');
+		return false;
+	}
+}
+
+
+
+/**
+* 编辑栏目名称
+*/
+function edit_k()
+{
+	var k_class	= $('#k_tree').tree('getSelected');
+	var k_class_name	= $('#edit_k_name').val();
+	if(!k_class || k_class_name == "")
+	{
+		$.messager.alert('Notice','<br>请指定当前栏目和新名称!','warning');
+		return false;
+	}
+	var k_class_id	= $('#k_tree').tree('getSelected').id;
+
+	$.ajax({
+		url : 'index.php?c=knowledge&m=update_class',
+		data : {k_class_id:k_class_id, k_class_name: k_class_name},
+		dataType : 'json',
+		type : 'post',
+		success : function(responce){
+			if(responce['error'] === 0)
+			{
+				k_class.text = k_class_name;
+				$('#k_tree').tree('update',k_class);
+
+				var select_name = ($('#k_tree').tree('getSelected')).text;
+				/*添加 - 栏目名称*/
+				$('#add_k_name').val('');
+				/*添加 -  上级栏目*/
+				$('#before_name').val(select_name);
+				/*编辑 - 当前名称*/
+				$('#this_name').val(select_name);
+				/*编辑 - 修改名称*/
+				$('#edit_k_name').val('');
+				/*删除 - 当前名称*/
+				$("#del_this_name").val(select_name);
+			}
+		}
+	});
+}
+
+/**
+*删除
+**/
+function del_k()
+{
+	var k_class = $('#k_tree').tree('getSelected');
+	if(!k_class)
+	{
+		$.messager.alert('提示','<br>请指定需要删除的信息','warning');
+		return;
+	}
+	$.messager.confirm('提示','<br>您确定删除吗？(提示：栏目下的所有栏目及文章都会删掉，慎用！)',function(r){
+		if(r)
+		{
+			var k_class_id = k_class.id;
+			if(k_class.attributes != 0)
+			{
+				$.ajax({
+					url : 'index.php?c=knowledge&m=delete_class',
+					data : {k_class_id:k_class_id,k_class_pid:k_class.attributes},
+					dataType : 'json',
+					type : 'post',
+					success : function(responce){
+						if(responce['error'] === 0)
+						{
+							$('#k_tree').tree('remove',k_class.target);
+
+							/*添加 -  上级栏目*/
+							$('#before_name').val('');
+							/*编辑 - 当前名称*/
+							$('#this_name').val('');
+							/*删除 - 当前名称*/
+							$("#del_this_name").val('');
+						}
+						else
+						{
+							$.messager.alert('提示','操作失败','warning');
+						}
+					}
+				});
+			}
+			else
+			{
+				$.messager.alert('错误','操作失败，栏目顶级不能删除！','error');
+			}
+		}
+	});
+}
+</script>

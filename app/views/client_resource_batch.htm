@@ -1,0 +1,220 @@
+<{include file="pageheader.htm"}>
+<div class="main-div"align="center" style="height:50px;">
+<div style='padding-top:5px;'>
+ 满足搜索条件数据有 <span style='color:blue;'><{$total}></span>&nbsp;条,<span style='font-weight:bold;'>可分配的数据</span>有 <span id='total_num' style='color:red;'><{$batch_total}></span>&nbsp;条（可分配数据：指 本部门(不包括子部门)，还没指定所属人的数据）。
+ <input type="hidden" id='current' name='current' size="10" value="0" class='easyui-numberbox' disabled>
+ <div style='padding:6px;'>
+ <input type="checkbox" id="special_deploy",name="special_deploy" checked /> 数据不分配给曾经占有过的坐席
+ </div>
+ </div>
+</div>
+
+<div id='dept_user_list'> </div>
+<div style="text-align:right;padding:5px;">
+<span style='color:red;' id="_this_total_msg"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<button type="button" class="btn btn-primary" id="sure_batch_btn" onclick="client_batch_deployment()">
+   <span class="glyphicon glyphicon-ok"></span> 确定分配
+</button>
+<img id="loading" src="./image/loading.gif" style="display:none;">
+</div>
+<div id="batch_chart"> </div>
+<{include file="pagefooter.htm"}>
+<script language="JavaScript" type="text/javascript">
+var current = $('#total_num').html();
+current = parseInt(current);
+
+$(document).ready(function() {
+	$('#sure_batch_btn').attr('disabled',true);
+	//分配到部门及人
+	$('#dept_user_list').treegrid({
+		title:'数据批量分配',
+		nowrap: true,
+		striped: true,
+		rownumbers:true,
+		checkOnSelect:false,
+		fitColumns:true,
+		url:'index.php?c=client_resource&m=deployment_batch_list',
+		idField:'id',
+		treeField:'text',
+		frozenColumns:[[
+		{title:'部门 | 人员',field:'text',width:350,formatter:function(value,rowData,rowIndex){
+			return "<span style='color:red'>"+value+"</span>";
+		}}
+		]],
+		columns:[[
+		<{if $power_cle_stat}>
+		{title:'未拨打数据',field:'data_left',width:120},
+		<{/if}>
+		{title:'已有数据',field:'data_total',width:120},
+		{title:'还可分配数量',field:'data_amount',width:120,formatter:function(value,rowData,rowIndex){
+			if(rowData.id == <{$dept_session_id}>){
+				return '-';
+			}
+			else if(rowData.attributes != 'last')
+			{
+				return '无限制';
+			}
+			else
+			return value;
+		}},
+		{title:'分配数量',field:'id',width:120,formatter:function(value,rowData,rowIndex){
+			if(rowData.id == <{$dept_session_id}>){
+				return null;
+			}
+			else if(rowData.attributes == 'last'){
+				value = value.split('user');
+				if(rowData.data_amount == '0')
+				{
+					return "<input type='text' style='margin-bottom:0;width:80px;' id='user"+value[1]+"' user='"+rowData.pid+"?"+value[1]+"' value='0' amount='0' disabled >";
+				}
+				else if(rowData.data_amount!='无限制')
+				{
+					return "<input type='text' style='margin-bottom:0;width:80px;' id='user"+value[1]+"' user='"+rowData.pid+"?"+value[1]+"' value='0' amount='"+rowData.data_amount+"' onkeyup=user_amount('user"+value[1]+"','"+rowData.data_amount+"') >";
+				}
+				else
+				return "<input type='text' style='margin-bottom:0;width:80px;' id='user"+value[1]+"' user='"+rowData.pid+"?"+value[1]+"' value='0' amount='无限制' onkeyup='set_total_num()' >";
+			}
+			else{
+				return "<input type='text' style='margin-bottom:0;width:80px;' id='dept"+value+"' user='"+value+"?0' value='0' amount='无限制' onkeyup='set_total_num()'>";
+			}
+		}}
+		]],
+		toolbar:[
+		{
+			iconCls:'icon-chart',
+			text:"平均分配",
+			handler:function(){
+				batch_chart_window();
+			}
+		},'-'
+		]
+	});
+
+});
+
+/*平均分配window*/
+function batch_chart_window()
+{
+	$('#batch_chart').window({
+		title: '平均分配 [分配给指定部门(不包括子部门)下坐席]',
+		href:'index.php?c=client_resource&m=get_batch_chart_page',
+		iconCls: "icon-chart",
+		top:150,
+		width:380,
+		shadow:false,
+		closed: false,
+		collapsible:false,
+		minimizable:false,
+		maximizable:false,
+		cache:false
+	});
+}
+
+/*确认分配*/
+function client_batch_deployment()
+{
+	$('#sure_batch_btn').attr('disabled',true);
+	$("#loading").show();
+	var assign_total = 0;
+	var assign_str = "";//保存分配的数据 以-和#分隔。
+	$('input[type=text]').each(function(){
+		if($(this).attr('id')!='dept_id_chart' && $(this).attr('id')!='batch_chart_num')
+		{
+			var num = parseInt($(this).val());
+			if(num.length!=0 && !isNaN(num))
+			{
+				if(num >0){
+					var user = $(this).attr('user');
+					assign_str += user+"-"+num+"#";
+				}
+				else{
+					num = 0;
+				}
+				assign_total += num;
+			}
+		}
+	});
+	/*执行分配*/
+	if(assign_total == 0 )
+	{
+		$.messager.alert('错误','分配数据为0');
+		return false;
+	}
+	if(assign_total > current){
+		$.messager.alert('提示','<br>分配的总数：'+assign_total+'条<br>大于本次可分配数：'+current+'条','info');
+		return false;
+	}
+	//数据不分配给曾经占有过的坐席
+	var special_deploy = 0;
+	if(  $("#special_deploy").attr("checked")=='checked'  )
+	{
+		special_deploy = 1;
+	}
+	//实际分配
+	$.ajax({
+		type:'POST',
+		url: "index.php?c=client_resource&m=batch_deployment",
+		data: {'search_condition':'<{$search_condition}>',"assign_str":assign_str,"total_limit":assign_total,"special_deploy":special_deploy},
+		dataType: "json",
+		success: function(responce){
+			$("#loading").hide();
+			if(responce['error']=='0')
+			{
+				$('#_this_total_msg').html("");
+				var new_batch_total = current - responce['content'];
+				$.messager.alert("提示","分配成功，本次成功分配了"+responce['content']+"条数据","info");
+				$('#total_num').html(new_batch_total);
+				$("#dept_user_list").treegrid('reload');
+			}
+			else
+			{
+				$.messager.alert('提示',responce['message'],'error');
+			}
+		}
+	});
+}
+
+//添加总条数
+function set_total_num()
+{
+	var total_num = $('#total_num').html();
+	var assign_total = 0;
+	$('input[type=text]').each(function(){
+		if($(this).attr('id')!='dept_id_chart' && $(this).attr('id')!='batch_chart_num')
+		{
+			var num = $(this).val();
+			num = parseInt(num);
+			if(isNaN(num))
+			{
+				num = 0;
+			}
+			$(this).val(num);
+			assign_total += num;
+		}
+	});
+	$('#_this_total_msg').html("提示：本次将要分配总数："+assign_total+"条");
+	if(assign_total >total_num)
+	{
+		$.messager.alert("提示","本次分配总数大于待分配数",'info');
+		$('#sure_batch_btn').attr('disabled',true);
+		return;
+	}
+	$('#sure_batch_btn').attr('disabled',false);
+	$("#current").val(assign_total);
+}
+
+//客户限制的
+function user_amount(user,amount)
+{
+	var this_num = parseInt($('#'+user+'').val());
+	if(this_num > amount)
+	{
+		$.messager.alert("错误","您给该员工分配的数量超过可分配数",'error');
+		$('#'+user+'').val(0);
+	}
+	else
+	{
+		set_total_num();
+	}
+}
+</script>

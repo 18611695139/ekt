@@ -1,0 +1,296 @@
+<{include file="pageheader.htm"}>
+<!--订单基本信息-->
+<div id='order_tools'>
+
+<div class="main-div" title='订单基本信息'>
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0" align="center" border="0" style="width:98%">
+ <tbody>
+	 <tr>
+         <td class="narrow-label"><label for="order_num">订单编号：</label></td>		           
+         <td ><input type='text' id='order_num' name='order_num' value='<{$order_num}>' readonly /></td>
+      </tr>
+      <tr >
+       <td class="narrow-label"><label for="order_remark">订单状态：</label></td>	
+	   <td  colspan="3" align="right" style="padding:5px 35px 5px 0px">
+	 	<input id="order_state" name="order_state" value="" type="hidden"/>
+        <div id="mainNav">
+ 	       <{foreach from=$order_state item=_state key=skey name=orderState}>
+            <span id="order_step_<{$skey}>" onclick="click_order_step('<{$skey}>','<{$smarty.foreach.orderState.total}>')" title="<{$_state.name}>" cvalue="span_order_step" <{if $smarty.foreach.orderState.last}>class="mainNavNoBg"<{/if}>  ><a title="<{$_state.name}>"><{$_state.name}></a></span>
+           <{/foreach}>
+ 	    </div>
+	   </td>
+	  </tr>
+      <tr>
+      <{if $order_base.order_delivery_mode}>
+        <td class="narrow-label"><label for="order_delivery_mode">配送方式：</label></td>	           
+        <td>
+         <select name="order_delivery_mode" id="order_delivery_mode" order_base_field='true'> 
+          <option value="" SELECTED >&nbsp;</option>
+          <{foreach from=$delivery_info item=info_delivery key=dkey}>
+ 	 	  <option value="<{$info_delivery.name}>" ><{$info_delivery.name}></option>
+ 	 	 <{/foreach}>
+ 		 </select>
+ 		</td>
+ 		<{/if}>
+ 		<{if $order_base.order_delivery_number}>
+ 		<td class="narrow-label"><label for="delivery_number">配送单号：</label></td>
+ 		<td>
+ 			<span title="只能填数字（可带小数点）" class="easyui-tooltip" data-options="position:'right'">
+ 				<input type='text' id='order_delivery_number' name='order_delivery_number' value="" order_base_field='true'/>
+ 			</span>
+ 		</td>
+      </tr>
+      <tr>
+      <{/if}>
+         <td class="narrow-label"><label for="order_price">订单总价：</label></td>		           
+         <td ><input type='text' id='order_price' name='order_price' value=''/></td>  
+      </tr>
+      <tr>
+         <td class="narrow-label"><label for="cle_name">客户名称：</label></td>		           
+         <td >
+          <div class="input-append">
+               <input type="text" id="cle_name"  name="cle_name"  value="<{$client_info.cle_name}>" readonly />
+               <button type="button" class="btn" onclick="_add_client()" title="查找客户">
+                    <span class="glyphicon glyphicon-zoom-in"></span>
+               </button>
+               <button type="button" class="btn" onclick="_client_detail()" title="客户详情">
+                    <span class="glyphicon glyphicon-briefcase"></span>
+               </button>
+           </div>
+           <input type="hidden"  id='cle_id' name='cle_id' value='<{$client_info.cle_id}>'  />
+         </td>
+         <td class="narrow-label"><label for="cle_phone">客户电话：</label></td>		           
+         <td >
+          	<div class="input-append">
+               <input type="text" id="cle_phone"  name="cle_phone"  value="<{$client_info.cle_phone}>" />
+               <button type="button" class="btn" onclick="sys_dial_num('<{$client_info.cle_phone}>','cle_phone')" title="呼叫号码">
+                    <span class="glyphicon glyphicon-phone"></span>
+               </button>
+               <{if $power_sendsms}>
+               <button type="button" class="btn" onclick="sys_send_sms('<{$client_info.cle_phone}>','cle_phone')" title="发送短信">
+                    <span class="glyphicon glyphicon-envelope"></span>
+               </button>
+               <{/if}>
+             </div>
+             <input type='hidden' id='real_cle_phone' name='real_cle_phone' value='<{$client_info.cle_phone}>' />
+         </td>  
+       </tr>
+     <{if $power_use_contact!=1}>
+     <tr>
+       	<td class="narrow-label"><label for="con_name">联系人姓名：</label></td>		           
+        <td><input id="con_name" name="con_name" /></td>
+        <td class="narrow-label"><label for="con_mobile">联系人电话：</label></td>		           
+        <td > 
+         	<div class="input-append">
+               <input type="text" id="con_mobile"  name="con_mobile"  value="<{$client_info.con_mobile}>" />
+               <button type="button" class="btn" onclick="sys_dial_num('<{$client_info.con_mobile}>','con_mobile')" title="呼叫号码">
+                    <span class="glyphicon glyphicon-phone"></span>
+               </button>
+               <{if $power_sendsms}>
+               <button type="button" class="btn" onclick="sys_send_sms('<{$client_info.con_mobile}>','con_mobile')" title="发送短信">
+                    <span class="glyphicon glyphicon-envelope"></span>
+               </button>
+               <{/if}>
+             </div>
+              <input type="hidden" id="real_con_mobile"  name="real_con_mobile"  value="<{$client_info.con_mobile}>" />
+         </td> 
+      </tr>
+      <{/if}>
+      <{if $order_base.cle_address}> 
+      <tr>
+         <td class="narrow-label"><label for="cle_address">客户地址：</label></td>		           
+         <td colspan='3'><input type='text' id='cle_address' name='cle_address' class='span6' value='<{$client_info.cle_address}>' order_base_field='true' /></td>
+      </tr>
+      <{/if}>
+      
+       <!--自定义字段  -----begin-------->
+    <{counter start=0 print=false assign='order_count'}><!--  计算  -->
+    <{foreach from=$order_confirm item=confirm_info key=ckey name=list_Name}>
+    
+    <{if $confirm_info.data_type==3}>
+    <{counter start=0 print=false assign='order_count'}><!-- 从新计算 -->
+      	<tr>
+	 		<td class="micro-label"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td >
+	 		<td colspan="11">
+	 			<textarea id="<{$confirm_info.fields}>" confirm_field='true'  name="<{$confirm_info.fields}>" class="span12" rows="3" cols="20" <{if $confirm_info.if_require==2}>class="easyui-validatebox" _date="textarea_box" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> ><{$confirm_info.default}></textarea>
+	 			<{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+	 		</td>
+		</tr>
+		
+	<{elseif $confirm_info.data_type==4}>
+	<{counter start=0 print=false assign='order_count'}><!-- 从新计算 -->
+	 	<tr>
+	 		<td class="micro-label"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td >
+	 		<td colspan="11">
+	 		<span id="<{$confirm_info.fields}>_1">
+	 	 		<select name='<{$confirm_info.fields}>_1' confirm_field='true' onchange="get_comfirm_jl_options(1,'<{$confirm_info.fields}>','<{$confirm_info.jl_series}>',<{$confirm_info.id}>)" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" if_require='true' _chinese_name='<{$confirm_info.name}>_1'<{/if}> >
+		 			<option value="" >--请选择--</option>
+		  			<{assign var="field_type" value=$confirm_info.fields|cat:'_1'}>
+		  			<{foreach from=$jl_options.$field_type item=option key=jlkey}>
+          			<option value="<{$jlkey}>" ><{$option}></option>
+          			<{/foreach}>
+	     		</select>
+	    	</span>
+	    	<span id="<{$confirm_info.fields}>_2"></span>
+	    <{if $confirm_info.jl_series==3}>      
+	      <span id="<{$confirm_info.fields}>_3"></span>
+	     <{/if}>
+	     <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+	 	</td>
+	 	</tr>
+
+		
+<{elseif $confirm_info.data_type==7}><!--级联多选框-->
+<{counter start=0 print=false assign='order_count'}><!-- 从新计算 -->
+<tr>
+    <td class="micro-label">
+        <label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label>
+    </td>
+ 	<td  colspan="11">
+		<table>
+			<{assign var="field_type" value=$confirm_info.id|cat:'_1'}>
+			<{assign var="field_type2" value=$confirm_info.id|cat:'_2'}>
+			<{foreach from = $checkbox_options.$field_type item=check_option1 key=id1}>
+     		<tr>
+                <th style="padding-bottom:5px;"><{$check_option1.name}></th>
+     		</tr>
+     		<tr>
+     			<td style="padding-bottom:5px;">
+      				<{foreach from = $checkbox_options.$field_type2 item=check_option key=id2}>
+      					<{if $check_option.p_id == $id1}>
+         					<input type="checkbox" checkbox_name="<{$confirm_info.fields}>" checkbox_pid="<{$id1}>" name="<{$confirm_info.fields}>_2[]" value="<{$id2}>" confirm_field='true' /> <{$check_option.name}>&nbsp;
+       					<{/if}>
+      				<{/foreach}>
+      			</td>
+      		</tr>
+    		<{/foreach}>
+		</table>
+ 	</td>
+ </tr>
+      
+	<{else}>
+       <{if $order_count%2 == 0 }>
+        <tr>
+       <{/if}>
+       <td class="narrow-label"  >  <label for="<{$confirm_info.fields}>"  ><{$confirm_info.name}>：<label></td>
+       <td > 
+        <{assign var="parent_id" value=$confirm_info.id}>
+        <{if $field_detail.$parent_id || $confirm_info.data_type==2}>
+        <select id="<{$confirm_info.fields}>"  name="<{$confirm_info.fields}>" confirm_field='true' <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> >
+           <{foreach from=$field_detail.$parent_id item=detail key=dkey}>
+           <option value="<{$detail}>" ><{$detail}></option>
+           <{/foreach}>
+           <option value='' selected>&nbsp;</option>
+        </select>
+        <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+       <{elseif $confirm_info.data_type==5}><!-- 日期框 -->
+          <div class="input-append">
+        	<input type="text" name="<{$confirm_info.fields}>" id="<{$confirm_info.fields}>" value="<{if $confirm_info.default=='系统时间'}><{if $confirm_info.datefmt=='yyyy-MM-dd'}><{$now_date}><{else}><{$now_time}><{/if}><{else}><{$confirm_info.default}><{/if}>" confirm_field='true'  <{if $confirm_info.if_require==2}>_date='date_box' _chinese_name='<{$confirm_info.name}>' if_require='true'<{/if}> readonly>
+        	<button type="button" role="date" class="btn" onclick="WdatePicker({el: '<{$confirm_info.fields}>',dateFmt:'<{$confirm_info.datefmt}>'})">
+           		<span class="glyphicon glyphicon-calendar"></span>
+        	</button>
+    	  </div><{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+         <{else}>
+         <input type="text" id="<{$confirm_info.fields}>" confirm_field='true' name="<{$confirm_info.fields}>" value="<{$confirm_info.default}>" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> />
+         <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+         <{/if}>
+        </td>   
+       <{if $order_count%2 != 0 }>
+          </tr>
+       <{/if}>
+       <{counter print=false assign='order_count'}><!--   加1   -->
+     <{/if}>
+    <{/foreach}>
+    <!--自定义字段  ------end--------->
+    <{if $order_base.order_remark}>
+      <tr>
+         <td class="narrow-label"><label for="order_remark">备注：</label></td>		           
+         <td colspan="11"><textarea id="order_remark"  name="order_remark"  order_base_field='true' class="span12" rows="3" cols="20"></textarea></td>
+      </tr>
+     <{/if}>
+  </tbody>
+ </table>
+</div>
+</div>
+
+<!--订单产品信息-->
+<div class='easyui-panel'  style="background-color:white" >
+<table id="order_product_list" title='订单产品列表' width="100%" style="height:auto" rownumbers="true" iconCls="icon-search" singleSelect="true" idField="op_id" url="">
+	<thead>
+		<tr>
+		    <th field="op_id"  hidden="true" ></th> 
+		    <th field="product_id"  hidden="true" >产品ID</th> 
+		    <th field="product_num" width="100" align="center" >产品编号</th> 
+            <th field="product_name_view" width="100" align="center">产品名称</th>
+            <th field="product_thum_pic" width="100" align="center" >产品示意图</th>
+            <th field="product_thum_value" hidden="true" ></th>
+			<th field="product_class" width="100" align="center">产品分类</th>			
+			<th field="product_price" width="100" align="center">单价(元)</th>
+			<th field="product_discount" width="60" align="center">折扣(%)</th>
+			<th field="product_number" width="60" align="center">数量</th>
+		</tr>
+	</thead>
+</table>
+<input type='hidden' id='product_info' name='product_info' value='' />
+<div style='text-align:right;padding:10px;'>
+	<span style='font-weight:bold;'>累加总额：</span><span id='product_total' style='width:50px;'></span>元&nbsp;&nbsp;
+</div>
+</div>
+
+<div id='window_class'></div>
+<div id='client_window'></div>
+<div id='order_product_detail_window'></div>
+<div id='set_field_confirm'></div><!--  自定义字段设置   -->
+<div id='set_dictionary'></div><!--  数据字典   -->
+
+
+
+<div class='form-div' style='text-align:right;padding:5px;'>
+	<span style='color:red' id='_order_msg'></span>&nbsp;&nbsp;
+	 <button type="button" class="btn btn-primary" id="save_btn" onclick="save_order_info()">
+        <span class="glyphicon glyphicon-saved"></span> 添加订单
+    </button>
+</div>
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script type="text/javascript" src="./jssrc/jquery.preview.js"></script>
+<script language="JavaScript" type="text/javascript">
+var jl_field_type = eval("(" + '<{$jl_field_type}>' + ")");
+var flag_con_info = 0;
+<{if $client_info.con_name}>
+flag_con_info = 1;
+<{/if}>
+var power_phone_view = <{$power_phone_view}>;
+var global_con_name = "<{$client_info.con_name|default:''}>";
+var global_cle_id = <{$client_info.cle_id|default:0}>;
+var system_order_product_amount = <{$system_order_product_amount|default:0}>;
+var power_view_product = <{$power_view_product}>;
+var power_use_contact = <{$power_use_contact}>;
+
+function order_confirm_dictionary()
+{
+	$('#order_tools').tabs({
+		tools:[
+		<{if $power_fieldsconfirm_order}>
+		{
+			iconCls:'icon-seting',
+			text:'订单自定义字段',
+			handler:function(){
+				edit_field_confirm();
+			}
+		},
+		<{/if}>
+		<{if $power_dictionary_order}>
+		{
+			iconCls:'icon-seting',
+			text:'数据字典',
+			handler:function(){
+				edit_dictionary();
+			}
+		}
+		<{/if}>
+		]
+	});
+}
+</script>
+<script src="./jssrc/viewjs/order_add.js?1.1" type="text/javascript"></script>

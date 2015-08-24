@@ -1,0 +1,180 @@
+<{include file="pageheader.htm"}>
+
+<div class="easyui-panel" title="系统服务状态">
+<table width="100%" cellpadding="3" cellspacing="2" style="background-color:#F4FAFB;">
+<tr>
+    <th width="20%">服务名称</th>
+    <th>服务状态</th>
+    <th width="10%">操作</th>
+</tr>
+<tr>
+    <td align="center">appache服务</td>
+    <td align="center" id="http_stat"><{$http_stat}></td>
+    <td align="center">
+    <{if $http_stat != ''}>
+    <a class="easyui-linkbutton" iconCls="icon-reload" onclick="restart_http()" title="重启该服务" plain="true">重启</a>
+    <{/if}>
+    </td>
+</tr>
+<tr>
+    <td align="center">数据库服务</td>
+    <td align="center" id="mysql_stat"><{$mysql_stat}></td>
+    <td align="center">
+    <{if $mysql_stat != ''}>
+    <a class="easyui-linkbutton" iconCls="icon-reload" onclick="restart_mysql()" title="重启该服务" plain="true">重启</a>
+	<{/if}>
+    </td>
+</tr>
+<tr>
+    <td align="center">中间件</td>
+    <td align="center" id="winast_stat"><{$winast_stat}></td>
+    <td align="center">
+    <{if $winast_stat != ''}>
+    <a class="easyui-linkbutton" iconCls="icon-reload" onclick="restart_winast()" title="重启该服务" plain="true">重启</a>
+    <{/if}>
+    </td>
+</tr>
+</table>
+</div>
+<{if $http_server}>
+<div class="easyui-panel" title="<{$http_server_name}>">
+<table width="100%" cellpadding="3" cellspacing="2" style="background-color:#F4FAFB;">
+<tr>
+<th>文件系统</th>
+<th>总大小</th>
+<th>已用空间</th>
+<th>可用空间</th>
+<th>使用</th>
+</tr>
+<{foreach from=$http_server_status.disk item=info}>
+<tr>
+<td align="center"><{$info[0]}></td><td align="center" ><{$info[4]}></td><td align="center" ><{$info[3]}></td><td align="center" ><{$info[2]}></td><td align="center" ><{$info[1]}></td>
+</tr>
+<{/foreach}>
+</table>
+</div>
+<div class="easyui-panel" title="CPU状态 <{$http_server_status.cpu.used_percent}>">
+<table width="100%" cellpadding="3" cellspacing="2"  style="background-color:#F4FAFB;">
+<tr>
+    <th>用户占用</th>
+    <th>系统占用</th>
+    <th>空闲</th>
+</tr>
+<tr>
+    <td align="center"><{$http_server_status.cpu.user_used}>%</td>
+    <td align="center"><{$http_server_status.cpu.system_used}>%</td>
+    <td align="center"><{$http_server_status.cpu.free}>%</td>
+</tr>
+</table>
+</div>
+<div class="easyui-panel" title="内存状态 <{$http_server_status.memory.used_percent}>">
+<table width="100%" cellpadding="3" cellspacing="2" style="background-color:#F4FAFB;">
+<tr >
+    <th>系统内存</th>
+    <th>已使用</th>
+    <th>空闲</th>
+</tr>
+<tr>
+    <td align="center"><{$http_server_status.memory.total}>M</td>
+    <td align="center" ><{$http_server_status.memory.used}>M</td>
+    <td align="center" ><{$http_server_status.memory.free}>M</td>
+</tr>
+</table>
+</div>
+<a class="easyui-linkbutton" iconCls="icon-reload" onclick="reboot_http_server()" title="重启服务器">重启服务器</a>
+<a class="easyui-linkbutton" iconCls="icon-no" onclick="shutdown_http_server()" title="关闭服务器">关闭服务器</a>
+<br>
+<br>
+<{/if}>
+<{if $mysql_server}>
+<div class="easyui-panel" title="<{$mysql_server_name}>">
+<table width="100%" cellpadding="3" cellspacing="2" style="background-color:#F4FAFB;">
+<tr>
+    <th>文件系统</th><th>总大小</th><th>已用空间</th><th>可用空间</th><th>使用</th></tr>
+    <{foreach from=$mysql_server_status.disk item=info}>
+    <tr>
+    <td align="center"><{$info[0]}></td><td align="center" ><{$info[4]}></td><td align="center" ><{$info[3]}></td><td align="center" ><{$info[2]}></td><td align="center" ><{$info[1]}></td>
+    </tr>
+    <{/foreach}>
+</table>
+</div>
+<div class="easyui-panel" title="CPU状态 <{$mysql_server_status.cpu.used_percent}>">
+<table width="100%" cellpadding="3" cellspacing="2"  style="background-color:#F4FAFB;">
+<tr>
+    <th>用户占用</th>
+    <th>系统占用</th>
+    <th>空闲</th>
+</tr>
+<tr>
+    <td align="center"><{$mysql_server_status.cpu.user_used}>%</td>
+    <td align="center"><{$mysql_server_status.cpu.system_used}>%</td>
+    <td align="center"><{$mysql_server_status.cpu.free}>%</td>
+</tr>
+</table>
+</div>
+<div class="easyui-panel" title="内存状态 <{$mysql_server_status.memory.used_percent}>">
+<table width="100%" cellpadding="3" cellspacing="2" style="background-color:#F4FAFB;">
+<tr >
+    <th>系统内存</th>
+    <th>已使用</th>
+    <th>空闲</th>
+</tr>
+<tr>
+    <td align="center"><{$mysql_server_status.memory.total}>M</td>
+    <td align="center" ><{$mysql_server_status.memory.used}>M</td>
+    <td align="center" ><{$mysql_server_status.memory.free}>M</td>
+</tr>
+</table>
+</div>
+<a class="easyui-linkbutton" iconCls="icon-reload" onclick="reboot_mysql_server()" title="重启服务器">重启服务器</a>
+<a class="easyui-linkbutton" iconCls="icon-no" onclick="shutdown_mysql_server()" title="关闭服务器">关闭服务器</a>
+<br>
+<br>
+<{/if}>
+<{if $phone_server}>
+<div class="easyui-panel" title="<{$phone_server_name}>">
+<table width="100%" cellpadding="3" cellspacing="2" style="background-color:#F4FAFB;">
+<tr>
+    <th>文件系统</th><th>总大小</th><th>已用空间</th><th>可用空间</th><th>使用</th></tr>
+    <{foreach from=$phone_server_status.disk item=info}>
+    <tr>
+    <td align="center"><{$info[0]}></td><td align="center" ><{$info[4]}></td><td align="center" ><{$info[3]}></td><td align="center" ><{$info[2]}></td><td align="center" ><{$info[1]}></td>
+    </tr>
+    <{/foreach}>
+</table>
+</div>
+<div class="easyui-panel" title="CPU状态 <{$phone_server_status.cpu.used_percent}>">
+<table width="100%" cellpadding="3" cellspacing="2"  style="background-color:#F4FAFB;">
+<tr>
+    <th>用户占用</th>
+    <th>系统占用</th>
+    <th>空闲</th>
+</tr>
+<tr>
+    <td align="center"><{$phone_server_status.cpu.user_used}>%</td>
+    <td align="center"><{$phone_server_status.cpu.system_used}>%</td>
+    <td align="center"><{$phone_server_status.cpu.free}>%</td>
+</tr>
+</table>
+</div>
+<div class="easyui-panel" title="内存状态 <{$phone_server_status.memory.used_percent}>">
+<table width="100%" cellpadding="3" cellspacing="2" style="background-color:#F4FAFB;">
+<tr >
+    <th>系统内存</th>
+    <th>已使用</th>
+    <th>空闲</th>
+</tr>
+<tr>
+    <td align="center"><{$phone_server_status.memory.total}>M</td>
+    <td align="center" ><{$phone_server_status.memory.used}>M</td>
+    <td align="center" ><{$phone_server_status.memory.free}>M</td>
+</tr>
+</table>
+</div>
+<a class="easyui-linkbutton" iconCls="icon-reload" onclick="reboot_phone_server()" title="重启服务器">重启服务器</a>
+<a class="easyui-linkbutton" iconCls="icon-no" onclick="shutdown_phone_server()" title="关闭服务器">关闭服务器</a>
+<br>
+<br>
+<{/if}>
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/viewjs/system_monitor.js" type="text/javascript"></script>

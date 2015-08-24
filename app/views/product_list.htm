@@ -1,0 +1,217 @@
+<{include file="pageheader.htm"}>
+<div class="form-div" id='_search_panel'></div>
+<div id='product_list'></div>
+<div id='set_product_field_confirm'></div>
+<div id='datagrid_product'></div>
+<div id='product_detail_window'></div>
+<{include file="pagefooter.htm"}>
+<script type="text/javascript" src="./jssrc/jquery.preview.js"></script>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	$('#_search_panel').panel({
+		href:'index.php?c=product&m=product_base_search',
+		onLoad:function(width, height){
+			$('#product_list').datagrid('resize',{
+				height:get_list_height_fit_window('_search_panel')
+			});
+		}
+	});
+	$('#product_list').datagrid({
+		title:'产品列表',
+		height:get_list_height_fit_window('_search_panel'),
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		rownumbers:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		sortName:'product_id',
+		sortOrder:'desc',//降序排列
+		idField:'product_id',
+		url:'index.php?c=product&m=get_product_query',
+		frozenColumns:[[
+		]],
+		columns:[[
+		<{if $power_view_delete}>
+		{field:'ck',checkbox:true},
+		<{/if}>
+		<{if $power_view_update}>
+		{title:'操作',field:'oper_txt',width:40,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			return "<span><a href='javascript:;' onclick=window.parent.addTab('编辑产品','index.php?c=product&m=edit_product&product_id="+rowData.product_id+"','menu_icon'); title='编辑'><img src='./image/icon_edit.gif' border='0' height='16' width='16' align='absmiddle'/></a>";
+		}},
+		<{/if}>
+		<{section name=key loop=$product_display_field}>
+		{title: "<{$product_display_field[key].name}>" ,field: '<{$product_display_field[key].fields}>' ,align:"CENTER",width:"<{$product_display_field[key].field_list_width}>",sortable:true,formatter:function(value,rowData,rowIndex){
+			<{if $product_display_field[key].fields == 'product_name'}>
+			return value+"<a href='###' title='查看产品详情' onclick='show_product_detail("+rowData.product_id+")'><img src='image/file.png' /></a>";
+			<{elseif $product_display_field[key].fields == 'product_thum_pic'}>
+			if(value!=''){return "<span ><a href='###' title='点击查看大图' path='"+rowData.product_pic+"' class='preview' onclick=window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id="+rowData.product_id+"','menu_icon');><img src='"+value+"' border='0' align='absmiddle' /></a></span>";}else{return "<img src='"+rowData.no_picture+"' title='无图' border='0' align='absmiddle'>";}
+			<{elseif $product_display_field[key].fields == 'product_state'}>
+			if(value==1){return "上架<{if $power_view_update}><a href='###' onclick=change_product_state("+rowData.product_id+","+rowData.product_state+")><img src='./image/stop.gif' border='0' height='16' width='16' align='absmiddle' title='点击下架' /></a><{/if}>";}else if(value==2){return "下架<{if $power_view_update}><a href='###' onclick=change_product_state("+rowData.product_id+","+rowData.product_state+")><img src='./image/run.gif' border='0' height='16' width='16' align='absmiddle' title='点击上架' /></a><{/if}>";}else{return '';}
+			<{elseif $product_display_field[key].fields == 'product_price'}>
+			if(value!='')
+			{
+				return value+'&nbsp;元'
+			}
+			<{else}>
+			return value;
+			<{/if}>
+		}},
+		<{/section}>
+		{title:'product_id',field:'product_id',hidden:true}
+		]],
+		onLoadSuccess: function(){
+			$('#product_list').datagrid('clearSelections');
+			$('#product_list').datagrid('clearChecked');
+			if($('a.preview').length){
+				var img = preloadIm();
+				imagePreview(img);
+			}
+		},
+		toolbar:[
+		<{if $power_view_insert}>
+		{
+			text:'添加产品',
+			iconCls:'icon-add',
+			handler:function(){
+				window.parent.addTab('添加产品',"index.php?c=product&m=add_product","menu_icon");
+			}
+		},'-',
+		<{/if}>
+		<{if $power_view_delete}>
+		{
+			text:'删除选中产品',
+			iconCls:'icon-del',
+			handler:function(){
+				var ids = getSelections();
+				if(ids == '')
+				{
+					$.messager.alert('提示','请选中要删除的产品！','error');
+					return false;
+				}
+				$.messager.confirm('提示', '您确定要删除选中产品？', function(r){
+					if(r){
+						$.ajax({
+							type:"POST",
+							url:'index.php?c=product&m=delete_product',
+							data:{"product_ids":ids},
+							dataType:'json',
+							success:function (responce){
+								if(responce['error']=='0'){
+									$('#product_list').datagrid('load');
+								}
+								else
+								{
+									$.messager.alert('执行错误',responce['message'],'error');
+								}
+							}
+						});
+					}
+					else
+					{
+						return false;
+					}
+				});
+			}
+		},'-',
+		<{/if}>
+		{
+			text:'列表设置',
+			iconCls:'icon-seting',
+			handler:function(){
+				$('#datagrid_product').window({
+					title: '显示列表设置',
+					href:"index.php?c=datagrid_confirm&display_type=5",
+					iconCls: "icon-seting",
+					top:10,
+					width:360,
+					closed: false,
+					collapsible:false,
+					minimizable:false,
+					maximizable:false,
+					cache:false
+				});
+
+			}
+		}
+		]
+	});
+	var pager = $('#product_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+/**
+*列表得到选中的id
+*/
+function getSelections()
+{
+	var ids = [];
+	var rows = $('#product_list').datagrid('getChecked');
+	for(var i=0;i<rows.length;i++){
+		ids.push(rows[i].product_id);
+	}
+	return ids.join(',');
+}
+
+/**
+* 改变 产品状态
+*/
+function change_product_state(product_id,product_state)
+{
+	$.ajax({
+		type:"POST",
+		url:'index.php?c=product&m=set_product_state',
+		data:{"product_id":product_id,'product_state':product_state},
+		dataType:'json',
+		success:function (responce){
+			if(responce['error']=='0'){
+				$('#product_list').datagrid('load');
+			}
+			else
+			{
+				$.messager.alert('执行错误',responce['message'],'error');
+			}
+		}
+	});
+}
+
+//基本搜索
+function base_search()
+{
+	$('#product_list').datagrid('options').queryParams = {};
+	$('#_search_panel').panel('open').panel('refresh','index.php?c=product&m=product_base_search');
+}
+
+//高级搜索
+function advanced_search()
+{
+	$('#product_list').datagrid('options').queryParams = {};
+	$('#_search_panel').panel('open').panel('refresh','index.php?c=product&m=product_advance_search');
+}
+
+/*查看产品详情*/
+function show_product_detail(product_id)
+{
+	<{if $power_view_product}>
+	$('#product_detail_window').window({
+		title: '产品详情',
+		iconCls:"icon-ok",
+		href:"index.php?c=product&m=view_product&product_id="+product_id,
+		width:580,
+		top:50,
+		shadow:true,
+		closed: false,
+		collapsible:false,
+		minimizable:false,
+		maximizable:false,
+		cache:false
+	});
+	<{else}>
+	$.messager.alert('提示','您没有查看产品的权限！','info');
+	<{/if}>
+}
+
+</script>

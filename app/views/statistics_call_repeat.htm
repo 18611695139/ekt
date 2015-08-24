@@ -1,0 +1,104 @@
+<{include file="pageheader.htm"}>
+<div id='_search_panel' class='form-div'>
+    <form action="javascript:quick_search()" name="searchForm" id="searchForm" class="form-inline">
+        <img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH"/>
+        日期
+        <div class="input-append">
+            <input type="text" name="start_time" id="start_time" value="<{$today_start}>" style="width:120px;" readonly>
+            <button type="button" role="date" class="btn" onclick="WdatePicker({el: 'start_time',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </button>
+        </div>
+        ~
+        <div class="input-append">
+            <input type="text" name="end_time" id="end_time" value="<{$today_end}>" style="width:120px;" readonly>
+            <button type="button" role="date" class="btn" onclick="WdatePicker({el: 'end_time',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </button>
+        </div>
+        &nbsp;&nbsp;
+        通话类型
+        <select name="cdr_call_type" id="cdr_call_type" style="width:100px;">
+        	<option value="">--请选择--</option>
+        	<{foreach from=$cdr_call_type item=type key=key}>
+        	<option value="<{$key}>"  <{if $key==2 }> SELECTED <{/if}>   ><{$type}></option>
+        	<{/foreach}>
+    	</select>
+        <button class="btn btn-primary" onclick="$('#searchForm').submit();">
+            <span class="glyphicon glyphicon-search"></span> 搜索
+        </button>
+        <button type="button" class="btn btn-info" onclick="export_csv()">
+            <span class="glyphicon glyphicon-export"></span> 导出CSV
+        </button>
+        <span style="color:red;">注：默认显示当天数据</span>
+    </form>
+</div>
+<div id='repetition_list'></div>
+<div id='show_sta_detail'></div>
+
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function () {
+	$('#repetition_list').datagrid({
+		title: '通话重复号码统计列表',
+		nowrap: true,
+		striped: true,
+		collapsible: true,
+		pagination: true,
+		rownumbers: true,
+		fitColumns:true,
+		sortName: 'cus_phone',
+		sortOrder: 'desc',//降序排列
+		idField: 'id',
+		url: 'index.php?c=statistics_call_repeat&m=get_call_repeat_info',
+		queryParams:{call_type:'2',start_time:'<{$today_start}>',end_time:'<{$today_end}>'},
+		frozenColumns: [[
+		]],
+		columns: [[
+		{title: '号码',field:'cus_phone',width:120,sortable: true,align:'center'},
+		{title: '通话类型',field:'call_type',width:160,align:'center'},
+		{title: '拨打次数', field: 'num', width: 100, align: 'center'},
+		{title: '接通数', field: 'through', width: 100, align: 'center'},
+		{title: '比例',field: 'ratio',width: 100, align:'center'}
+		]]
+	});
+});
+
+
+/**
+*   快速查找
+*/
+
+function quick_search() {
+	var start_time = $('#start_time').val();
+	var end_time = $('#end_time').val();
+	var cdr_call_type = $('#cdr_call_type').val();
+	var queryParams = $('#repetition_list').datagrid('options').queryParams;
+	queryParams.call_type = cdr_call_type;
+	queryParams.start_time = start_time;
+	queryParams.end_time = end_time;
+	$('#repetition_list').datagrid('reload');
+}
+
+/**
+* 导出
+*/
+function export_csv()
+{
+	//列表参数
+	var datagrid_param = $('#repetition_list').datagrid('options');
+	var queryParams    = datagrid_param.queryParams;
+	//排序
+	queryParams.sortName  = datagrid_param.sortName;
+	queryParams.sortOrder = datagrid_param.sortOrder;
+	queryParams.total     = $('#repetition_list').datagrid('getData').total;
+	var sql_condition  = json2url(queryParams);
+	if( sql_condition )
+	{
+		sql_condition = "&"+sql_condition;
+	}
+	location.href = 'index.php?c=statistics_call_repeat&m=export_repeat'+sql_condition;
+}
+
+</script>

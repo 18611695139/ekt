@@ -1,0 +1,75 @@
+<{include file="pageheader.htm"}>
+<div class="form-div" id='_search_panel'>
+    <form action="javascript:quick_search()" method="POST" name="searchForm" class="form-inline" id="searchForm">
+	     <img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+	     <input type="text" class="form-control input-sm" id="search_key" name="search_key" value=""  placeholder="流程名"/>
+	     <button class="btn btn-primary" onclick="$('#searchForm').submit();">
+        	<span class="glyphicon glyphicon-search"></span> 搜索
+   		 </button>
+    </form>
+</div>
+<div id='flow_list'></div>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	//text绑定回车事件
+	$("input[type='text']").keydown(function(event){
+		if(event.keyCode == 13){
+			$('#searchForm').submit();
+		}
+	});
+	//管理列表
+	$('#flow_list').datagrid({
+		title:'新建工单',
+		height:get_list_height_fit_window('_search_panel'),
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		rownumbers:true,
+		fitColumns:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		sortName:'flow_id',
+		sortOrder:'DESC',//降序排列
+		idField:'flow_id',
+		url:'index.php?c=flow&m=get_flow_list_query',
+		queryParams:{'flow_status':1},
+		frozenColumns:[[
+		{title:'操作',field:'opter_txt',width:100,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			return '<a href="###" onclick=new_work_flow('+rowData.flow_id+',"'+rowData.flow_name+'") title="新建工单">【创建】</a>';
+		}}
+		]],
+		columns:[[
+		{title:'流程名',field:'flow_name',width:150},
+		{title:'流程状态',field:'flow_status',width:100},
+		{title:'有效开始时间',field:'valid_from',width:150},
+		{title:'有效结束时间',field:'valid_to',width:150},
+		{title:'流程说明',field:'flow_description',width:250},
+		{title:'flow_id',field:'flow_id',hidden:true}
+		]],
+		onLoadSuccess: function(){
+			$('#flow_list').datagrid('clearSelections');
+			$('#flow_list').datagrid('clearChecked');
+		}
+	});
+
+	var pager = $('#flow_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+// 快速查找
+function quick_search(){
+	var flow_name = $('#search_key').val();
+	var queryParams = $('#flow_list').datagrid('options').queryParams;
+	queryParams.flow_name   = flow_name;
+	$('#flow_list').datagrid('load');
+}
+
+function new_work_flow(flow_id,flow_name)
+{
+	window.parent.addTab('新建工单-'+flow_name,'index.php?c=work_flow&m=add_work_flow&flow_id='+flow_id+'&cle_id=<{$cle_id}>','menu_icon');
+}
+</script>
+<{include file="pagefooter.htm"}>

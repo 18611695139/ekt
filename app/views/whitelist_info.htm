@@ -1,0 +1,97 @@
+<{include file="pageheader.htm"}>
+<div class="container-fluid">
+    <div class="well well-small">
+        <form class="form-horizontal" method="post" action="index.php?c=white&m=set_whitelist">
+            <div class="control-group">
+                <label class="control-label" for="trunk_num">所属中继号码</label>
+                <div class="controls">
+                    <select id="trunk_num" name="trunk_num">
+                        <{html_options options=$phones}>
+                    </select>
+                    <span class="help-block">
+                        中继号码不允许为空
+                    </span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="phone_type1">添加方式</label>
+                <div class="controls">
+                    <label class="radio inline">
+                        <input id="phone_type1" class="radio" name="phone_type" value="1" checked type="radio"> 单个号码
+                    </label>
+                    <label class="radio inline">
+                        <input id="phone_type2" class="radio" name="phone_type" value="2" type="radio"> 批量添加
+                    </label>
+                </div>
+            </div>
+            <div id="phone-container">
+                <div class="control-group">
+                    <label class="control-label" for="phone">电话号码</label>
+                    <div class="controls">
+                        <input type="text" id="phone" name="phone[]" placeholder="电话号码">
+                        <button type="button" class="btn btn-info" id="add_phone">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-save"></span> 保存
+                    </button>
+                    <button type="button" class="btn" id="cancel">
+                        <span class="glyphicon glyphicon-arrow-left"></span> 返回
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="application/javascript">
+    $(document).ready(function(){
+        $('input[name=phone_type]').on('click', function() {
+            var type = $(this).val();
+            var $container = $('#phone-container');
+            var old_html = $container.html();
+            if (type == 1) {
+                $container.html('<div class="control-group">\
+                        <label class="control-label" for="phone">电话号码</label>\
+                            <div class="controls">\
+                                    <input type="text" id="phone" name="phone[]" placeholder="电话号码">\
+                                    <button type="button" class="btn btn-info" id="add_phone">\
+                                    <span class="glyphicon glyphicon-plus"></span>\
+                            </button>\
+                            </div>\
+                        </div>'
+                );
+            } else {
+                $container.html('<div class="control-group">\
+                        <label class="control-label" for="phone">电话号码</label>\
+                            <div class="controls">\
+                                    <textarea id="phone" name="phone[]" rows="6" cols="80"></textarea>\
+                            </button>\
+                            </div>\
+                        </div>');
+            }
+        });
+        $('#add_phone').on('click', function(){
+            $('<div class="control-group"> \
+                <label class="control-label" for="phone">电话号码</label> \
+                <div class="controls"> \
+                        <input type="text" id="phone" name="phone[]" placeholder="电话号码"> \
+                        <button type="button" class="btn btn-danger" id="remove_phone"> \
+                        <span class="glyphicon glyphicon-minus"></span> \
+                </button> \
+                </div> \
+            </div>').appendTo($('#phone-container')).find('#remove_phone').on('click', function(){
+                $(this).parent().parent().remove();
+            });
+        });
+        $('#cancel').on('click', function(){
+            location.href = 'index.php?c=white';
+        });
+    });
+</script>
+<{include file="pagefooter.htm"}>

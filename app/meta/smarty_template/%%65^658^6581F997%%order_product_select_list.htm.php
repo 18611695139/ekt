@@ -1,0 +1,142 @@
+<?php /* Smarty version 2.6.19, created on 2015-08-12 14:59:59
+         compiled from order_product_select_list.htm */ ?>
+<div class="form-div" style="margin:0px ;">
+    <form action="javascript:quick_search()" method="POST" name="searchForm"  id="searchForm">
+	         <img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+	          产品名称 <input type="text" style='width:80px;' id="product_name_search" name="product_name_search" />&nbsp;
+	          产品编号 <input type="text" style='width:80px;' id="product_num_search" name="product_num_search" />&nbsp;
+	          产品分类 <input type="text" style='width:100px;' id="product_class_search" name="product_class_search" />&nbsp;
+	         <a class="easyui-linkbutton" iconCls="icon-search" href="javascript:void(0)"  onclick="$('#searchForm').submit();" >搜索</a>
+    </form>
+</div>
+<div id='product_list'></div>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	$('#product_class_search').combotree({
+		url:'index.php?c=product&m=get_product_class_tree',
+		onClick:function(node){
+			$(this).tree('expand', node.target);
+		},
+		onBeforeLoad : function(node, param){
+			if (node){
+				return false;
+			} else {
+				$('#product_class_search').combotree('options').url = "index.php?c=product&m=get_product_class_tree";
+
+			}
+		}
+	});
+	$('#product_list').datagrid({
+		title:'产品列表',
+		nowrap: true,
+		height:400,
+		striped: true,
+		pagination:true,
+		rownumbers:true,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		sortName:'product_id',
+		sortOrder:'desc',//降序排列
+		singleSelect:true,
+		idField:'product_id',
+		url:'index.php?c=product&m=get_product_query',
+		queryParams:{'product_state':'1'},
+		frozenColumns:[[
+		]],
+		columns:[[
+		{title: "选择" ,field: 'opex_select' ,align:"CENTER",width:"40",sortable:false,formatter:function(value,rowData,rowIndex){
+			return "<a href='###' onclick='add_this_product("+rowData.product_id+")' style='text-decoration:underline;' title='选中'><img src='./themes/default/icons/edit_add.png' bwork_flow='0' height='16' width='16' align='absmiddle' /></a>";
+		}},
+		{title: "产品编号" ,field: 'product_num' ,align:"CENTER",width:"65",sortable:true},
+		{title: "产品名称" ,field: 'product_name' ,align:"CENTER",width:"140",sortable:true,formatter:function(value,rowData,rowIndex){
+			return value+"<a href='###' title='查看产品详情' onclick='show_order_product_detail("+rowData.product_id+")'><img src='image/file.png' /></a>";
+		}},
+		{title: "产品图片" ,field: 'product_thum_pic' ,align:"CENTER",width:"70",sortable:true,formatter:function(value,rowData,rowIndex){
+			if(value!=''){return "<span ><a href='###' path='"+rowData.product_pic+"' class='preview' ><img src='"+value+"' border='0' align='absmiddle' /></a></span>";}else{return "<img src='"+rowData.no_picture+"' title='无图' border='0' align='absmiddle'>";}
+		}},
+		{title: "产品分类" ,field: 'product_class_name' ,align:"CENTER",width:"120",sortable:true},
+		{title: "单价(元)" ,field: 'product_price' ,align:"CENTER",width:"80",sortable:true},
+		{title:'product_id',field:'product_id',hidden:true}
+		]],
+		onLoadSuccess: function(){
+			$('#product_list').datagrid('clearSelections');
+			if($('a.preview').length){
+				var img = preloadIm();
+				imagePreview(img);
+			}
+		}
+	});
+	var pager = $('#product_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+function add_this_product(product_id)
+{
+	var flag = 0;
+	//订单产品信息 - 相同产品不添加列表中
+	var Params_order_product = $('#order_product_list').datagrid('getData').rows;
+	$.each(Params_order_product, function(property,value) {;
+	if( value.product_id == product_id )
+	{
+		flag = 1;
+		return false;
+	}
+	});
+	if( flag == 1 )
+	{
+		return false;
+	}
+
+	//添加产品
+	var index = $('#product_list').datagrid('getRowIndex',product_id);
+	$('#product_list').datagrid('selectRow',index);
+	var selected = $('#product_list').datagrid('getSelected');
+	if(selected.product_thum_pic)
+	{
+		var thum_pic = "<a href='###' title='查看产品详情' onclick=show_order_product_detail('"+selected.product_id+"')><img src='"+selected.product_thum_pic+"' border='0' align='absmiddle' /></a>";
+		var product_thum_val = selected.product_thum_pic;
+	}
+	else
+	{
+		var thum_pic = "<img src='"+selected.no_picture+"' title='无图' border='0' align='absmiddle' />";
+		var product_thum_val = "";
+	}
+	$('#order_product_list').datagrid('appendRow',{
+		product_id:selected.product_id,
+		product_num:selected.product_num,
+		product_name:selected.product_name,
+		product_name_view:selected.product_name+"<a href='###' title='查看产品详情' onclick=show_order_product_detail('"+selected.product_id+"')><img src='image/file.png' /></a>",
+		product_thum_pic:thum_pic,
+		product_thum_value:product_thum_val,
+		product_class:selected.product_class_name,
+		product_price:selected.product_price,
+		product_discount:"<input style='width:50px;' onchange='confirm_products_info()' id='product_discount"+selected.product_id+"' value='100.00' />",
+		product_number:"<input style='width:50px;' onkeyup='confirm_products_info()' id='product_number"+selected.product_id+"' value='1' />"
+	});
+
+	var lastIndex = $('#order_product_list').datagrid('getRows').length-1;
+	$('#order_product_list').datagrid('beginEdit', lastIndex);
+	$('#product_list').datagrid('clearSelections');
+	$('#order_product_list').datagrid('acceptChanges');
+	$('#order_product_list').datagrid('load');
+}
+
+
+
+
+// 快速查找
+function quick_search(){
+	var product_name = $('#product_name_search').val();
+	var product_num = $('#product_num_search').val();
+	var product_class_id = $('#product_class_search').combotree('getValue');
+
+	var queryParams = $('#product_list').datagrid('options').queryParams;
+	queryParams.product_name   = product_name;
+	queryParams.product_num   = product_num;
+	queryParams.product_class_id     = product_class_id;
+	$('#product_list').datagrid('load');
+}
+
+</script>

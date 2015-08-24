@@ -1,0 +1,33 @@
+<{include file="pageheader.htm"}>
+<link href="themes/chosen/chosen.min.css" rel="stylesheet" type="text/css">
+<script src="themes/chosen/chosen.jquery.min.js" type="text/javascript"></script>
+<div class="well well-small" style="margin-bottom: 0">
+    <select id="flow_id" name="flow_id">
+    <{foreach from=$flows item=flow key=key}>
+    	<{if $flow.flow_status==1}>
+    		<option value="<{$flow.flow_id}>" ><{$flow.flow_name}></option>
+    	<{/if}>
+    <{/foreach}>
+    </select>
+</div>
+<div class="container-fluid">
+    <iframe id='flowFrame' frameborder='0' src='' scrolling='auto' style='width:99%;height:500px;'></iframe>
+</div>
+<script type="application/javascript">
+    $(document).ready(function() {
+        $('#flowFrame').attr('src', 'index.php?c=work_flow&m=add_work_flow&cle_id=<{$cle_id}>&flow_id='+$("#flow_id").val());
+    });
+    var flow_config = {
+        no_results_text: "没有选项",
+        placeholder_text_single: '请选择一个工单',
+        search_contains: true,
+        allow_single_deselect: false
+    };
+    $("#flow_id").chosen(flow_config)
+            .on('change', function(){
+                //加载相应的工单
+                $('#flowFrame')
+                        .attr('src', 'index.php?c=work_flow&m=add_work_flow&cle_id=<{$cle_id}>&flow_id='+$(this).val());
+            });
+</script>
+<{include file="pagefooter.htm"}>

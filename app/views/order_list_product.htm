@@ -1,0 +1,30 @@
+<style type="text/css">
+	.dv-table td{
+		border:0;
+	}
+	.dv-label{
+		font-weight:bold;
+		color:#15428B;
+		width:10%;
+	}
+</style>
+
+<{section name=loop loop=$order_product_info}>
+<table class="dv-table" style="width:80%;border-bottom:1px dotted #000000;">
+	<tr>
+		<td rowspan="3" style="width:15%;padding-left:30px;">
+			<a href='###' onclick="show_order_product_detail('<{$order_product_info[loop].product_id}>')"><img src="<{$order_product_info[loop].product_thum_pic}>" title='点击查看产品详情' border='0' align='absmiddle' /></a>
+		</td>
+		<td class="dv-label">产品名称:</td>
+		<td style="width:20%"><{$order_product_info[loop].product_name}></td>
+		<td class="dv-label">购买数量:</td>
+		<td style="width:5%;"><{$order_product_info[loop].product_number}></td>
+	</tr>
+	<tr>
+		<td class="dv-label">产品单价: </td>
+		<td style="width:20%"><{$order_product_info[loop].product_price}></td>
+		<td class="dv-label">产品编号:</td>
+		<td style="width:20%"><{$order_product_info[loop].product_num}></td>
+	</tr>
+</table>
+<{/section}>

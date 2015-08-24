@@ -1,0 +1,125 @@
+<{include file="pageheader.htm"}>
+<div class='form-div'>
+<div class="easyui-accordion" id='data_accordion'>
+	<div title='第一步 搜索要处理的数据' style="overflow:auto;padding:10px;"  href='index.php?c=client&m=advance_search&flag=data_deal'></div>
+	<div title="第二步 处理数据" href="index.php?c=client_data_deal&m=deal_result"></div>
+</div>
+</div>
+
+<div id="client_list" ></div>
+<input type='hidden' id='list_total' name='list_total' value='' />
+<div id="datagrid_client"></div>
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+
+	//设置列表
+	$('#client_list').datagrid({
+		title:"客户列表",
+		nowrap: true,
+		striped: true,
+		autoRowHeight:false,
+		pagination:true,
+		rownumbers:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		sortName:'cle_id',
+		sortOrder:'desc',//降序排列
+		idField:'cle_id',
+		url:"index.php?c=client_data_deal&m=list_client_query",
+		queryParams:{},
+		frozenColumns:[[
+		{field:'ck',checkbox:true}
+		]],
+		columns:[[
+		<{section name=key loop=$cle_display_field}>
+		{title: "<{$cle_display_field[key].name}>" ,field: '<{$cle_display_field[key].fields}>' ,align:"CENTER",width:"<{$cle_display_field[key].field_list_width}>",sortable:true,formatter:function(value,rowData,rowIndex){
+			<{if $cle_display_field[key].fields == "cle_name"}>
+			return "<a href='###' onclick=link_client_accept('"+rowData.cle_id+"'); class='underline'>"+value+"</a>";
+			power_phone_view
+			<{elseif $cle_display_field[key].fields == "cle_phone"}>
+			if(value)
+			{
+				<{if !$power_phone_view}>
+				value = hidden_part_number(value);
+				<{/if}>
+				return "<a href='###' onclick=link_client_accept('"+rowData.cle_id+"'); class='underline'>"+value+"</a>";
+			}
+			else
+			return value;
+			<{else}>
+			return value;
+			<{/if}>
+		}},
+		<{/section}>
+		{title:"cle_id" ,field:"cle_id",hidden:true}
+		]],
+		onLoadSuccess: function(data){
+			if(data.total!=0)
+			{
+				$('#data_accordion').accordion('select',"第二步 处理数据");
+				$('#list_total').val(data.total);
+			}
+			$('#client_list').datagrid('clearSelections');
+			$('#client_list').datagrid('clearChecked');
+		},
+		onDblClickRow:function (rowIndex, rowData)  //双击  -  业务受理
+		{
+			link_client_accept(rowData.cle_id);
+		},
+		toolbar:[
+		{
+			iconCls:'icon-seting',
+			text:'列表设置',
+			handler:function(){
+				$('#datagrid_client').window({
+					title: '显示列表设置',
+					href:"index.php?c=datagrid_confirm&display_type=4",
+					iconCls: "icon-edit",
+					top:10,
+					width:360,
+					closed: false,
+					collapsible:false,
+					minimizable:false,
+					maximizable:false,
+					cache:false
+				});
+			}
+		},'-']
+	});
+	
+	var pager = $('#client_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+//点击清空
+function search_cle_name()
+{
+	var _name = $('#cle_name_search').val();
+	if(_name == '支持拼音首字母')
+	{
+		$('#cle_name_search').css('color','#000000');
+		$('#cle_name_search').val('');
+	}
+}
+//判断是否为空
+function if_null()
+{
+	var name_value = $('#cle_name_search').val();
+	if(name_value.length == 0)
+	{
+		$('#cle_name_search').css('color','#cccccc');
+		$('#cle_name_search').val('支持拼音首字母');
+	}
+}
+
+function link_client_accept(cle_id)
+{
+	window.parent.addTab('业务受理','index.php?c=client&m=accept&cle_id='+cle_id,'menu_icon');
+}
+
+</script>

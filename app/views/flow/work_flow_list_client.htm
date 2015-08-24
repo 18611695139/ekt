@@ -1,0 +1,49 @@
+<div id='flow_list'></div>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	//管理列表
+	$('#flow_list').datagrid({
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		rownumbers:true,
+		fitColumns:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[30,10],
+		sortName:'id',
+		sortOrder:'DESC',//降序排列
+		idField:'id',
+		url:'index.php?c=work_flow&m=get_work_flow_client_query',
+		queryParams:{'cle_id':'<{$cle_id}>'},
+		frozenColumns:[[
+		{title:'操作',field:'opter_txt',width:100,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			return '<span><a href="###" onclick=view_work_flow('+rowData.id+','+rowData.flow_id+','+rowData.node_id+',"'+rowData.flow_number+'") title="查看工单">【查看】</a></span>';
+		}}
+		]],
+		columns:[[
+		{title:'工单编号',field:'flow_number',width:100},
+		{title:'流程名称',field:'flow_name',width:100},
+		{title:'当前节点',field:'node_name',width:100},
+		{title:'节点状态',field:'node_status',width:100},
+		{title:'提交时间',field:'node_start_time',width:100},
+		{title:'过期时间',field:'node_over_time',width:100},
+		{title:'flow_id',field:'flow_id',hidden:true}
+		]],
+		onLoadSuccess: function(){
+			$('#flow_list').datagrid('clearSelections');
+			$('#flow_list').datagrid('clearChecked');
+		}
+	});
+
+	var pager = $('#flow_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+function view_work_flow(id,flow_id,node_id,flow_number)
+{
+	window.parent.addTab('查看工单-'+flow_number,'index.php?c=work_flow&m=view_work_flow&id='+id+'&flow_id='+flow_id+'&node_id='+node_id,'menu_icon');
+}
+</script>

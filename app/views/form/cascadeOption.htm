@@ -1,0 +1,285 @@
+ <div class="span4">
+ 	<div id="optionDiv" >
+ 	
+     </div>
+     <label>
+        <button type="button" class="btn btn-small btn-primary" id='btn-add-cascade'><span class="glyphicon glyphicon-plus"></span> 添加选项 </button>
+<!--        <button type="button" class="btn btn-small" onclick="close_casecde_window()">关闭窗口 </button>-->
+     </label>
+    
+ </div>
+ <input type='hidden' name='casecadeType' id='casecadeType' value='<{$casecadeType}>'>
+ <script language="JavaScript" type="text/javascript">
+ var cascadeId = 1;
+ var casecadeType = $('#casecadeType').val();//第几级
+ var parent = '<{$parent}>';
+ $(document).ready(function(){
+ 	if(form_id == 0)
+ 	{
+ 		$('#btn-add-cascade').on('click',function(){
+ 			addOption()
+ 		});
+ 		if(cascadeOption[wgid]!=undefined)
+ 		{
+ 			if(cascadeOption[wgid][casecadeType]!=undefined)
+ 			{
+ 				if(cascadeOption[wgid][casecadeType][parent]!=undefined)
+ 				{
+ 					$('#optionDiv').empty();
+ 					$.each(cascadeOption[wgid][casecadeType][parent], function(index, value) {
+ 						$('#optionDiv').append('<div class="controls"> \
+                		<input name="option[]" cascadeId="'+value.id+'" style="margin-bottom:2px" type="text" placeholder="选项" value="'+value.name+'"> \
+                		<button type="button" cascadeIdBtn="'+value.id+'" name="btn-minus" class="btn btn-mini btn-danger"> \
+                			<span class="glyphicon glyphicon-minus"></span> \
+        				</button> \
+        				</div>');
+ 						//删除选项
+ 						$('button[name="btn-minus"]').on('click', function() {
+ 							var cascadeIdBtn = $(this).attr('cascadeIdBtn');
+ 							$(this).parent().remove();
+ 							setCascadeOptions(cascadeIdBtn);
+ 						});
+ 						//选项名称
+ 						$('input[name="option[]"]').on('keyup', function() {
+ 							setCascadeOptions();
+ 						});
+ 						cascadeId++;
+ 					});
+ 					if($('#optionDiv').html()=='')
+ 					{
+ 						addOption();
+ 					}
+ 				}
+ 				else
+ 				{
+ 					addOption();
+ 					cascadeOption[wgid][casecadeType][parent] = {};
+ 				}
+ 			}
+ 			else
+ 			{
+ 				addOption();
+ 				cascadeOption[wgid][casecadeType] = {};
+ 				cascadeOption[wgid][casecadeType][parent] = {};
+ 			}
+ 		}
+ 		else
+ 		{
+ 			addOption();
+ 			cascadeOption[wgid] = {};
+ 			cascadeOption[wgid][casecadeType] = {};
+ 			cascadeOption[wgid][casecadeType][parent] = {};
+ 		}
+ 	}
+ 	else
+ 	{
+ 		$('#btn-add-cascade').on('click',function(){
+ 			addEditOption()
+ 		});
+
+ 		$.ajax({
+ 			type:'POST',
+ 			url: "index.php?c=form&m=get_cascade_info",
+ 			data:{"parent_id":parent,"deep":casecadeType,'form_id':form_id,'field':wgid},
+ 			dataType:"json",
+ 			success: function(responce){
+ 				if(responce['error']=='0')
+ 				{
+ 					$('#optionDiv').empty();
+ 					$.each(responce['content'],function(id,value){
+ 						$('#optionDiv').append('<div class="controls"> \
+                		<input name="option[]" cascadeId="'+id+'" style="margin-bottom:2px" type="text" placeholder="选项" value="'+value+'"> \
+                		<button type="button" cascadeIdBtn="'+id+'" name="btn-minus" class="btn btn-mini btn-danger"> \
+                			<span class="glyphicon glyphicon-minus"></span> \
+        				</button> \
+        				</div>');
+ 						//删除选项
+ 						$('button[name="btn-minus"]').on('click', function() {
+ 							var cascadeIdBtn = $(this).attr('cascadeIdBtn');
+ 							$(this).parent().remove();
+ 							editCascedeOptions(cascadeIdBtn,'del');
+ 						});
+ 						//选项名称
+ 						$('input[name="option[]"]').on('keyup', function() {
+ 							var changeId = $(this).attr('cascadeId');
+ 							editCascedeOptions(changeId,'update');
+ 						});
+ 					});
+
+ 				}
+ 			}
+ 		});
+ 	}
+ });
+
+
+ //添加选项按钮 casecadeType
+ function addOption() {
+ 	var tr = $('<div class="controls"> \
+                <input name="option[]" cascadeId="'+parent+'-'+cascadeId+'" style="margin-bottom:2px" type="text" placeholder="选项" value=""> \
+                <button type="button" cascadeIdBtn="'+parent+'-'+cascadeId+'" name="btn-minus" class="btn btn-mini btn-danger"> \
+                	<span class="glyphicon glyphicon-minus"></span> \
+        		</button> \
+        	</div>');
+ 	$('#optionDiv').append(tr);
+ 	//删除选项
+ 	$('button[name="btn-minus"]').on('click', function() {
+ 		var cascadeIdBtn = $(this).attr('cascadeIdBtn');
+ 		$(this).parent().remove();
+ 		setCascadeOptions(cascadeIdBtn);
+ 	});
+ 	//选项名称
+ 	$('input[name="option[]"]').on('keyup', function() {
+ 		setCascadeOptions();
+ 	});
+ 	cascadeId++;
+ }
+
+ //设置对应选项（添加）
+ function setCascadeOptions()
+ {
+ 	if(arguments[0])
+ 	{
+ 		if(series==3 && casecadeType==1)
+ 		{
+ 			if(cascadeOption[wgid][2][arguments[0]]!=undefined)
+ 			{
+ 				$.each(cascadeOption[wgid][2][arguments[0]], function(index, value) {
+ 					cascadeOption[wgid][3][value.id] = {};
+ 				});
+ 			}
+ 		}
+ 		cascadeOption[wgid][(parseInt(casecadeType)+1)][arguments[0]] = {};
+ 	}
+ 	var currentOptions = $('#optionDiv').find('input[name="option[]"]');
+ 	var container = $('#setSeries'+casecadeType);
+ 	var opValues = {};
+ 	container.empty();
+ 	container.append('<option value="">--第'+casecadeType+'级选项--</option>');
+ 	$.each(currentOptions, function(index, value) {
+ 		if($(value).val()!='')
+ 		{
+ 			var id = $(this).attr('cascadeId');
+ 			container.append('<option value="'+id+'">'+$(value).val()+'</option>');
+ 			opValues[id] = {'parent':parent,'id':id,'name':$(value).val(),'deep':casecadeType,'field':wgid};
+ 		}
+ 	});
+ 	$('#setSeries'+casecadeType).trigger('change')
+ 	cascadeOption[wgid][casecadeType][parent] = opValues;
+ }
+
+ /*关闭窗口*/
+/* function close_casecde_window()
+ {
+ 	$('#set_cascade_option_window').window('close');
+ }*/
+
+ //+++++==========================================================================
+
+ //添加选项按钮 casecadeType
+ function addEditOption() {
+ 	$('#btn-add-cascade').attr('disabled',true);
+ 	var tr = $('<div class="controls"> \
+                <input name="option[]" cascadeId="0" style="margin-bottom:2px" type="text" placeholder="选项" value="选项"> \
+                <button type="button" cascadeIdBtn="0" name="btn-minus" class="btn btn-mini btn-danger"> \
+                	<span class="glyphicon glyphicon-minus"></span> \
+        		</button> \
+        	</div>');
+ 	$('#optionDiv').append(tr);
+ 	//删除选项
+ 	$('button[name="btn-minus"]').on('click', function() {
+ 		var cascadeIdBtn = $(this).attr('cascadeIdBtn');
+ 		$(this).parent().remove();
+ 		editCascedeOptions(cascadeIdBtn,'del');
+ 	});
+ 	//选项名称
+ 	$('input[name="option[]"]').on('keyup', function() {
+ 		var changeId = $(this).attr('cascadeId');
+ 		editCascedeOptions(changeId,'update');
+ 	});
+ 	$.ajax({
+ 		type:'POST',
+ 		url: "index.php?c=form&m=insert_cascade",
+ 		data:{'parent_id':parent,'name':'选项','deep':casecadeType,'field':wgid,'form_id':form_id},
+ 		dataType:"json",
+ 		success: function(responce){
+ 			if(responce['error']=='0')
+ 			{
+ 				tr.find('input[name="option[]"]').attr('cascadeId',responce['content']);
+ 				tr.find('button[name="btn-minus"]').attr('cascadeIdBtn',responce['content']);
+ 				var container = $('#setSeries'+casecadeType);
+ 				container.append('<option value="'+responce['content']+'">选项</option>');
+ 			}
+ 			$('#btn-add-cascade').attr('disabled',false);
+ 		}
+ 	});
+ }
+
+ function editCascedeOptions(changeId,changeType)
+ {
+ 	var currentOptions = $('#optionDiv').find('input[name="option[]"]');
+ 	var container_str = '';
+ 	var opValues = {};
+ 	$.each(currentOptions, function(index, value) {
+ 		var id = $(this).attr('cascadeId');
+
+ 		if(id==changeId)
+ 		{
+ 			if(changeType=='update')
+ 			{
+ 				opValues = {'parent_id':parent,'id':id,'name':$(value).val(),'deep':casecadeType,'field':wgid,'form_id':form_id};
+ 				container_str += '<option value="'+id+'">'+$(value).val()+'</option>';
+ 			}
+ 		}
+ 		else
+ 		{
+ 			container_str += '<option value="'+id+'">'+$(value).val()+'</option>';
+ 		}
+ 	});
+ 	if(changeType=='update')
+ 	{
+ 		$.ajax({
+ 			type:'POST',
+ 			url: "index.php?c=form&m=update_cascade",
+ 			data:opValues,
+ 			dataType:"json",
+ 			success: function(responce){
+ 				if(responce['error']=='0')
+ 				{
+ 					changePageOption(container_str);
+ 				}
+ 			}
+ 		});
+ 	}
+ 	else if(changeType=='del')//删除
+ 	{
+ 		if(changeId!=0)
+ 		{
+ 			$.ajax({
+ 				type:'POST',
+ 				url: "index.php?c=form&m=delete_cascade",
+ 				data:{"id":changeId,'deep':casecadeType,'series':series},
+ 				dataType:"json",
+ 				success: function(responce){
+ 					if(responce['error']=='0')
+ 					{
+ 						changePageOption(container_str);
+ 					}
+ 				}
+ 			});
+ 		}
+ 	}
+ }
+
+ function changePageOption(container_str)
+ {
+ 	var container = $('#setSeries'+casecadeType);
+ 	container.empty();
+ 	container.append('<option value="">--第'+casecadeType+'级选项--</option>');
+ 	container.append(container_str);
+ 	$('#setSeries'+casecadeType).trigger('change');
+ }
+
+
+
+ </script>

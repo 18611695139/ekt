@@ -1,0 +1,323 @@
+<{include file="pageheader.htm"}>
+<!--订单基本信息-->
+<div class="easyui-tabs">
+<div class="main-div" title='订单基本信息'>
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0" align="center" border="0" style="width:98%">
+ <tbody>
+	 <tr>
+         <td class="narrow-label"><label for="order_num">订单编号：</label></td>		           
+         <td ><input type='text' id='order_num' name='order_num' value='<{$order_info.order_num}>' readonly /></td>   
+     </tr>
+      <tr >
+       <td class="narrow-label"><label for="order_state">订单状态：</label></td>	
+	  <td  colspan="3" align="right" style="padding:5px 35px 5px 0px">
+	 	<input id="order_state" name="order_state" value="<{$order_info.order_state}>" type="hidden"/>
+        <div id="mainNav">
+         <{foreach from=$order_state item=info_state key=skey name=orderState}>
+ 	      <span  onclick="change_order_state_step('<{$info_state.name}>')" title="<{$info_state.name}>" <{if $smarty.foreach.orderState.last}>class="mainNavNoBg"<{/if}>  ><a title="<{$info_state.name}>"><{$info_state.name}></a></span>
+ 	     <{/foreach}>
+ 	    </div>
+	  </td>
+	  </tr>
+	  <tr>
+	  <{if $order_base.order_delivery_mode}>
+	  	<td class="narrow-label"><label for="order_delivery_mode">配送方式：</label></td>		           
+        <td>
+        <select name="order_delivery_mode" id="order_delivery_mode" order_base_field='true'>
+        <{foreach from=$delivery_info item=info_delivery key=dkey}>
+ 	 	<option value="<{$info_delivery.name}>"  <{if $order_info.order_delivery_mode == $info_delivery.name }> SELECTED <{/if}>   ><{$info_delivery.name}></option>
+ 	 	<{/foreach}>
+ 	 	<option value="" <{if !$order_info.order_delivery_mode}>SELECTED<{/if}> >&nbsp;</option>
+ 		</select>
+        </td>
+        <{/if}>
+        <{if $order_base.order_delivery_number}>
+        <td class="narrow-label"><label for="order_delivery_number">配送单号：</label></td>	
+        <td><input type='text' id='order_delivery_number' name='order_delivery_number' value="<{$order_info.order_delivery_number|default:''}>" order_base_field='true' /></td>
+	    </tr>
+	     <{/if}>
+        <tr>
+         <td class="narrow-label"><label for="order_price">订单总价：</label></td>		           
+         <td ><span title="只能填数字（可带小数点）" class="easyui-tooltip" data-options="position:'right'"><input type='text' id='order_price' name='order_price' value='<{$order_info.order_price}>'/></span>
+         
+         <{if $order_info}>
+          <td class="narrow-label"><label for="order_accept_time">下单时间：</label></td>		           
+         <td ><{$order_info.order_accept_time}></td>
+         <{/if}>    
+      </tr>
+       <tr>
+         <td class="narrow-label"><label for="cle_name">客户名称：</label></td>		           
+         <td >
+          <div class="input-append">
+               <input type="text" id="cle_name"  name="cle_name"  value="<{$order_info.cle_name}>" readonly/>
+               <button type="button" class="btn" onclick="_add_client()" title="查找客户">
+                    <span class="glyphicon glyphicon-zoom-in"></span>
+               </button>
+               <button type="button" class="btn" onclick="_client_detail()" title="客户详情">
+                    <span class="glyphicon glyphicon-briefcase"></span>
+               </button>
+          </div>
+          <input type="hidden"  id='cle_id' name='cle_id' value='<{$order_info.cle_id|default:0}>'  />
+         </td>
+         <td class="narrow-label"><label for="cle_phone">客户电话：</label></td>		           
+         <td >
+         	<div class="input-append">
+               <input type="text" id="cle_phone"  name="cle_phone"  value="<{$order_info.cle_phone}>" />
+               <button type="button" class="btn" onclick="sys_dial_num('<{$order_info.cle_phone}>','cle_phone')" title="呼叫号码">
+                    <span class="glyphicon glyphicon-phone"></span>
+               </button>
+               <{if $power_sendsms}>
+               <button type="button" class="btn" onclick="sys_send_sms('<{$order_info.cle_phone}>','cle_phone')" title="发送短信">
+                    <span class="glyphicon glyphicon-envelope"></span>
+               </button>
+               <{/if}>
+             </div>
+             <input type='hidden' id='real_cle_phone' name='real_cle_phone' value='<{$order_info.cle_phone}>' />
+         </td>  
+      </tr>
+      <{if $power_use_contact!=1}>   
+      <tr>
+       <td class="narrow-label"><label for="con_name">联系人姓名：</label></td>		           
+         <td >
+         <input id="con_name" name="con_name" />
+         </td>
+         <td class="narrow-label"><label for="con_mobile">联系人电话：</label></td>		           
+         <td >
+         	<div class="input-append">
+               <input type="text" id="con_mobile"  name="con_mobile"  value="<{$order_info.con_mobile}>" />
+               <button type="button" class="btn" onclick="sys_dial_num('<{$order_info.con_mobile}>','con_mobile')" title="呼叫号码">
+                    <span class="glyphicon glyphicon-phone"></span>
+               </button>
+               <{if $power_sendsms}>
+               <button type="button" class="btn" onclick="sys_send_sms('<{$order_info.con_mobile}>','con_mobile')" title="发送短信">
+                    <span class="glyphicon glyphicon-envelope"></span>
+               </button>
+               <{/if}>
+             </div>
+             <input type='hidden' id='real_con_mobile' name='real_con_mobile' value='<{$order_info.con_mobile}>' />
+          </td>
+         
+      </tr>
+      <{/if}>
+      <{if $order_base.cle_address}>   
+      <tr>
+         <td class="narrow-label"><label for="cle_address">客户地址：</label></td>		           
+         <td colspan='11'><input type='text' id='cle_address' name='cle_address' value='<{$order_info.cle_address}>' order_base_field='true' class="span12" /></td>
+      </tr>
+      <{/if}>
+       <!--自定义字段  -----begin-------->
+    <{counter start=0 print=false assign='order_count'}><!--  计算  -->
+    <{foreach from=$order_confirm item=confirm_info key=ckey name=list_Name}>
+    <{assign var="parent_id" value=$confirm_info.id}>
+    <{assign var="real_field" value=$confirm_info.fields}>
+    
+    <{if $confirm_info.data_type==3}>
+    <{counter start=0 print=false assign='order_count'}><!-- 从新计算 -->
+      <tr>
+	 		<td class="micro-label"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td >
+	 		<td colspan="11">
+	 			<textarea id="<{$confirm_info.fields}>" confirm_field='true'  name="<{$confirm_info.fields}>" class="span12" rows="3" cols="20" <{if $confirm_info.if_require==2}>class="easyui-validatebox" _date="textarea_box" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> ><{$order_info.$real_field}></textarea>
+	 			<{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+	 		</td>
+	 </tr>
+	 
+	<{elseif $confirm_info.data_type==4}>
+	<{counter start=0 print=false assign='order_count'}><!-- 从新计算 -->
+	 <tr>
+	 	<td class="micro-label"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td >
+	 	<td colspan="11">
+	 	<span id="<{$confirm_info.fields}>_1">
+	 	 <select name='<{$confirm_info.fields}>_1' confirm_field='true' onchange="get_comfirm_jl_options(1,'<{$confirm_info.fields}>','<{$confirm_info.jl_series}>',<{$confirm_info.id}>)" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" if_require='true' _chinese_name='<{$confirm_info.name}>_1'<{/if}> >
+		 <option value="" >--请选择--</option>
+		  <{assign var="field_type" value=$confirm_info.fields|cat:'_1'}>
+		  <{foreach from=$jl_options.$field_type item=option key=jlkey}>
+          <option value="<{$jlkey}>" <{if $jlkey==$order_info.$field_type}>selected<{/if}> ><{$option}></option>
+          <{/foreach}>
+	     </select>
+	    </span>
+	    <{assign var="jl_f_t" value=$confirm_info.jl_field_type}>
+	    <{assign var="field_type2" value=$confirm_info.fields|cat:'_2'}>
+	    <span id="<{$confirm_info.fields}>_2">
+	    	<{if $order_info.$field_type}>
+	    		<{assign var="p_id" value=$order_info.$field_type}>
+	    		<{if $jl_f_t[$p_id]&&$jl_f_t[$p_id]==1}>
+	    			<input type='text' name='<{$confirm_info.fields}>_2' value='<{$order_info.$field_type2}>' confirm_field='true'/>
+	    		<{else}>
+	    			<select name="<{$confirm_info.fields}>_2" confirm_field='true' <{if $confirm_info.jl_series==3}>onchange="get_comfirm_jl_options(2,'<{$confirm_info.fields}>','<{$confirm_info.jl_series}>',<{$confirm_info.id}>)"<{/if}>>
+        				<option value="">--请选择--</option>
+       	 				<{foreach from=$jl_options.$field_type2 item=option key=jlkey}>
+        				<option value="<{$jlkey}>" <{if $jlkey==$order_info.$field_type2}>selected<{/if}> ><{$option}></option>
+        				<{/foreach}>
+        			</select>
+	    		<{/if}>
+	    	 <{/if}>
+	     	 </span>
+	    <{if $confirm_info.jl_series==3}>	      
+	      <span id="<{$confirm_info.fields}>_3">
+	    	<{if $order_info.$field_type2}>
+	    	<{assign var="p_id2" value=$order_info.$field_type2}>
+	    	<{assign var="field_type3" value=$confirm_info.fields|cat:'_3'}>
+	    		<{if $jl_f_t[$p_id2]&&$jl_f_t[$p_id2]==1}>
+	    			<input type='text' name='<{$confirm_info.fields}>_3' value='<{$order_info.$field_type3}>' confirm_field='true'/>
+	    		<{else}>
+	    			<select name="<{$confirm_info.fields}>_3" confirm_field='true'>
+        				<option value="">--请选择--</option>
+       	 				<{foreach from=$jl_options.$field_type3 item=option key=jlkey}>
+        				<option value="<{$jlkey}>" <{if $jlkey==$order_info.$field_type3}>selected<{/if}> ><{$option}></option>
+        				<{/foreach}>
+        			</select>
+	    		<{/if}>
+	     	<{/if}>
+	     	</span>
+	     <{/if}>
+	     <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+	 	</td>
+	 </tr>
+	 
+	
+<{elseif $confirm_info.data_type==7}><!--级联多选框-->
+<{counter start=0 print=false assign='order_count'}><!-- 从新计算 -->
+<tr>
+    <td class="span2" style="text-align: right">
+        <label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label>
+    </td>
+ 	<td  colspan="11">
+		<table>
+			<{assign var="field_type" value=$confirm_info.id|cat:'_1'}>
+			<{assign var="field_type2" value=$confirm_info.id|cat:'_2'}>
+			<{if $order_info}>
+				<{assign var="field_value" value=$order_info.$field_type}>
+				<{assign var="field_value2" value=$order_info.$field_type2}>
+			<{/if}>
+			<{foreach from = $checkbox_options.$field_type item=check_option1 key=id1}>
+     		<tr>
+                <th style="padding-bottom:5px;"><{$check_option1.name}></th>
+     		</tr>
+     		<tr>
+     			<td style="padding-bottom:5px;">
+      				<{foreach from = $checkbox_options.$field_type2 item=check_option key=id2}>
+      					<{if $check_option.p_id == $id1}>
+         					<input type="checkbox" checkbox_name="<{$confirm_info.fields}>_2" name="<{$confirm_info.fields}>_2[]" value="<{$id2}>" confirm_field='true' <{if $field_value2[$id2]==$id2}>checked<{/if}> /> <{$check_option.name}>&nbsp;
+       					<{/if}>
+      				<{/foreach}>
+      			</td>
+      		</tr>
+    		<{/foreach}>
+		</table>
+ 	</td>
+ </tr>
+	 
+      
+	<{else}>
+       <{if $order_count%2 == 0 }>
+        <tr>
+       <{/if}>
+       <td class="narrow-label"  >  <label for="<{$confirm_info.fields}>"  ><{$confirm_info.name}>：<label></td><td >
+        <{if $field_detail.$parent_id || $confirm_info.data_type==2}>
+        <select id="<{$confirm_info.fields}>"  name="<{$confirm_info.fields}>" confirm_field='true' <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> >
+           <{foreach from=$field_detail.$parent_id item=detail key=dkey}>
+           <option value="<{$detail}>"  <{if $detail == $order_info.$real_field}>selected<{/if}> ><{$detail}></option>
+           <{/foreach}>
+           <option value="" <{if !$order_info.$real_field}>selected<{/if}> >&nbsp;</option>
+        </select>
+        <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+        <{elseif $confirm_info.data_type==5}><!-- 日期框 -->
+         <div class="input-append">
+        	<input type="text" name="<{$confirm_info.fields}>" id="<{$confirm_info.fields}>" value="<{$order_info[$confirm_info.fields]}>" confirm_field='true'  <{if $confirm_info.if_require==2}>_date='date_box' _chinese_name='<{$confirm_info.name}>' if_require='true'<{/if}> readonly>
+        	<button type="button" role="date" class="btn" onclick="WdatePicker({el: '<{$confirm_info.fields}>',dateFmt:'<{$confirm_info.datefmt}>'})">
+           		<span class="glyphicon glyphicon-calendar"></span>
+        	</button>
+    	  </div><{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+         
+        <{else}>
+         <input type="text" id="<{$confirm_info.fields}>" name="<{$confirm_info.fields}>" confirm_field='true' value="<{$order_info.$real_field}>" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> />
+         <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+        <{/if}>
+        </td>
+       <{if $order_count%2 != 0 }>
+          </tr>
+       <{/if}>
+       <{counter print=false assign='order_count'}><!--   加1   -->
+     <{/if}>
+    <{/foreach}>
+    <!--自定义字段  ------end---------> 
+    <{if $order_base.order_remark}>  
+      <tr>
+         <td class="narrow-label"><label for="order_remark">备注：</label></td>		           
+         <td colspan="11"><textarea id="order_remark"  name="order_remark" order_base_field='true' class="span12" rows="3" cols="20"><{$order_info.order_remark}></textarea></td>	      
+      </tr>
+     <{/if}>
+  </tbody>
+ </table>
+</div>
+
+<!--客服服务-->
+<{if $power_service_view && $order_info.cle_id}>
+<div  title="客服服务" href="index.php?c=service&m=client_service&cle_id=<{$order_info.cle_id}>"></div>
+<{/if}>
+</div>
+<div id='window_class'></div>
+<div id='client_window'></div>
+<div id='order_product_detail_window'></div>
+
+<div class="form-inline" style="text-align:right;">
+	<span style='color:red' id='_order_msg'></span>&nbsp;&nbsp;
+	<{if $system_pagination}>
+	<button class="btn btn-small btn-primary" id="last_order" onclick="jump_pre_order()">
+        <span class="glyphicon glyphicon-step-backward"></span> 上一条
+    </button>
+	【<{$row_index}>/<{$row_limit}>】
+	<button class="btn btn-small btn-primary" id="next_order" onclick="jump_next_order()">
+        下一条 <span class="glyphicon glyphicon-step-forward"></span>
+    </button>
+	<{/if}>
+	<{if $power_update_order}>
+	<{if  $system_pagination}>
+	<label class="checkbox easyui-tooltip" title="数据保存后,自动取下一条并呼叫">
+    	<input type="checkbox" id="save_next" name="save_next" onclick="record_memrot_cookie();" class="checkbox"/> 自动跳转
+    </label>
+	<{/if}>
+	<button type="button" class="btn btn-small btn-primary" id="save_btn" onclick="save_order_info()">
+        <span class="glyphicon glyphicon-saved"></span> 保存基本信息
+    </button>
+	<{/if}>
+</div>
+
+<!--订单产品信息-->
+<div  style="background-color:white;" class="easyui-panel" href='index.php?c=order&m=get_order_product_info&order_id=<{$order_info.order_id}>' ></div>
+
+<div class="easyui-tabs">
+<div title="新建联系记录" href="index.php?c=contact_record&m=new_contact_record&cle_id=<{$order_info.cle_id|default:'0'}>&order_id=<{$order_info.order_id}>"></div>
+<div title='过往联系记录' href="index.php?c=contact_record&m=contact_record_list&cle_id=<{$order_info.cle_id|default:'0'}>&order_id=<{$order_info.order_id}>"></div>
+<!--订单日志-->
+<div  title="操作日志" href="index.php?c=order&m=get_order_log&order_id=<{$order_info.order_id}>"></div>
+</div>
+
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script type="text/javascript" src="./jssrc/jquery.preview.js"></script>
+<script src="./jssrc/viewjs/order_accept.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+var flag_con_info = 0;
+<{if $order_info.con_name}>flag_con_info = 1;<{/if}>
+var row_index = <{$row_index|default:0}>;//在列表中所处的位置 序号 从1开始
+var row_limit = <{$row_limit|default:10}>;//列表长度
+var system_pagination = <{$system_pagination|default:false}>;//显示上一条下一条
+var system_autocall = <{$system_autocall|default:false}>;//自动呼叫
+var system_autocall_number = "<{$system_autocall_number|default:''}>";//自动呼叫的号码 默认为传过来的号码，一般是客户号码
+
+var role_type = <{$role_type}>;
+var user_session_id = <{$user_session_id}>;//当前用户id
+var global_user_id = <{$order_info.user_id|default:0}>;
+var global_order_id = <{$order_info.order_id|default:0}>;
+var global_order_price = "<{$order_info.order_price|default:''}>";
+var global_cle_id = <{$order_info.cle_id|default:0}>;
+var global_cle_phone = "<{$order_info.cle_phone|default:''}>";
+var global_con_name = "<{$order_info.con_name|default:''}>";
+var global_con_mobile = "<{$order_info.con_mobile|default:''}>";
+
+var power_phone_view = <{$power_phone_view}>;//显示全部号码权限
+var power_update_order = <{$power_update_order}>;
+var power_use_contact = <{$power_use_contact|default:0}>;//是否使用联系人
+var jl_field_type = eval("(" + '<{$jl_field_type}>' + ")");
+</script>

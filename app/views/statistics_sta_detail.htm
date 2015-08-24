@@ -1,0 +1,33 @@
+<div id='sta_detail_list'></div>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	$('#sta_detail_list').datagrid({
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		rownumbers:true,
+		fitColumns:true,
+		checkOnSelect:false,
+		pageSize:10,
+		pageList:[10],
+		sortName:'id',
+		sortOrder:'DESC',//降序排列
+		idField:'id',
+		url:'index.php?c=statistics&m=get_sta_detail_query',
+		queryParams:{"user_id":"<{$user_id}>","start_time":"<{$start_time}>","end_time":"<{$end_time}>"},
+		frozenColumns:[[
+		{title:'坐席',field:'user_name',align:"center",width:80}
+		]],
+		columns:[[
+        {title:'当前状态',field:'ag_sta_type',align:"center",width:80},
+		/*{title:'当前状态',field:'sta_type',width:60,align:"center",formatter:function(value,rowData,rowIndex){
+			if(value == 1) return '登录';
+			else if(value == 2) return '示忙';
+			else return '';
+		}},*/
+		{title:'状态开始时间',field:'start_time',width:135,align:"center"},
+		{title:'持续时间',field:'duration',align:"center",width:120}
+		]]
+	});
+});
+</script>

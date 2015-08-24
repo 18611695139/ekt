@@ -1,0 +1,63 @@
+<div id="jquery_jplayer_1" class="jp-jplayer"></div>
+<div id="jp_container_1" class="jp-audio">
+	<div class="jp-type-single">
+		<div class="jp-gui jp-interface">
+			<ul class="jp-controls">
+				<li><a href="javascript:;" class="jp-play" tabindex="1" style="display:block;">play</a></li>
+				<li><a href="javascript:;" class="jp-pause" tabindex="1" style="display:block;">pause</a></li>
+				<li><a href="javascript:;" class="jp-stop" tabindex="1" style="display:block;">stop</a></li>
+				<li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute" style="display:block;">mute</a></li>
+				<li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute" style="display:block;">unmute</a></li>
+				<li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume" style="display:block;">max volume</a></li>
+			</ul>
+			<div class="jp-progress">
+				<div class="jp-seek-bar">
+					<div class="jp-play-bar"></div>
+				</div>
+			</div>
+			<div class="jp-volume-bar">
+				<div class="jp-volume-bar-value"></div>
+			</div>
+			<div class="jp-time-holder">
+				<div class="jp-current-time"></div>
+				<div class="jp-duration"></div>
+
+				<ul class="jp-toggles">
+					<li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat" style="display:block;">repeat</a></li>
+					<li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off" style="display:block;">repeat off</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<link href="themes/default/blue.monday/jplayer.blue.monday.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="jssrc/jquery.jplayer.min.js"></script>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	$("#jquery_jplayer_1").jPlayer({
+		swfPath: "charts",
+		supplied: "mp3",
+		ready:function(){
+			<{if $callid}>
+            fn_listen_voice(<{$callid}>);
+			<{/if}>
+		}
+	});
+});
+
+//停止收听录音
+function fn_stop_player()
+{
+	$("#jquery_jplayer_1").jPlayer('stop');
+}
+
+/* 听留音 */
+function fn_listen_voice(callid)
+{
+    var url = 'index.php?c=missed_calls&m=get_voice_url&callid='+callid;
+    $("#jquery_jplayer_1").jPlayer("setMedia", {
+          mp3:url
+    });
+    $("#jquery_jplayer_1").jPlayer('play');
+}
+</script>

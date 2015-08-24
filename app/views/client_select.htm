@@ -1,0 +1,56 @@
+<{include file="pageheader.htm"}>
+<div class="main-div" style="padding: 5px;">
+<font color="red">根据条件，得到多个客户信息能与条件匹配(多于10条匹配数据时，显示前10个)，请选择正确的数据进行处理</font>
+</div>
+<input type="hidden" id="callin" name="callin" value="<{$callin|default:'0'}>" />
+
+<table id="list_table"></table>
+<{include file="pagefooter.htm"}>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	//设置列表
+	$('#list_table').datagrid({
+		title:'搜索客户列表(点击选中)',
+		nowrap: true,
+		striped: true,
+		pagination:false,
+		rownumbers:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		idField:'cle_id',
+		fitColumns:true,
+		url:'index.php?c=client&m=list_repeat_client_query',
+		queryParams:{"name":"<{$name|default:''}>","phone":"<{$phone|default:''}>"},
+		columns:[[
+		{title:'cle_id',field:'cle_id',hidden:true},
+		{title:'客户名称',field:'cle_name',width:150,sortable:true,align:'center'},
+		{title:'客户电话',field:'cle_phone',width:120,sortable:true,align:'center',formatter:function(value,rowData,rowIndex){
+			//客户电话的‘*’号隐藏号码处理
+			<{if $power_phone_view }>
+			return value;
+			<{else}>
+			if( value )
+			{
+				return hidden_part_number(value);
+			}
+			<{/if}>
+		}},
+		{title:'所属部门',field:'dept_name',width:100,sortable:true,align:'center'},
+		{title:'所属人',field:'user_name',width:100,sortable:true,align:'center'}
+		]],
+		onClickRow:function(rowIndex,rowData){
+			if(rowData.cle_id)
+			{
+				//业务受理
+				est_header('Location:index.php?c=client&m=accept&callin=<{$callin}>&cle_id='+rowData.cle_id);
+			}
+		}
+	});
+	var pager = $('#list_table').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+</script>

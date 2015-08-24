@@ -1,0 +1,135 @@
+<{include file="pageheader.htm"}>
+<div class="form-div" id='_search_panel'>
+    <form action="javascript:quick_search()" method="POST" name="searchForm" class="form-inline" id="searchForm">
+	     <img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+	     <input type="text" class="form-control input-sm" id="search_key" name="search_key" value=""  placeholder="流程名"/>
+	     <button class="btn btn-primary" onclick="$('#searchForm').submit();">
+        	<span class="glyphicon glyphicon-search"></span> 搜索
+   		 </button>
+    </form>
+</div>
+<div id='flow_list'></div>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	//text绑定回车事件
+	$("input[type='text']").keydown(function(event){
+		if(event.keyCode == 13){
+			$('#searchForm').submit();
+		}
+	});
+	//管理列表
+	$('#flow_list').datagrid({
+		title:'流程管理',
+		height:get_list_height_fit_window('_search_panel'),
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		rownumbers:true,
+		fitColumns:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		sortName:'flow_id',
+		sortOrder:'DESC',//降序排列
+		idField:'flow_id',
+		url:'index.php?c=flow&m=get_flow_list_query',
+		queryParams:{},
+		frozenColumns:[[
+		{field:'ck',checkbox:true},
+		{title:'操作',field:'opter_txt',width:100,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			return '<a href="###" onclick="edit_flow('+rowData.flow_id+')" title="编辑流程">【编辑】</a>';
+		}}
+		]],
+		columns:[[
+		{title:'流程名',field:'flow_name',width:150},
+		{title:'流程状态',field:'flow_status',width:100},
+		{title:'有效开始时间',field:'valid_from',width:150},
+		{title:'有效结束时间',field:'valid_to',width:150},
+		{title:'流程说明',field:'flow_description',width:250},
+		{title:'创建人',field:'create_user_name',width:100},
+		{title:'创建时间',field:'create_time',width:150},
+		{title:'修改人',field:'update_user_name',width:100},
+		{title:'修改时间',field:'update_time',width:150},
+		{title:'flow_id',field:'flow_id',hidden:true}
+		]],
+		onLoadSuccess: function(){
+			$('#flow_list').datagrid('clearSelections');
+			$('#flow_list').datagrid('clearChecked');
+		},
+		toolbar:[
+		{
+			iconCls:'icon-add',
+			text:'添加流程',
+			handler:function(){
+				window.parent.addTab('添加流程','index.php?c=flow&m=add_flow','menu_icon');
+			}
+		},'-',
+		{
+			text:'删除流程',
+			iconCls:'icon-del',
+			handler:function(){
+				var ids = getChecked();
+				if(ids == '')
+				{
+					$.messager.alert('提示','请选中要删除的数据！','error');
+					return;
+				}
+				$.messager.confirm('提示', '<br>您确定要删除选中数据？', function(r){
+					if(r){
+						$.ajax({
+							type:'POST',
+							url: "index.php?c=flow&m=delete_flow",
+							data: {"flow_id":ids},
+							dataType: "json",
+							success: function(responce){
+								if(responce["error"] == 0)
+								{
+									$('#flow_list').datagrid('load');
+								}
+								else
+								{
+									$.messager.alert('错误',responce["message"],'error');
+								}
+							}
+						});
+					}else{
+						return false;
+					}
+				});
+			}
+		}]
+	});
+
+	var pager = $('#flow_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+// 快速查找
+function quick_search(){
+	var flow_name = $('#search_key').val();
+	var queryParams = $('#flow_list').datagrid('options').queryParams;
+	queryParams.flow_name   = flow_name;
+	$('#flow_list').datagrid('load');
+}
+/**
+*列表得到选中的id
+*/
+function getChecked()
+{
+	var ids = [];
+	var rows = $('#flow_list').datagrid('getChecked');
+	for(var i=0;i<rows.length;i++){
+		ids.push(rows[i].flow_id);
+	}
+	return ids.join(',');
+}
+
+function edit_flow(flow_id)
+{
+	window.parent.addTab('编辑流程','index.php?c=flow&m=edit_flow&flow_id='+flow_id,'menu_icon');
+}
+
+</script>
+<{include file="pagefooter.htm"}>

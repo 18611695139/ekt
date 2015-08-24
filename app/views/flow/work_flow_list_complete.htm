@@ -1,0 +1,139 @@
+<{include file="pageheader.htm"}>
+<link href="themes/chosen/chosen.min.css" rel="stylesheet" type="text/css">
+<script src="themes/chosen/chosen.jquery.min.js" type="text/javascript"></script>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<div class="form-div" id='_search_panel'>
+    <form action="javascript:quick_search()" method="POST" name="searchForm" class="form-inline" id="searchForm">
+        <img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+        流程
+        <select id="flow_id" style="width:120px;">
+            <option value=""></option>
+            <{foreach from=$flows item=flow_name key=fid}>
+            <option value="<{$fid}>"><{$flow_name}></option>
+            <{/foreach}>
+        </select>
+        流程编号
+        <input type="text" id="flow_number" name="flow_number" value="" style="width:120px;"  placeholder="流程编号"/>
+        提交时间
+        <div class="input-append">
+            <input type="text" name="start_time" id="start_time" value="" style="width:120px;" readonly>
+            <button type="button" role="date" class="btn" onclick="WdatePicker({el: 'start_time',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </button>
+        </div> ~
+        <div class="input-append">
+            <input type="text" name="end_time" id="end_time" value="" style="width:120px;" readonly>
+            <button type="button" role="date" class="btn" onclick="WdatePicker({el: 'end_time',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </button>
+        </div>
+        <{if $role_type!=2}>
+        操作人
+        <select id="user_id" multiple>
+            <option value=""></option>
+            <{foreach from=$users item=user_name key=uid}>
+            <option value="<{$uid}>"><{$user_name}></option>
+            <{/foreach}>
+        </select>
+        <{/if}>
+
+        <button class="btn btn-primary" onclick="$('#searchForm').submit();">
+            <span class="glyphicon glyphicon-search"></span> 搜索
+        </button>
+    </form>
+</div>
+<div id='flow_list'></div>
+<script language="JavaScript" type="text/javascript">
+$('#flow_id').chosen({
+     no_results_text: "没有该工单",
+     placeholder_text_single: '请选择工单',
+     search_contains: true,
+     allow_single_deselect: false
+ });
+$('#user_id').chosen({
+    no_results_text: "没有该员工",
+    placeholder_text_multiple: '请选择员工',
+    search_contains: true,
+    display_selected_options: false
+});
+$(document).ready(function(){
+	//text绑定回车事件
+	$("input[type='text']").keydown(function(event){
+		if(event.keyCode == 13){
+			$('#searchForm').submit();
+		}
+	});
+	//管理列表
+	$('#flow_list').datagrid({
+		title:'已处理工单列表',
+		height:get_list_height_fit_window('_search_panel'),
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		rownumbers:true,
+		fitColumns:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		sortName:'id',
+		sortOrder:'DESC',//降序排列
+		idField:'id',
+		url:'index.php?c=work_flow&m=get_work_flow_complete_list_query',
+		queryParams:{},
+		frozenColumns:[[
+		{title:'操作',field:'opter_txt',width:150,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			return '<span><a href="###" onclick=view_work_flow('+rowData.id+','+rowData.flow_id+','+rowData.node_id+',"'+rowData.flow_number+'") title="查看工单">【查看】</a>&nbsp;&nbsp;<a href="###" onclick=addinsert_work_flow('+rowData.id+','+rowData.flow_id+','+rowData.node_id+',"'+rowData.flow_number+'") title="追加说明">【追加说明】</a></span>';
+		}},
+		{title:'工单编号',field:'flow_number',width:150,align:"CENTER"}
+		]],
+		columns:[[
+		{title:'流程名称',field:'flow_name',width:150,align:"CENTER"},
+		{title:'节点名称',field:'node_name',width:150,align:"CENTER"},
+		{title:'提交时间',field:'node_end_time',width:150,align:"CENTER"},
+		{title:'过期时间',field:'node_over_time',width:150,align:"CENTER"},
+		{title:'是否超时',field:'node_status',width:150,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			if(value==2) return '未超时';
+			else if(value==4) return '已超时';
+			else return '';
+		}},
+		{title:'操作人',field:'deal_user_name',width:150,align:"CENTER"}
+		]],
+		onLoadSuccess: function(){
+			$('#flow_list').datagrid('clearSelections');
+			$('#flow_list').datagrid('clearChecked');
+		}
+	});
+
+	var pager = $('#flow_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+// 快速查找
+function quick_search(){
+	var flow_id = $('#flow_id').val();
+	var flow_number = $('#flow_number').val();
+	var user_id= $('#user_id').val();
+	var start_time= $('#start_time').val();
+	var end_time= $('#end_time').val();
+	var queryParams = $('#flow_list').datagrid('options').queryParams;
+	queryParams.flow_id   = flow_id;
+	queryParams.flow_number   = flow_number;
+	queryParams.user_id   = user_id;
+	queryParams.start_time   = start_time;
+	queryParams.end_time   = end_time;
+	$('#flow_list').datagrid('load');
+}
+
+function view_work_flow(id,flow_id,node_id,flow_number)
+{
+	window.parent.addTab('查看工单-'+flow_number,'index.php?c=work_flow&m=view_work_flow&id='+id+'&flow_id='+flow_id+'&node_id='+node_id,'menu_icon');
+}
+
+function addinsert_work_flow(id,flow_id,node_id,flow_number)
+{
+    window.parent.addTab('追加说明-'+flow_number,'index.php?c=work_flow&m=addinsert_work_flow&id='+id+'&flow_id='+flow_id+'&node_id='+node_id,'menu_icon');
+}
+</script>
+<{include file="pagefooter.htm"}>

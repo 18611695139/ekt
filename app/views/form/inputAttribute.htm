@@ -1,0 +1,117 @@
+<table class="table table-hover table-bordered table-condensed">
+    <tr><th>组件【输入框】属性</th></tr>
+    <tr>
+        <td>
+            <label>标签</label>
+            <input id="label" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="标签" value="输入框">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class='radio'>
+                <input type="checkbox" id="required" value="1"> 是否必填项
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>默认值</label>
+            <input id="defaultVal" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="默认值" value="">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>输入框尺寸</label>
+            <label class="checkbox">
+                <input type="radio" name="size" id="size1" value="span8"> 小尺寸
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="size" id="size2" value="span10" checked> 标准尺寸
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="size" id="size3" value="span12"> 大尺寸
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>输入内容类型</label>
+            <label class="checkbox">
+                <input type="radio" name="inputType" id="inputType1" value="text" checked> 文本
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="inputType" id="inputType2" value="number"> 数字
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="inputType" id="inputType3" value="email"> 邮箱
+            </label>
+        </td>
+    </tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+    var selectedWidget = selectedWidget || $();
+    var wgid = selectedWidget.attr('title');
+
+    //设置初始属性值
+    var label = selectedWidget.attr('label') || '输入框';
+    var defaultVal = selectedWidget.attr('defaultval') || '';
+    var required = selectedWidget.attr('required') || '';
+    var size = selectedWidget.attr('size') || 'span10';
+    var inputType = selectedWidget.attr('validate') || 'text';
+
+    //标签
+    $('#label').val(label)
+            .on('keyup', function() {
+                selectedWidget.find('.control-label').text($(this).val());
+                selectedWidget.attr('label', $(this).val());
+                if (required) {
+        			selectedWidget.find('.control-label').text($(this).val());
+                	selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+    			}
+    });
+    
+     //是否必填
+    $('#required').on('click', function() {
+        if($(this).attr('checked')) {
+            selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+            $('#'+wgid).attr('require', 'true');
+            selectedWidget.attr('required', 'required');
+            required = 'required';
+        } else {
+            selectedWidget.find('.control-label').text(selectedWidget.attr('label') || '输入框');
+            selectedWidget.removeAttr('required');
+            $('#'+wgid).removeAttr('require');
+            required = '';
+        }
+    });
+    if (required) {
+        $('#required').attr('checked', 'checked');
+    } else {
+        $('#required').removeAttr('checked');
+    }
+    
+    //默认值
+     $('#defaultVal').val(defaultVal)
+            .on('keyup', function() {
+                $('#'+wgid).val($(this).val());
+                selectedWidget.attr('defaultval', $(this).val());
+    });
+    if(defaultVal)
+    {
+    	$('#'+wgid).val(defaultVal);
+    }
+    
+    //大小
+    $('input[name="size"]').on('click', function() {
+        $('#'+wgid).removeClass().addClass($(this).val());
+        selectedWidget.attr('size', $(this).val());
+    });
+    $('input[name="size"][value="'+size+'"]').attr('checked', 'checked');
+    
+    //输入文本类型
+    $('input[name=inputType]').on('click', function() {
+        $('#'+wgid).attr('validate', $(this).val());
+        selectedWidget.attr('validate', $(this).val());
+    });
+    $('input[name="inputType"][value="'+inputType+'"]').attr('checked', 'checked');
+</script>

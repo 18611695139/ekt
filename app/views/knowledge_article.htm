@@ -1,0 +1,59 @@
+<div id='knowledge_body' style='width:100%;'>
+<div class="easyui-panel" id='knowledge_art_content' title="<{$k_art_info.k_art_title}>-详情" style="overflow:auto;">
+	<div id="detail_content">	
+		<div id='d_t'>
+			<span><{$k_art_info.k_art_title}>&nbsp;&nbsp;</span>
+			<span style='float:right;'>
+			<{if $power_zsk_update}>
+				<a href='###' onclick='edit_article(<{$k_art_info.k_art_id}>)'><img src='image/icon_edit.gif' title='编辑' /></a>&nbsp;
+			<{/if}>
+			<{if $power_zsk_delete}>
+				<a href='###' onclick='remove_article(<{$k_art_info.k_art_id}>,<{$k_art_info.k_class_id}>)'><img src='image/icon_drop.gif' title='删除' /></a>
+			<{/if}>
+			</span>
+		</div>
+		<div id='d_m'><span style="color:#808080;">作者：&nbsp;<{$k_art_info.user_name}>&nbsp;&nbsp;&nbsp;&nbsp;创建时间：<{$k_art_info.k_art_create_date}>&nbsp;&nbsp;点击率：<span style='color:red;'><{$k_art_info.k_art_click_rate}></span></span></div>
+		<div id='d_c'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<{$k_art_info.k_art_content}></div>
+	</div>
+	</div>
+</div>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	$('#knowledge_art_content').panel({
+		height:get_list_height_fit_window()
+	});
+});
+/*获取修改文章页面*/
+function edit_article(art_id)
+{
+	$('#knowledge_panel').panel('open').panel('refresh','index.php?c=knowledge&m=edit_article&k_art_id='+art_id);
+}
+
+/*删除文章*/
+function remove_article(art_id,art_type)
+{
+	$.messager.confirm('提示','<br><a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</a> 您确定删除吗？',function(r){
+		if(r)
+		{
+			$.ajax({
+				url : 'index.php?c=knowledge&m=remove_article',
+				data : {k_art_ids:art_id},
+				dataType : 'json',
+				type : 'post',
+				success : function(responce){
+					if(responce['error'] === 0)
+					{
+						$('#knowledge_panel').panel('open').panel('refresh','index.php?c=knowledge&m=get_more_article_page&k_class_id='+art_type+'&k_class_name=文章列表');
+					}
+					else
+					{
+						$.messager.alert('Notice','删除失败','warning');
+					}
+				}
+			});
+		}
+	});
+}
+
+</script>
+

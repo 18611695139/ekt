@@ -1,0 +1,90 @@
+<table cellpadding="0" cellspacing="0" border="0" style="width:260px" id="tb_consultouter">
+<tr >
+<td style="font-weight:700;padding:10px 5px 5px 5px;" align="right">号码：</td>
+<td><select class="easyui-combobox"  id="pc_phone_num" name="pc_phone_num" style="width:130px;"><{html_options options=$call_records}></select></td>
+</tr>
+<tr>
+<td style="font-weight:700;padding:10px 5px 5px 5px"align="right" >主叫号码：</td>
+<td>
+<select id="pc_caller"  onchange="set_caller_cookie()" style="width:130px;"></select></td>
+</tr>
+<tr>
+<td align="center" colspan="2">
+<a class="easyui-linkbutton"  href="javascript:void(0)" iconCls="icon-phone"  id="pc_consultouter_btn" >呼叫</a>
+</td>
+</tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	$('#tb_consultouter').bind('keyup',function(event) {
+		if(event.keyCode==13){
+			$('#pc_consultouter_btn').click();
+		}
+	});
+	/*主叫号码*/
+	var _callers= new Array();
+	try
+	{
+		_callers =  wincall.fn_get_caller();
+	}
+	catch(e){}
+	if(_callers.length == 0)
+	{
+		<{if $outcaller_type==1}>
+		$("#pc_caller").append('<option value="<{$outcaller_num}>" ><{$outcaller_num}></option>');
+		<{else}>
+		$("#pc_caller").append('<option value="" >默认主叫</option>');
+		<{/if}>
+	}
+	else
+	{
+		var cookie_caller = get_cookie('est_caller');
+		for(var i=0;i<_callers.length;i++)//添加外呼主叫号码
+		{
+			var _checked = '';
+			<{if $outcaller_type==1}>
+			if(_callers[i] == '<{$outcaller_num}>')
+			{
+				_checked="selected";
+			}
+			<{else}>
+			if( cookie_caller && cookie_caller == _callers[i] )
+			{
+				_checked="selected";
+			}
+			<{/if}>
+			$("#pc_caller").append('<option value="'+_callers[i]+'"  '+_checked+' >'+_callers[i]+'</option>');
+		}
+	}
+
+	//外呼号码
+	$('#pc_phone_num').combobox({
+		filter: function(q, row){
+			var opts = $(this).combobox('options');
+			return row[opts.textField].indexOf(q) == 0;
+		}
+	});
+});
+
+$('#pc_consultouter_btn').click(function(){
+	var phone_num = $('#pc_phone_num').combobox("getText")
+	if(phone_num.length==0){
+		$.messager.alert('错误',"<br>请输入号码",'info');
+		return;
+	}
+	var _caller	= $('#pc_caller').val();
+
+	//验证号码是否都是数字
+	var reg = RegExp(/^[0-9]*$/);
+	if(reg.test(phone_num))
+	{
+		wincall.fn_consultouter(phone_num,_caller);
+		$('#pc_phone_num').combo('hidePanel');
+		$('#dail_panel').window('close');
+	}
+	else
+	{
+		$.messager.alert('错误',"<br>号码格式有问题",'info');
+	}
+});
+</script>

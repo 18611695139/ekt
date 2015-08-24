@@ -1,0 +1,55 @@
+<table class="table table-hover table-bordered table-condensed">
+    <tr><th>组件【电话】属性</th></tr>
+    <tr>
+        <td>
+            <label>标签</label>
+            <input id="label" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="标签" value="电话">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="radio">
+                <input type="checkbox" id="required" value="1"> 是否必填项
+            </label>
+        </td>
+    </tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+    var selectedWidget = selectedWidget || $();
+    var wgid = selectedWidget.attr('title');
+
+    //设置初始属性值
+    var label = selectedWidget.attr('label') || '电话';
+    var required = selectedWidget.attr('required') || '';
+
+    //标签
+    $('#label').val(label)
+            .on('keyup', function() {
+                selectedWidget.find('.control-label').text($(this).val());
+                selectedWidget.attr('label', $(this).val());
+                 if (required) {
+        			selectedWidget.find('.control-label').text($(this).val());
+                	selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+    			}
+            });
+
+    //是否必填
+    $('#required').on('click', function() {
+        if($(this).attr('checked')) {
+            selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+            $('#'+wgid).attr('require', 'true');
+            selectedWidget.attr('required', 'required');
+            required = 'required';
+        } else {
+            selectedWidget.find('.control-label').text(selectedWidget.attr('label') || '电话');
+            selectedWidget.removeAttr('required');
+            $('#'+wgid).removeAttr('require');
+            required = '';
+        }
+    });
+    if (required) {
+        $('#required').attr('checked', 'checked');
+    } else {
+        $('#required').removeAttr('checked');
+    }
+</script>

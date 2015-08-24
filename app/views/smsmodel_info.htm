@@ -1,0 +1,87 @@
+<div style="padding:10px;background:#fff;border:1px solid #ccc;">
+<input type="hidden" name="mod_id" id="mod_id" value="<{$smsmodel_info.mod_id}>">
+ <table borderColor="#ffffff" cellSpacing="0" cellPadding="0" style="width:95%" align="center" border="1">
+     <tbody>
+        <tr>
+           <td  align="right" ><label for="theme">主题：</label></td><td  colspan="2"><input class="easyui-validatebox" required="true" size="50" type="text" name="theme" id="theme" missingMessage="模板主题不能为空"  value="<{$smsmodel_info.theme}>"></td> 
+        </tr>
+        <tr>
+           <td ><label for="content" >信息内容：</td ><td > <textarea id="content"  name="content" class="easyui-validatebox" required="true" missingMessage="模板内容不能为空" rows="10" cols="48" onpropertychange="calculation()" oninput="calculation()" ><{$smsmodel_info.content}></textarea></td>              
+        </tr>
+          <td></td><td>您一共输入了<input type="text" id="cal" name="cal" size="3"   style="border:0;color:red" readonly/>个字,还可以输入<input type="text" id="yuxia" name="yuxia" size="3"   style="border:0;color:red" readonly/>个字（<input type="text" id="tiaoshu" name="tiaoshu" size="3"   style="border:0;color:red" readonly/>条）</td>
+        <tr>
+        </tr>
+     </tbody>
+ </table>
+</div>
+<div style="text-align:right;padding-top:5px;padding-right:20px">
+<a class="easyui-linkbutton" iconCls="icon-save" href="#" id="save_newmodel" onclick="mod_send_action()">保存</a>
+<a class="easyui-linkbutton" iconCls="icon-cancel" href="#" onclick="mod_cancel_action()">取消</a>
+</div>	
+
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	calculation();
+});
+
+//取消
+function mod_cancel_action()
+{
+	$('#smsmodel_add_panel').window('close');
+}
+//保存
+function mod_send_action()
+{
+	if( !$('#theme').validatebox('isValid') )
+	{
+		return false;
+	}
+	if( !$('#content').validatebox('isValid') )
+	{
+		return false;
+	}
+	var _data = {};
+
+	_data.mod_id = $('#mod_id').val();//模板id
+	_data.theme = $('#theme').val();//模板主题
+	_data.content = $('#content').val();//模板内容
+
+	$('#save_newmodel').linkbutton({'disabled':true});
+	$.ajax({
+		type:'POST',
+		url: "index.php?c=sms&m=<{$form_act}>",
+		data:_data,
+		dataType:"json",
+		success: function(responce){
+			if(responce['error']=='0')
+			{
+				$('#smsmodel_list_table').datagrid('reload');
+				$('#smsmodel_add_panel').window('close');
+			}
+			else
+			{
+				$.messager.alert('错误',responce['message'],'error');
+			}
+			$('#save_newmodel').linkbutton({'disabled':false});
+		}
+	});
+}
+
+//计算模板字数
+function calculation()
+{
+	var length = $("#content").val().length;
+	if( length <= <{$MAX_smsLength}>)
+	{
+		$("#cal").val(length);//已输入字符数
+		$("#yuxia").val(<{$MAX_smsLength}>-length);//剩余可输入字符数
+		$("#tiaoshu").val(Math.ceil( length/<{$EACH_smsLength}> )+"/<{$MAX_tiaoshu}>" );//短信条数
+	}
+	else
+	{
+		var str = $("#content").val().substr(0,parseInt('<{$MAX_smsLength}>'));
+		$("#content").val(str);
+		$.messager.alert('提示',"达到短信模板最大输入上限",'info');
+	}
+}
+</script>

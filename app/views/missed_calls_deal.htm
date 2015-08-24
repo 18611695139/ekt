@@ -1,0 +1,56 @@
+<div region="center" border="false" style="padding-left:40px;padding-top:10px;padding-bottom:10px;background:#fff;border:1px solid #ccc;">
+
+			指定坐席 <span class='easyui-tooltip' data-options="position:'right'" title='支持模糊搜索'><input type='text' id='sys_name' name='sys_name'/></span>
+</div>
+<div region="south" border="false" style="text-align:right;height:15px;line-height:15px;margin-top:10px" id='resource_button'>
+			<a class="easyui-linkbutton" iconCls="icon-ok" href="###"  onclick="missed_calls_action();" id="submit_member" title="确定" >确  定</a>
+			<a class="easyui-linkbutton" iconCls="icon-cancel" href="###" onclick="cancel();"  title="取消-关闭窗口" >取消</a>
+</div>
+
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	//坐席
+	$('#sys_name').combobox({
+		url:'index.php?c=user&m=get_user_box',
+		valueField:'user_id',
+		textField:'user_name_num',
+		hasDownArrow:false,
+		mode:'remote'
+	});
+});
+
+//取消
+function cancel()
+{
+	$('#missed_calls_window').window('close');
+}
+
+//数据调配
+function missed_calls_action()
+{
+	/*人员*/
+	var user_id = $("#sys_name").combobox("getValue");
+	
+
+	$('#submit_member').attr('disabled',true);
+	$.ajax({
+		type:'POST',
+		url: "index.php?c=missed_calls&m=missed_calls_action",
+		data: {'user_id':user_id,'ids':'<{$ids}>'},
+		dataType: "json",
+		success: function(responce){
+			if(responce['error']=='0')
+			{
+				$('#missed_calls_window').window('close');
+				$('#missed_calls_list').datagrid('clearSelections');
+				$("#missed_calls_list").datagrid("reload");
+			}
+			else
+			{
+				$.messager.alert('执行错误',responce['message'],'error');
+			}
+			$('#submit_member').attr('disabled',false);
+		}
+	});
+}
+</script>

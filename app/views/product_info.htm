@@ -1,0 +1,271 @@
+<{include file="pageheader.htm"}>
+<div id='product_tools'>
+<div class='main-div' style="background-color:white" title="产品编辑">
+<form id='product_form' name='product_form' method="post" action="" enctype="multipart/form-data">
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0" align="center" border="0" style="width:98%">
+ <tbody>
+	 <tr>
+         <td class="narrow-label"><label for="product_name">产品名称：</label></td>		           
+         <td colspan="3"><input type='text' size="60" id='product_name' name='product_name' value='<{$product_info.product_name}>' class="easyui-validatebox" missingMessage="此项不能为空" required="true" />
+         <span style='color:red;font-weight:bold;'>*</span></td>         
+      </tr>
+     
+        <tr>
+       	<td class="narrow-label"><label for="product_num">产品编号：</label></td>		           
+         <td ><input type='text' id='product_num' name='product_num' value='<{if $product_info.product_num}><{$product_info.product_num}><{elseif $product_num}><{$product_num}><{/if}>'/> </td> 
+         <td class="narrow-label"><label for="product_price">产品价格：</label></td>		           
+         <td ><input type='text' id='product_price' name='product_price' value='<{$product_info.product_price}>' style='width:80px;' />元</td>
+      </tr>
+      
+      <!--自定义字段  -----begin-------->
+    <{counter start=0 print=false assign='product_count'}><!--  计算  -->
+    <{foreach from=$product_confirm item=confirm_info key=ckey name=list_Name}>
+      <{assign var="parent_id" value=$confirm_info.id}>
+      <{assign var="real_field" value=$confirm_info.fields}>
+      
+      <{if $confirm_info.data_type==3}>
+      <{counter start=0 print=false assign='product_count'}><!-- 从新计算 -->
+      <tr>
+	 	<td class="micro-label"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td ><td colspan="11"><textarea id="<{$confirm_info.fields}>"  name="<{$confirm_info.fields}>" style="width: 80%" rows="3" cols="20" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> ><{$product_info.$real_field}></textarea>
+	 	<{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+	 	</td>
+	  </tr>
+	  
+	  <{elseif $confirm_info.data_type==4}>
+	  <{counter start=0 print=false assign='product_count'}><!-- 从新计算 -->
+	 <tr>
+	 	<td class="narrow-label"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td >
+	 	<td colspan="11">
+	 	<span id="<{$confirm_info.fields}>_1">
+	 	 <select name='<{$confirm_info.fields}>_1' confirm_field='true' onchange="get_comfirm_jl_options(1,'<{$confirm_info.fields}>','<{$confirm_info.jl_series}>',<{$confirm_info.id}>)" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" if_require='true' _chinese_name='<{$confirm_info.name}>_1'<{/if}> >
+		 <option value="" >--请选择--</option>
+		  <{assign var="field_type" value=$confirm_info.fields|cat:'_1'}>
+		  <{foreach from=$jl_options.$field_type item=option key=jlkey}>
+          <option value="<{$jlkey}>" <{if $jlkey==$product_info.$field_type}>selected<{/if}> ><{$option}></option>
+          <{/foreach}>
+	     </select>
+	    </span>
+	    <{assign var="jl_f_t" value=$confirm_info.jl_field_type}>
+	    <{assign var="field_type2" value=$confirm_info.fields|cat:'_2'}>
+	    <span id="<{$confirm_info.fields}>_2">
+	    	<{if $product_info.$field_type}>
+	    		<{assign var="p_id" value=$product_info.$field_type}>
+	    		<{if $jl_f_t[$p_id]&&$jl_f_t[$p_id]==1}>
+	    			<input type='text' name='<{$confirm_info.fields}>_2' value='<{$product_info.$field_type2}>' confirm_field='true'/>
+	    		<{else}>
+	    			<select name="<{$confirm_info.fields}>_2" confirm_field='true' <{if $confirm_info.jl_series==3}>onchange="get_comfirm_jl_options(2,'<{$confirm_info.fields}>','<{$confirm_info.jl_series}>',<{$confirm_info.id}>)"<{/if}> >
+        				<option value="">--请选择--</option>
+       	 				<{foreach from=$jl_options.$field_type2 item=option key=jlkey}>
+        				<option value="<{$jlkey}>" <{if $jlkey==$product_info.$field_type2}>selected<{/if}> ><{$option}></option>
+        				<{/foreach}>
+        			</select>
+	    		<{/if}>
+	    	 <{/if}>
+	     	 </span>
+	     <{if $confirm_info.jl_series==3}>      
+	      <span id="<{$confirm_info.fields}>_3">
+	    	<{if $product_info.$field_type2}>
+	    	<{assign var="p_id2" value=$product_info.$field_type2}>
+	    	<{assign var="field_type3" value=$confirm_info.fields|cat:'_3'}>
+	    		<{if $jl_f_t[$p_id2]&&$jl_f_t[$p_id2]==1}>
+	    			<input type='text' name='<{$confirm_info.fields}>_3' value='<{$product_info.$field_type3}>' confirm_field='true'/>
+	    		<{else}>
+	    			<select name="<{$confirm_info.fields}>_3" confirm_field='true'>
+        				<option value="">--请选择--</option>
+       	 				<{foreach from=$jl_options.$field_type3 item=option key=jlkey}>
+        				<option value="<{$jlkey}>" <{if $jlkey==$product_info.$field_type3}>selected<{/if}> ><{$option}></option>
+        				<{/foreach}>
+        			</select>
+	    		<{/if}>
+	     	<{/if}>
+	     	</span>
+	     <{/if}>
+	     <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+	 	</td>
+	 </tr>
+	
+<{elseif $confirm_info.data_type==7}><!--级联多选框-->
+<{counter start=0 print=false assign='product_count'}><!-- 从新计算 -->
+<tr>
+    <td class="narrow-label">
+        <label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label>
+    </td>
+ 	<td  colspan="11">
+		<table>
+			<{assign var="field_type" value=$confirm_info.id|cat:'_1'}>
+			<{assign var="field_type2" value=$confirm_info.id|cat:'_2'}>
+			<{if $product_info}>
+				<{assign var="field_value" value=$product_info.$field_type}>
+				<{assign var="field_value2" value=$product_info.$field_type2}>
+			<{/if}>
+			<{foreach from = $checkbox_options.$field_type item=check_option1 key=id1}>
+     		<tr>
+                <th style="padding-bottom:5px;"><{$check_option1.name}></th>
+     		</tr>
+     		<tr>
+     			<td style="padding-bottom:5px;">
+      				<{foreach from = $checkbox_options.$field_type2 item=check_option key=id2}>
+      					<{if $check_option.p_id == $id1}>
+         					<input type="checkbox" checkbox_name="<{$confirm_info.fields}>" checkbox_pid="<{$id1}>" name="<{$confirm_info.fields}>_2[]" value="<{$id2}>" confirm_field='true' <{if $field_value2[$id2]==$id2}>checked<{/if}> /> <{$check_option.name}>&nbsp;
+       					<{/if}>
+      				<{/foreach}>
+      			</td>
+      		</tr>
+    		<{/foreach}>
+		</table>
+ 	</td>
+ </tr>
+	
+      <{else}>
+       <{if $product_count%2 == 0 }>
+        <tr>
+       <{/if}>
+       <td class="narrow-label"  >  <label for="<{$confirm_info.fields}>"  ><{$confirm_info.name}>：<label></td><td > 
+        <{if $field_detail.$parent_id || $confirm_info.data_type==2}>
+        <select id="<{$confirm_info.fields}>"  name="<{$confirm_info.fields}>" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> >
+           <{foreach from=$field_detail.$parent_id item=detail key=dkey}>
+           <option value="<{$detail}>" <{if $detail == $product_info.$real_field}>selected<{/if}> ><{$detail}></option>
+           <{/foreach}>
+           <option value="" <{if !$product_info.$real_field}>selected<{/if}> >&nbsp;</option>
+        </select>
+        <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+        <{elseif $confirm_info.data_type==5}><!-- 日期框 -->
+         <div class="input-append">
+             <input type="text" name="<{$confirm_info.fields}>" id="<{$confirm_info.fields}>" value="<{if $product_info}><{$product_info[$confirm_info.fields]}><{elseif $confirm_info.default=='系统时间'}><{if $confirm_info.datefmt=='yyyy-MM-dd'}><{$now_date}><{else}><{$now_time}><{/if}><{else}><{$confirm_info.default}><{/if}>" confirm_field='true'  <{if $confirm_info.if_require==2}>_date='date_box' _chinese_name='<{$confirm_info.name}>' if_require='true'<{/if}> readonly>
+        	<button type="button" role="date" class="btn" onclick="WdatePicker({el: '<{$confirm_info.fields}>',dateFmt:'<{$confirm_info.datefmt}>'})">
+           		<span class="glyphicon glyphicon-calendar"></span>
+        	</button>
+    	</div>
+           <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+        <{else}>
+         <input type="text" id="<{$confirm_info.fields}>" name="<{$confirm_info.fields}>" value="<{$product_info.$real_field}>" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> />
+          <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+         <{/if}>
+         
+        </td>   
+       <{if $product_count%2 != 0 }>
+          </tr>
+       <{/if}>
+       <{counter print=false assign='product_count'}><!--   加1   -->
+     <{/if}>
+    <{/foreach}>
+    <!--自定义字段  ------end--------->
+     <tr>
+      	  <td class="narrow-label"><label for="product_state">产品状态：</label></td>		           
+         <td >
+         	<input type='radio' name='product_state' value='1' <{if $product_info.product_state==1 || !$product_info}>checked<{/if}> />上架&nbsp;&nbsp;&nbsp;&nbsp;<input type='radio' name='product_state' value='2' <{if $product_info.product_state==2}>checked<{/if}> />下架
+         </td>       
+         <td class="narrow-label"><label for="product_class_id">产品分类：</label></td>		           
+         <td ><input id='product_class_id' name='product_class_id' value='<{$product_info.product_class_id}>'  class="easyui-validatebox" missingMessage="此项不能为空" required="true"/>
+         <span style='color:red;font-weight:bold;'>*</span></td> 
+      </tr>
+     <tr>
+         <td class="narrow-label"><label>产品图片：</label></td>		           
+         <td >
+         <{if $product_info.product_thum_pic}>
+          <span id='show_product_pic'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_pic}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_thum_pic}>' /></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_pic_only_name}>','product_pic','product_thum_pic')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_pic' name='product_pic' value=''/>
+         </td>
+     </tr>
+     <tr>
+      	<td class="narrow-label"><label>其他图片1：</label></td>		           
+         <td >
+         <{if $product_info.product_other_thum_pic1}>
+          <span id='show_product_other_pic1'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_other_pic1}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_other_thum_pic1}>' /></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_other_pic_only_name1}>','product_other_pic1','product_other_thum_pic1')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_other_pic1' name='product_other_pic1' value=''/>
+         </td>
+         <td class="narrow-label"><label>其他图片2：</label></td>		           
+         <td >
+         <{if $product_info.product_other_thum_pic2}>
+         <span id='show_product_other_pic2'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_other_pic2}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_other_thum_pic2}>'/></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_other_pic_only_name2}>','product_other_pic2','product_other_thum_pic2')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_other_pic2' name='product_other_pic2' value=''/>
+         </td>
+     </tr>
+      <tr>
+      	<td class="narrow-label"><label>其他图片3：</label></td>		           
+         <td >
+         <{if $product_info.product_other_thum_pic3}>
+         <span id='show_product_other_pic3'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_other_pic3}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_other_thum_pic3}>'/></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_other_pic_only_name3}>','product_other_pic3','product_other_thum_pic3')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_other_pic3' name='product_other_pic3' value=''/>
+         </td>
+         <td class="narrow-label"><label>其他图片4：</label></td>		           
+         <td >
+         <{if $product_info.product_other_thum_pic4}>
+         <span id='show_product_other_pic4'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_other_pic4}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_other_thum_pic4}>'/></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_other_pic_only_name4}>','product_other_pic4','product_other_thum_pic4')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_other_pic4' name='product_other_pic4' value=''/>
+         </td>
+     </tr>
+      <tr>
+      	<td class="narrow-label"><label>其他图片5：</label></td>		           
+         <td >
+         <{if $product_info.product_other_thum_pic5}>
+         <span id='show_product_other_pic5'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_other_pic5}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_other_thum_pic5}>'/></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_other_pic_only_name5}>','product_other_pic5','product_other_thum_pic6')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_other_pic5' name='product_other_pic5' value=''/>
+         </td>
+         <td class="narrow-label"><label>其他图片6：</label></td>		           
+         <td >
+         <{if $product_info.product_other_thum_pic6}>
+         <span id='show_product_other_pic6'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_other_pic6}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_other_thum_pic6}>'/></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_other_pic_only_name6}>','product_other_pic6','product_other_thum_pic6')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_other_pic6' name='product_other_pic6' value=''/>
+         </td>
+     </tr>
+      <tr>
+      	<td class="narrow-label"><label>其他图片7：</label></td>		           
+         <td >
+         <{if $product_info.product_other_thum_pic7}>
+         <span id='show_product_other_pic7'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_other_pic7}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_other_thum_pic7}>'/></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_other_pic_only_name7}>','product_other_pic7','product_other_thum_pic7')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_other_pic7' name='product_other_pic7' value=''/>
+         </td>
+         <td class="narrow-label"><label>其他图片8：</label></td>		           
+         <td >
+         <{if $product_info.product_other_thum_pic8}>
+         <span id='show_product_other_pic8'>
+         <a href='###' title='点击查看大图' path='<{$product_info.product_other_pic8}>' class='preview' onclick="window.parent.addTab('图片','index.php?c=product&m=show_pic&product_id=<{$product_info.product_id}>','menu_icon');"><img  src='<{$product_info.product_other_thum_pic8}>'/></a>&nbsp;&nbsp;<a href='javascript:;' onclick="delete_product_pic(<{$product_info.product_id}>,'<{$product_info.product_other_pic_only_name8}>','product_other_pic8','product_other_thum_pic8')" title='删除' class='easyui-tooltip'><img src='./image/no.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>
+         <{/if}>
+           &nbsp;&nbsp;<input type='file' id='product_other_pic8' name='product_other_pic8' value=''/>
+         </td>
+     </tr>
+  
+      <input type="hidden" id="product_id" name="product_id" value="<{$product_info.product_id|default:'0'}>"/>
+ </tbody> 
+</table>
+</form>
+<div style='padding-left:100px;margin-top:20px;'>
+	<div>操作说明：</div>
+	<div style='padding-left:30px;'>1.产品分类、名称务必填选 ；</div>
+	<div style='padding-left:30px;'>2.只能上传文件格式为 jpg | png | gif 的图片</div>
+</div>
+</div>
+</div>
+<div class='form-div' style='text-align:right;'>
+	<span style='color:red;' id='_product_msg'></span>
+	<a href='###' id="save_btn" class="easyui-linkbutton" iconCls="icon-save" onclick="save_product()">保存数据</a>&nbsp;&nbsp;
+</div>
+<div id="set_product_field_confirm"></div>
+
+<{include file="pagefooter.htm"}>
+<script type="text/javascript" src="./jssrc/jquery.preview.js"></script>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+var global_product_class_id     = "<{$product_info.product_class_id|default:''}>";
+var power_fieldsconfirm_product = "<{$power_fieldsconfirm_product}>";
+var product_info_product_id     = "<{$product_info.product_id|default:0}>";
+var jl_field_type = eval("(" + '<{$jl_field_type}>' + ")");
+</script>
+<script src="./jssrc/viewjs/product_info.js?1.1" type="text/javascript"></script>

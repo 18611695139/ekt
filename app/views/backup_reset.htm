@@ -1,0 +1,11 @@
+<{include file="pageheader.htm"}>
+<div class='form-div' id="_search_panel">
+   	&nbsp;&nbsp;备份文件名： <input type='text' name='backup_client' id='backup_client' value='' />
+   	&nbsp;&nbsp;<a class="easyui-linkbutton" iconCls="icon-backup-database" href="###" onclick="client_data_backup()" >开始备份数据</a>
+ </div>
+ <div id='backup_list'></div>
+<{include file="pagefooter.htm"}>
+<script language="JavaScript" type="text/javascript">
+var power_reset = <{$power_reset}>;
+</script>
+<script src="./jssrc/viewjs/backup_reset.js" type="text/javascript"></script>

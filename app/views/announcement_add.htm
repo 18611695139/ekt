@@ -1,0 +1,27 @@
+<{include file="pageheader.htm"}>
+<div align="center" class="form-div"> 
+<form action="./index.php?c=announcement&m=<{$ins_up}>" method="POST" name="theForm" id="theForm" enctype="multipart/form-data">
+<table align="center" width="95%">
+<tr>
+<td ><input type="hidden" id="anns_id" name="anns_id" value="<{$anns_info.anns_id}>"/>
+标题：<input type="text" style="height:25px" name="title" size="50" id="title_add_ans" value="<{$anns_info.anns_title}>"></td>
+</tr>
+<tr>
+<td  >部门：<input  id="department" name="department" value="<{$anns_info.dept_id|default:''}>"/></td>
+</tr>
+<tr>
+<td>
+<textarea id="ancontent" name="ancontent"><{$anns_info.anns_content}></textarea>
+</td>
+</tr>
+<tr>
+<td align="center">
+<a href="###" class="easyui-linkbutton" iconCls="icon-save" onClick="javascript:return checkvalue();" id="add_anns">保存</a>
+</td>
+</tr>
+</table>
+</form>
+</div>
+<{include file="pagefooter.htm"}>
+<script type="text/javascript" src="./jssrc/xheditor/xheditor.js?v=1.11"></script>
+<script src="./jssrc/viewjs/announcement_add.js" type="text/javascript"></script>

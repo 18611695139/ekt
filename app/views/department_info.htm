@@ -1,0 +1,314 @@
+<{if !$setting_department}>
+<{include file="pageheader.htm"}>
+<{/if}>
+<div class="main-div dept-height"  style='background:#ffffff;'>
+
+<table><tbody><tr>
+<td style='width:15%'></td>
+<td style='width:20%'>
+<div style="height:220px;">
+<ul id="dept_tree" class="easyui-tree"></ul>
+</div>
+</td>
+<td style='width:40%'>
+<div  id='action_dept'  style="height:220px;">
+<div id="add_department" title="添加部门" >
+<table border="0">
+<tbody>
+<tr>
+<td align="right" ><label for="before_dept">上级部门：</label></td>
+<td align="left">
+<input type="text" name="before_dept" id="before_dept" disabled />
+</td>
+</tr>
+<tr>
+<td  align="right" ><label for="add_dept_name">部门名称：</label></td>
+<td align="left">
+<input type="text" name="add_dept_name" id="add_dept_name"/>
+</td>
+</tr>
+<tr>
+<td align="right">&nbsp;</td><td align="left">
+<a class="easyui-linkbutton" iconCls="icon-add" href="javascript:void(0)"  onclick="add_dept();" id="add_dept_btn" >添加</a>
+<a href="#"  class="easyui-linkbutton" iconCls="icon-cancel"  onclick="cansal_action()" id="add_btn">取消</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div id="edit_department"  title="修改部门">
+<table border="0">
+<tbody>
+<tr>
+<td  align="right" ><label for="this_name">当前部门：</label></td><td align="left">
+<input type="text" name="this_name" id="this_name" disabled />
+</td>
+</tr>
+<tr>
+<td  align="right" ><label for="edit_dept_name">修改名称：</label></td><td align="left">
+<input type="text" name="edit_dept_name" id="edit_dept_name"/>
+</td></tr>
+<tr><td align="right">&nbsp;</td><td align="left">
+<a class="easyui-linkbutton" iconCls="icon-edit" href="javascript:void(0)"  onclick="edit_dept();" >修改</a>
+<a href="#"  class="easyui-linkbutton" iconCls="icon-cancel"  onclick="cansal_action()" id="edit_btn" >取消</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div id="delete_department" title="删除部门">
+<table border="0">
+<tbody>
+<tr>
+<td  align="right" ><label for="del_this_name">当前部门：</label></td><td align="left">
+<input type="text" name="del_this_name" id="del_this_name" disabled />
+</td></tr>
+<tr><td colspan='2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style='color:red;'>注：删除部门同时会自动收回其下所有数据</font></td></tr>
+<tr><td align="right">&nbsp;</td>
+<td align="left">
+<a class="easyui-linkbutton" iconCls="icon-del" href="javascript:void(0)"  onclick="del_dept();" >删除</a></td></tr>
+</tbody></table>
+</div>
+
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<{if $setting_department}>
+<div style='padding:1px 10px;'>提示：您也可以通过以下路径进行设置：</div>
+<div style='padding:5px 60px 10px 60px;'><b>系统管理</b> => <b>部门管理</b></div>
+<{else}>
+<{include file="pagefooter.htm"}>
+<{/if}>
+<script type="text/javascript" language="javascript">
+var tmp_select_dept = 0;
+$(function(){
+	<{if !$setting_department}>
+	$('.dept-height').css({height:""+get_list_height_fit_window()+""});//高度
+	<{/if}>
+	$('#action_dept').tabs({
+		width:300,
+		border:false,
+		plain:true
+	});
+	$('#dept_tree').tree({
+		url : "index.php?c=department&m=get_department_tree",
+		lines:true,
+		onClick : function(dept){
+			$('#dept_tree').tree('expand',dept.target);//改变目录状态
+			var select_name = ($('#dept_tree').tree('getSelected')).text;
+			/*添加 - 部门名称*/
+			$('#add_dept_name').val('');
+			/*添加 -  上级部门*/
+			$('#before_dept').val(select_name);
+			/*编辑 - 当前部门*/
+			$('#this_name').val(select_name);
+			/*编辑 - 修改名称*/
+			$('#edit_dept_name').val('');
+			/*删除 - 当前部门*/
+			$("#del_this_name").val(select_name);
+		},
+		onBeforeLoad : function(node, param){
+			if (node){
+				return false;
+			} else {
+				$('#dept_tree').tree('options').url = "index.php?c=department&m=get_department_tree";
+			}
+		},
+		onLoadSuccess:function(){
+			var select_name = "";
+			<{if $session_dept_id}>
+			var node = "";
+			if( tmp_select_dept == 0 )
+			{
+				node = $('#dept_tree').tree('find', "<{$session_dept_id}>");
+			}
+			else
+			{
+				node = tmp_select_dept;
+			}
+			//选中
+			$('#dept_tree').tree('select', node.target);
+			select_name = ($('#dept_tree').tree('getSelected')).text;
+			<{/if}>
+
+			/*添加 - 部门名称*/
+			$('#add_dept_name').val('');
+			/*添加 -  上级部门*/
+			$('#before_dept').val(select_name);
+			/*编辑 - 当前部门*/
+			$('#this_name').val(select_name);
+			/*编辑 - 修改名称*/
+			$('#edit_dept_name').val('');
+			/*删除 - 当前部门*/
+			$("#del_this_name").val(select_name);
+		}
+	});
+});
+
+/**
+*取消
+*/
+function cansal_action()
+{
+	/*添加 - 部门名称*/
+	$('#add_dept_name').val('');
+	/*编辑 - 修改部门*/
+	$('#edit_dept_name').val('');
+}
+
+/**
+*添加一个下级分类
+*/
+function add_dept()
+{
+	var dept_p = $('#dept_tree').tree('getSelected');
+	if(!dept_p)
+	{
+		$.messager.alert('Notice','<br><a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</a>请指定当前部门','warning');
+		return;
+	}
+	tmp_select_dept = dept_p;
+
+	var dept_p_id = ($('#dept_tree').tree('getSelected')).id;
+	var dept_p_deep = ($('#dept_tree').tree('getSelected')).attributes;
+	dept_p_deep = parseInt(dept_p_deep);
+	if(dept_p_deep+1 > <{$max_tree_deep|default:6}>)
+	{
+		$.messager.alert('提示','<br>当前部门不能添加下一级部门','warning');
+		return;
+	}
+
+	var dept_name = $('#add_dept_name').val();
+	if(dept_name == "")
+	{
+		$.messager.alert('Notice','<br><a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</a>请指定下级分类名称!','warning');
+		return;
+	}
+	$('#add_dept_btn').attr('disabled',true);
+
+	$.ajax({
+		url : "index.php?c=department&m=insert_department",
+		data : {dept_p_id:dept_p_id,dept_name:dept_name,dept_deep:dept_p_deep},
+		type : 'post',
+		dataType : 'json',
+		success : function(responce){
+			if(responce['error'] === 0)
+			{
+				var dept_id = responce['content'];
+				$('#dept_tree').tree('append',{
+					parent : dept_p ? dept_p.target : null,
+					data : [{id:dept_id,text:dept_name,attributes:dept_p_deep+1}]
+				});
+				/*添加 - 部门名称*/
+				$('#add_dept_name').val('');
+				$('#dept_tree').tree('expand',dept_p.target);
+			}
+			else
+			{
+				$.messager.alert('Notice','添加部门失败','warning');
+			}
+			$('#add_dept_btn').attr('disabled',false);
+		}
+	});
+}
+
+/**
+*编辑部门
+**/
+function edit_dept(){
+	var dept	= $('#dept_tree').tree('getSelected');
+	var dept_id	= $('#dept_tree').tree('getSelected').id;
+	var dept_name	= $('#edit_dept_name').val();
+
+	if(!dept || dept_name == "")
+	{
+		$.messager.alert('Notice','<br><a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</a>请指定当前部门和新名称!','warning');
+		return false;
+	}
+	$.ajax({
+		url : 'index.php?c=department&m=update_department',
+		data : {dept_id:dept_id, dept_name: dept_name},
+		dataType : 'json',
+		type : 'post',
+		success : function(responce){
+			if(responce['error'] === 0)
+			{
+				dept.text = dept_name;
+				$('#dept_tree').tree('update',dept);
+
+				var select_name = ($('#dept_tree').tree('getSelected')).text;
+				/*添加 - 部门名称*/
+				$('#add_dept_name').val('');
+				/*添加 -  上级部门*/
+				$('#before_dept').val(select_name);
+				/*编辑 - 当前部门*/
+				$('#this_name').val(select_name);
+				/*编辑 - 修改名称*/
+				$('#edit_dept_name').val('');
+				/*删除 - 当前部门*/
+				$("#del_this_name").val(select_name);
+			}
+		}
+	});
+}
+
+/**
+*删除节点
+**/
+function del_dept()
+{
+	var dept = $('#dept_tree').tree('getSelected');
+	if(!dept)
+	{
+		$.messager.alert('提示','<br><a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</a>请指定需要删除的部门','warning');
+		return;
+	}
+
+	var dept_id = dept.id;
+	var dept_deep = dept.attributes;
+	if( dept_deep == 1 )
+	{
+		$.messager.alert('提示','<br>不能删除顶级部门！','warning');
+		return;
+	}
+	<{if $session_dept_id}>
+	if( '<{$session_dept_id}>' == dept_id )
+	{
+		$.messager.alert('提示','<br>不能删除员工当前所属部门！','warning');
+		return;
+	}
+	<{/if}>
+
+	$.messager.confirm('提示','<br><a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</a> 您确定删除该部门吗？',function(r){
+		if(r)
+		{
+			$.ajax({
+				url : 'index.php?c=department&m=delete_department',
+				data : {"dept_id":dept_id,"dept_deep":dept_deep},
+				dataType : 'json',
+				type : 'post',
+				success : function(responce){
+					if(responce['error'] === 0)
+					{
+						$('#dept_tree').tree('remove',dept.target);
+
+						/*添加 -  上级部门*/
+						$('#before_dept').val('');
+						/*编辑 - 当前部门*/
+						$('#this_name').val('');
+						/*删除 - 当前部门*/
+						$("#del_this_name").val('');
+					}
+					else
+					{
+						$.messager.alert('错误',responce["message"],'warning');
+					}
+				}
+			});
+		}
+	});
+}
+</script>

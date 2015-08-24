@@ -1,0 +1,553 @@
+<{include file="pageheader.htm"}>
+ <script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+    <style>
+        .selected {
+            border: 1px dashed darkturquoise;
+            background-color: #D9EDF7;
+        }
+        .clicked {
+            border: 1px solid darkturquoise;
+            background-color: #D9EDF7;
+        }
+    </style>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2">
+                <table class="table table-hover table-bordered table-condensed">
+                    <tr><th>自定义组件</th></tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="input">
+                                <span class="glyphicon glyphicon-font"></span> 输入框
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="textarea">
+                                <span class="glyphicon glyphicon-tasks"></span> 文本框
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="checkbox">
+                                <span class="glyphicon glyphicon-check"></span> 多选框
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="radio">
+                                <span class="glyphicon glyphicon-record"></span> 单选框
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="select">
+                                <span class="glyphicon glyphicon-list-alt"></span> 下拉框
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="cascade">
+                                <span class="glyphicon glyphicon-list"></span> 级联框
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="date">
+                                <span class="glyphicon glyphicon-calendar"></span> 日期框
+                            </button>
+                        </td>
+                    </tr>
+                   <!-- <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="attachment">
+                                <span class="glyphicon glyphicon-paperclip"></span> 附件框
+                            </button>
+                        </td>
+                    </tr>-->
+                </table>
+                <table class="table table-hover table-bordered table-condensed">
+                    <tr><th>系统组件</th></tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="name">
+                                <span class="glyphicon glyphicon-user"></span> 姓名
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="mobile">
+                                <span class="glyphicon glyphicon-phone"></span> 手机
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="phone">
+                                <span class="glyphicon glyphicon-phone-alt"></span> 电话
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="gender">
+                                <span class="glyphicon glyphicon-tower"></span> 性别
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-block" data-options="address">
+                                <span class="glyphicon glyphicon-send"></span> 地址
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <!--表单-->
+            <div class="span8">
+                <div class="row-fluid">
+					<form class="form-inline" id="actionForm" action="<{$opter_txt}>" method="post" style="padding-bottom: 5px;">
+                		<input type='hidden' id='form_id' name='form_id' value='<{$form_info.form_id|default:0}>' />
+                		<input type='hidden' id='html' name='html' value='' />
+                		<input type='hidden' id='cascadeOption' name='cascadeOption' value='' />
+                    	<input type="text" name="form_name" id="form_name"  placeholder="表单名">                    	
+                    	<a href="javascript:void(0);" id="btn-add-form" class="btn btn-primary" disabled="true">保存表单</a>
+                    </form>
+                    <form id="contentForm" class="form-horizontal">
+                        <table id="formTable" class="table table-bordered table-hover table-condensed">
+                            <tr id="row1" index="1">
+                                <td id="item11" hasWidget="no" class="span6">无</td>
+                                <td id="item12" hasWidget="no" class="span6">无</td>
+                            </tr>
+                            <tr id="row2" index="2">
+                                <td id="item21" hasWidget="no" class="span6">无</td>
+                                <td id="item22" hasWidget="no" class="span6">无</td>
+                            </tr>
+                            <tr id="row3" index="3">
+                                <td id="item31" hasWidget="no" class="span6">无</td>
+                                <td id="item32" hasWidget="no" class="span6">无</td>
+                            </tr>
+                            <tr id="row4" index="4">
+                                <td id="item41" hasWidget="no" class="span6">无</td>
+                                <td id="item42" hasWidget="no" class="span6">无</td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!--属性-->
+            <div class="span2">
+                <form id="attributeForm"></form>
+            </div>
+        </div>
+    </div>
+    <script language="JavaScript" type="text/javascript">
+        var $button = $('button');
+        var row = 4, selectedWidget = null,cascadeOption = {};//cascadeOption级联选项
+        $button.on('click', function() {
+            var type = $(this).attr('data-options');
+            var $emptyContainer = findEmptyContainer();
+            setWidget(type, $emptyContainer);
+            $('.controls').css('margin-left','95px');
+            $('.control-label').css('width','80px');
+        });
+        var option_config = {
+   				no_results_text: "没有选项",
+   				placeholder_text_multiple: "请选择",
+   				search_contains: true,
+   				display_selected_options: false
+  		};
+  		var form_id = $('#form_id').val();
+  		$(document).ready(function(){
+  			if(form_id!=0)
+  			{
+  				$('#form_name').val('<{$form_info.form_name}>');
+  				if('<{$form_info.form_name}>'!= '')
+  				$('#form_name').trigger('keyup');
+  				$('#formTable').empty();
+  				$('#formTable').append('<{$form_info.form_gobal_html}>');
+  				$('td[hasWidget=yes]').each(function(){
+  					var widgetId = $(this).attr('id');
+            		widgetId = widgetId.replace('item', 'widget');
+            		//绑定事件
+            		loadTdAction($(this),widgetId);
+  				});
+  				row = $('#contentForm tr').last().attr('index');
+  			}
+  		});
+  		
+        /**
+         * 查找空的位置
+         */
+        function findEmptyContainer() {
+            var $selectors = $('td[hasWidget=no]');
+            if ($selectors.length > 0) {
+                //空则插入新行
+                var $container = $selectors.slice(0, 1);
+            } else {
+                var $newRowIndex = ++row;
+                var $newRow = $('<tr id="row'+$newRowIndex+'" index="'+$newRowIndex+'">' +
+                        '<td id="item'+$newRowIndex+'1" hasWidget="no" class="span6"></td>' +
+                        '<td id="item'+$newRowIndex+'2" hasWidget="no" class="span6"></td>' +
+                        '</tr>');
+                $('#formTable').append($newRow);
+                $container = $newRow.find(':first-child');
+            }
+            return $container;
+        }
+
+        /**
+         * 设置组件
+         */
+        function setWidget(type, container) {
+            var $widget = null;
+            var widgetId = container.attr('id');
+            widgetId = widgetId.replace('item', 'widget');
+            switch (type) {
+                case 'input':
+                    $widget = $('\
+                    <div class="control-group" type="input" label="输入框" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'">\
+                        输入框\
+                        </label> \
+                        <div class="controls"> \
+                            <input type="text" name="'+widgetId+'" id="'+widgetId+'" value=""> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'textarea':
+                    $widget = $('\
+                    <div class="control-group" type="textarea" label="文本框" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'">文本框</label> \
+                        <div class="controls"> \
+                            <textarea rows="3"  name="'+widgetId+'" id="'+widgetId+'"></textarea> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'checkbox':
+                    $widget = $('\
+                    <div class="control-group" type="checkbox" label="多选框" title="'+widgetId+'" options="选项|选项"> \
+                        <label class="control-label" for="'+widgetId+'">多选框</label> \
+                        <div class="controls"> \
+                            <label class="radio inline"> \
+                            <input name="'+widgetId+'[]"  type="checkbox" value="选项"> \
+                            选项 \
+                            </label> \
+                            <label class="radio inline"> \
+                            <input name="'+widgetId+'[]"  type="checkbox" value="选项"> \
+                            选项 \
+                            </label> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'radio':
+                    $widget = $('\
+                    <div class="control-group" type="radio" label="单选框" title="'+widgetId+'" options="选项|选项"> \
+                        <label class="control-label" for="'+widgetId+'">单选框</label> \
+                        <div class="controls"> \
+                            <label class="checkbox inline"> \
+                            <input name="'+widgetId+'" type="radio" value="选项"> \
+                            选项 \
+                            </label> \
+                            <label class="checkbox inline"> \
+                            <input name="'+widgetId+'" type="radio" value="选项"> \
+                            选项 \
+                            </label> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'select':
+                    $widget = $('\
+                    <div class="control-group" type="select" label="下拉框" title="'+widgetId+'" options="选项|选项"> \
+                        <label class="control-label" for="'+widgetId+'">下拉框</label> \
+                        <div class="controls"> \
+                            <select name="'+widgetId+'" id="'+widgetId+'"> \
+                                <option value="选项">选项</option> \
+                                <option value="选项">选项</option> \
+                        </select> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'cascade':
+                	$widget = $('\
+                    <div class="control-group" type="cascade" label="级联框" title="'+widgetId+'" series="2"> \
+                        <label class="control-label" for="'+widgetId+'">级联框</label> \
+                        <div class="controls"> \
+                            <select name="'+widgetId+'_1" id="'+widgetId+'_1" style="width:100px;" data-placeholder="请选择"> \
+                                <option value=""></option> \
+                        	</select> \
+                        	<select name="'+widgetId+'_2" id="'+widgetId+'_2" style="width:100px;" data-placeholder="请选择"> \
+                        	 	<option value=""></option> \
+                        	</select> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'date':
+                  $widget = $('\
+                    <div class="control-group" type="date" label="日期框" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'">日期框</label> \
+                        <div class="controls"> \
+                            <div class="input-append"> \
+                                <input type="text" name="'+widgetId+'" id="'+widgetId+'" readonly> \
+                                <button type="button" role="date" class="btn" inputid="'+widgetId+'">\
+                                <span class="glyphicon glyphicon-calendar"></span>\
+                                </button>\
+                            </div> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'attachment':
+                $widget = $('\
+                    <div class="control-group" type="attachment" label="附件框" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'"> \
+                         附件框\
+                        </label> \
+                        <div class="controls"> \
+                            <div class="input-append"> \
+                                <input type="file" name="'+widgetId+'" id="'+widgetId+'" > \
+                            </div> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'name':
+                    $widget = $('\
+                    <div class="control-group" type="name" label="姓名" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'"> \
+                        姓名 \
+                        </label> \
+                        <div class="controls"> \
+                            <div class="input-prepend input-append span10"> \
+                                <span class="add-on"><span class="glyphicon glyphicon-user"></span></span> \
+                                <input type="text" name="'+widgetId+'" id="'+widgetId+'"> \
+                            </div> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'mobile':
+                    $widget = $('\
+                    <div class="control-group" type="mobile" label="手机" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'"> \
+                        手机 \
+                        </label> \
+                        <div class="controls"> \
+                            <div class="input-prepend input-append span10"> \
+                                <span class="add-on"><span class="glyphicon glyphicon-phone"></span></span> \
+                                <input type="text" name="'+widgetId+'" id="'+widgetId+'" style="width:150px;"> \
+                                <button type="button" role="call" class="btn" telinput="'+widgetId+'" title="呼叫此号码">\
+                                <span class="glyphicon glyphicon-earphone"></span>\
+                                </button>\
+                                <button type="button" role="sms" class="btn" smsinput="'+widgetId+'" title="给此号码发送短信">\
+                                <span class="glyphicon glyphicon-envelope"></span>\
+                                </button>\
+                            </div> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'phone':
+                    $widget = $('\
+                    <div class="control-group" type="phone" label="号码" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'"> \
+                        号码 \
+                        </label> \
+                        <div class="controls"> \
+                            <div class="input-prepend input-append span10"> \
+                                <span class="add-on"><span class="glyphicon glyphicon-phone-alt"></span></span> \
+                                <input type="text" name="'+widgetId+'" id="'+widgetId+'" style="width:150px;"> \
+                                <button type="button" role="call" class="btn" telinput="'+widgetId+'" title="呼叫此号码">\
+                                <span class="glyphicon glyphicon-earphone"></span>\
+                                </button>\
+                                <button type="button" role="sms" class="btn" smsinput="'+widgetId+'" title="给此号码发送短信">\
+                                <span class="glyphicon glyphicon-envelope"></span>\
+                                </button>\
+                            </div> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'gender':
+                 	$widget = $('\
+                    <div class="control-group" type="gender" label="性别" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'"> \
+                        性别 \
+                        </label> \
+                        <div class="controls"> \
+                        	<label class="checkbox inline"> \
+                            <input name="'+widgetId+'" type="radio" value="1"> \
+                            不知 \
+                            </label> \
+                            <label class="checkbox inline"> \
+                            <input name="'+widgetId+'" type="radio" value="2"> \
+                            男 \
+                            </label> \
+                            <label class="checkbox inline"> \
+                            <input name="'+widgetId+'" type="radio" value="3"> \
+                            女 \
+                            </label> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+                case 'address':
+                	$widget = $('\
+                    <div class="control-group" type="address" label="地址" title="'+widgetId+'"> \
+                        <label class="control-label" for="'+widgetId+'"> \
+                        地址 \
+                        </label> \
+                        <div class="controls"> \
+                            <input type="text" name="'+widgetId+'" id="'+widgetId+'"> \
+                        </div> \
+                    </div>');
+                    $widget.css('margin-bottom', 0);
+                    container.html($widget).attr('hasWidget', 'yes');
+                    break;
+            }
+            //加载属性
+            $('#attributeForm').load('index.php?c=form&m=loadAttribute&type='+type);
+            $('.clicked').removeClass('clicked');
+            $widget.addClass('clicked');
+            selectedWidget = $widget;
+            //绑定事件
+            loadTdAction(container,widgetId);
+        }
+        
+        //绑定事件
+  		function loadTdAction(container,widgetId)
+  		{
+  			var $widget = container.find('.control-group');
+  			var type = $widget.attr('type');
+  			container.on('mouseover', function() {
+                $widget.addClass('selected');
+            }).on('mouseout', function() {
+                $widget.removeClass('selected');
+            }).on('click', function() {
+                $('.clicked').removeClass('clicked');
+                $widget.addClass('clicked');
+                $('#attributeForm').load('index.php?c=form&m=loadAttribute&type='+type);
+                selectedWidget = $widget;
+           	});
+            //绑定删除表单项事件
+            container.hover(function(){
+            	var removeBtnHtml = '<a href="#" id="remove-btn"><span class="glyphicon glyphicon-remove"></span></a>';
+            	if(type=='gender'||type=='checkbox'||type=='radio')
+                {
+                    removeBtnHtml = ' <label class="checkbox inline" id="remove-btn"><a href="#"><span class="glyphicon glyphicon-remove"></span></a></label>';
+                }
+                if(type=='mobile'||type=='phone' || type=='name')
+                {
+                    removeBtnHtml = ' <a href="#" id="remove-btn" class="help-inline"><span class="glyphicon glyphicon-remove"></span></a>';
+                }
+                $widget.find('.controls').append(removeBtnHtml);
+                $('#remove-btn').on('click',function(){
+                    $widget.empty();
+                    container.unbind("click");//删除事件
+                    container.html('无').attr('hasWidget', 'no');
+                    cascadeOption[widgetId] = {};
+                    $('#attributeForm').empty();
+                });
+            },function(){
+            	$widget.find('.controls #remove-btn').remove();
+            });
+  		}
+        
+        
+        $('#form_name').on('keyup',function(){
+        	$('#btn-add-form').attr('disabled',false);
+        	if($('#form_name').val()=='')
+        	{
+        		formMessage("表单名不能为空",'error');
+        		$('#btn-add-form').attr('disabled',true);
+        	}
+        });
+        
+        $('#btn-add-form').on('click',function(){
+        	if($(this).attr('disabled')!='disabled')
+        	{
+        		var html = '';
+        		var form_name = $('#form_name').val();
+        		if(form_name.length!=0)
+        		{
+        			if($("#contentForm").find('td[hasWidget="yes"]:first-child').html()!=undefined)
+        			{
+        				$("#contentForm").find('.clicked').removeClass('clicked');//去掉点击样式
+        				//去掉没启用的tr
+        	 			$("#contentForm tr").each(function(){
+        	 				var one = $(this).find('td').attr('hasWidget');
+        	 				var two = $(this).find('td').attr('hasWidget');
+        	 				if(one==two && one=="no")
+        	 				{
+        	 					$(this).remove();
+        	 				}
+        	 			});
+        	 			$("#contentForm").find('td[hasWidget="no"]').empty();//清空没启用的td
+        				html = $("#formTable").html();
+        				
+        				$('#btn-add-form').attr('disabled',true);
+        				if(form_id==0)
+        				{
+        					$('#cascadeOption').val(json2str(cascadeOption));
+        					$('#html').val(html);
+        					$('#actionForm').submit();
+        				}
+        				else
+        				{
+        					$('#html').val(html);
+        					$('#actionForm').submit();
+        				}
+        	 		}
+        	 		else
+        	 		{
+        	 			formMessage("请先设置表单内容",'error');
+        	 		}
+        		}
+        		else
+        		{
+        			formMessage("表单名不能为空",'error');
+        		}
+        	}
+        });
+        
+        function formMessage(msg,msgType)
+   		{
+   			var str = '<span id="form-error-msg" class="alert alert-success">'+msg+'</span>';
+   			if(msgType=='error')
+   			str = '<span id="form-error-msg" class="alert alert-error">错误：'+msg+'</span>';
+   			if($('#actionForm').find('#form-error-msg').html()==undefined)
+   			{
+   	 			$('#actionForm').append(str);
+   	 			setTimeout(function(){
+					$('#actionForm').find('#form-error-msg').remove();
+				},2000);
+   			}
+   		}
+    </script>
+<{include file="pagefooter.htm"}>

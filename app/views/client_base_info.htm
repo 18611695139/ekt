@@ -1,0 +1,243 @@
+<{if $only_page==1}>
+<{include file="pageheader.htm"}>
+<{/if}>
+<div class="main-div" style="padding-bottom: 0">
+<table id='clientBaseInfo' class="table table-condensed" style="margin-bottom: 0">
+<tbody>
+<tr>
+    <td class="span2" style="text-align: right"><label for="cle_name">客户姓名：</label></td>
+    <td colspan="3">
+        <input type="text" name="cle_name" id="cle_name" value="<{$client_info.cle_name}>" class="span8" />
+        <input type="hidden"  name="cle_id" id="cle_id" value="<{$client_info.cle_id}>"/>
+    </td>
+</tr>
+<tr>
+    <td class="span2" style="text-align: right"><label for="cle_phone">客户电话：</label> </td>
+    <td>
+        <div class="input-append">
+            <input type="text" id="cle_phone" name="cle_phone" value="<{$client_info.cle_phone}>" />
+            <button class="btn" onclick="sys_dial_num('<{$client_info.cle_phone}>','cle_phone')" title="呼叫号码">
+                <span class="glyphicon glyphicon-phone"></span>
+            </button>
+            <{if $power_sendsms}>
+            <button class="btn" onclick="sys_send_sms('<{$client_info.cle_phone}>','cle_phone')" title="发送短信">
+                <span class="glyphicon glyphicon-envelope"></span>
+            </button>
+            <{/if}>
+        </div>
+    </td>
+    <{if $client_base.cle_info_source}>
+    <td class="span2" style="text-align: right"><label for="cle_info_source">信息来源：</label></td><td>
+    <select name="cle_info_source" id="cle_info_source" style="width:148px;" base_field='true'>
+        <{foreach from=$cle_info_source item=info_source key=skey}>
+        <option value="<{$info_source.name}>"  <{if $client_info.cle_info_source == $info_source.name }> SELECTED <{/if}>   ><{$info_source.name}></option>
+        <{/foreach}>
+        <{if $client_info.cle_info_source}>
+        <option value="<{$client_info.cle_info_source}>" SELECTED ><{$client_info.cle_info_source}></option>
+        <{/if}>
+    </select></td>
+    <{/if}>
+</tr>
+<tr>
+    <!--办公电话-->
+    <{if $client_base.cle_phone2}>
+    <td class="span2" style="text-align: right"><label for="cle_phone2">办公电话：</label> </td>
+    <td>
+        <div class="input-append">
+            <input type="text" id="cle_phone2" name="cle_phone2" value="<{$client_info.cle_phone2}>" />
+            <button class="btn" onclick="sys_dial_num('<{$client_info.cle_phone2}>','cle_phone2')" title="呼叫号码">
+                <span class="glyphicon glyphicon-phone"></span>
+            </button>
+            <{if $power_sendsms}>
+            <button class="btn" onclick="sys_send_sms('<{$client_info.cle_phone2}>','cle_phone2')" title="发送短信">
+                <span class="glyphicon glyphicon-envelope"></span>
+            </button>
+            <{/if}>
+        </div>
+    </td>
+    <{/if}>
+    <!--其他电话-->
+    <{if $client_base.cle_phone3}>
+    <td class="span2" style="text-align: right"><label for="cle_phone3">其他电话：</label> </td>
+    <td>
+        <div class="input-append">
+            <input type="text" id="cle_phone3" name="cle_phone3" value="<{$client_info.cle_phone3}>" />
+            <button class="btn" onclick="sys_dial_num('<{$client_info.cle_phone3}>','cle_phone3')" title="呼叫号码">
+                <span class="glyphicon glyphicon-phone"></span>
+            </button>
+            <{if $power_sendsms}>
+            <button class="btn" onclick="sys_send_sms('<{$client_info.cle_phone3}>','cle_phone3')" title="发送短信">
+                <span class="glyphicon glyphicon-envelope"></span>
+            </button>
+            <{/if}>
+        </div>
+    </td>
+    <{/if}>
+</tr>
+<{if $client_base.cle_stage}>
+<tr>
+    <td class="span2" style="text-align: right"><label for="cle_stage">客户阶段：</label></td>
+    <td colspan="3">
+        <input id="cle_stage" name="cle_stage" value="<{$client_info.cle_stage}>" type="hidden"/>
+        <div id="mainNav">
+            <{foreach from=$cle_stage item=stage key=skey name=listName}>
+            <span title="<{$stage.name}>" <{if $smarty.foreach.listName.last}>class="mainNavNoBg"<{/if}>  ><a title="<{$stage.name}>"><{$stage.name}></a></span>
+            <{/foreach}>
+        </div>
+    </td>
+</tr>
+<{/if}>
+<!--自定义字段  -----begin-------->
+<{counter start=0 print=false assign='client_confirm_count'}><!--  计算  -->
+<{foreach from=$client_confirm item=confirm_info key=ckey name=list_Name}>
+<{if $confirm_info.data_type==3}><{counter start=0 print=false assign='client_confirm_count'}><!-- 从新计算 -->
+<tr>
+    <td class="span2" style="text-align: right"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td >
+    <td colspan="11">
+    	<textarea id="<{$confirm_info.fields}>" confirm_field='true'  name="<{$confirm_info.fields}>" class="span12" rows="3" cols="20" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> ><{$client_info[$confirm_info.fields]}></textarea>
+    	<{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+	</td>
+</tr>
+<{elseif $confirm_info.data_type==4}><{counter start=0 print=false assign='client_confirm_count'}><!-- 从新计算 -->
+<tr>
+    <td class="span2" style="text-align: right"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td >
+    <td colspan="11">
+        <{if $jl_have_three[$confirm_info.id]}>
+        <select id="<{$confirm_info.fields}>_1" name='<{$confirm_info.fields}>_1' confirm_field='true' style="width:110px;" onchange="change_comfirm_jl('<{$confirm_info.fields}>_1','<{$confirm_info.fields}>_2',2,<{$confirm_info.id}>,'<{$confirm_info.fields}>_3')" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" if_require='true' _chinese_name='<{$confirm_info.name}>_1'<{/if}> >
+        <option value="" >--请选择--</option>
+        <{assign var="field_type" value=$confirm_info.fields|cat:'_1'}>
+        <{foreach from=$jl_options.$field_type item=option key=jlkey}>
+        <option value="<{$jlkey}>" <{if $jlkey==$client_info.$field_type}>selected<{/if}> ><{$option}></option>
+        <{/foreach}>
+        </select>
+        <select id="<{$confirm_info.fields}>_2" name="<{$confirm_info.fields}>_2" confirm_field='true' style="width:110px;" onchange="change_comfirm_jl('<{$confirm_info.fields}>_2','<{$confirm_info.fields}>_3',3,<{$confirm_info.id}>)"  <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" if_require='true' _chinese_name='<{$confirm_info.name}>_2'<{/if}> >
+        <option value="">--请选择--</option>
+        <{assign var="field_type" value=$confirm_info.fields|cat:'_2'}>
+        <{foreach from=$jl_options.$field_type item=option key=jlkey}>
+        <option value="<{$jlkey}>" <{if $jlkey==$client_info.$field_type}>selected<{/if}> ><{$option}></option>
+        <{/foreach}>
+        </select>
+        <select id="<{$confirm_info.fields}>_3" name="<{$confirm_info.fields}>_3" confirm_field='true' style="width:110px;"  <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" if_require='true' _chinese_name='<{$confirm_info.name}>_3'<{/if}> >
+        <option value="">--请选择--</option>
+        <{assign var="field_type" value=$confirm_info.fields|cat:'_3'}>
+        <{foreach from=$jl_options.$field_type item=option key=jlkey}>
+        <option value="<{$jlkey}>" <{if $jlkey==$client_info.$field_type}>selected<{/if}> ><{$option}></option>
+        <{/foreach}>
+        </select>
+        <{else}>
+        <select id="<{$confirm_info.fields}>_1" name="<{$confirm_info.fields}>_1" confirm_field='true' style="width:110px;" onchange="change_comfirm_jl('<{$confirm_info.fields}>_1','<{$confirm_info.fields}>_2',2,<{$confirm_info.id}>)" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" if_require='true' _chinese_name='<{$confirm_info.name}>_1'<{/if}> >
+        <option value="" >--请选择--</option>
+        <{assign var="field_type" value=$confirm_info.fields|cat:'_1'}>
+        <{foreach from=$jl_options.$field_type item=option key=jlkey}>
+        <option value="<{$jlkey}>" <{if $jlkey==$client_info.$field_type}>selected<{/if}> ><{$option}></option>
+        <{/foreach}>
+        </select>
+        <select id="<{$confirm_info.fields}>_2" name="<{$confirm_info.fields}>_2" confirm_field='true' style="width:110px;"  <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" if_require='true' _chinese_name='<{$confirm_info.name}>_2'<{/if}> >
+        <option value="">--请选择--</option>
+        <{assign var="field_type" value=$confirm_info.fields|cat:'_2'}>
+        <{foreach from=$jl_options.$field_type item=option key=jlkey}>
+        <option value="<{$jlkey}>" <{if $jlkey==$client_info.$field_type}>selected<{/if}> ><{$option}></option>
+        <{/foreach}>
+        </select>
+        <{/if}>
+        <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+    </td>
+</tr>
+<{else}>
+<{if $client_confirm_count%2 == 0 }>
+<tr>
+<{/if}>
+    <td  class="span2" style="text-align: right"><label for="<{$confirm_info.fields}>"  ><{$confirm_info.name}>：</label></td>
+    <td>
+    	<{if $field_detail[$confirm_info.id]||$confirm_info.data_type==2}><!--下拉选择-->
+    	<select id="<{$confirm_info.fields}>"  name="<{$confirm_info.fields}>" confirm_field='true' <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> >
+    		<{foreach from=$field_detail[$confirm_info.id] item=detail key=dkey}>
+    		<option value="<{$detail}>" <{if $detail==$client_info[$confirm_info.fields]}>selected<{/if}> ><{$detail}></option>
+    		<{/foreach}>
+    		<option value="" <{if !$client_info[$confirm_info.fields]}>selected<{/if}> >&nbsp;</option>
+    	</select><{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+   		<{elseif $confirm_info.data_type==5}><!-- 日期框 -->
+    	<div class="input-append">
+        	<input type="text" name="<{$confirm_info.fields}>" id="<{$confirm_info.fields}>" value="<{$client_info[$confirm_info.fields]}>" confirm_field='true'  <{if $confirm_info.if_require==2}>_date='date_box' _chinese_name='<{$confirm_info.name}>' if_require='true'<{/if}> readonly>
+        	<button type="button" role="date" class="btn">
+           		<span class="glyphicon glyphicon-calendar"></span>
+        	</button>
+    	</div><{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+    <{else}><!-- 文本框 -->
+    <input type="text" id="<{$confirm_info.fields}>" name="<{$confirm_info.fields}>" confirm_field='true' value="<{$client_info[$confirm_info.fields]}>" <{if $confirm_info.if_require==2}>class="easyui-validatebox" required="true" missingMessage="<{$confirm_info.name}>不能为空" if_require='true' _chinese_name='<{$confirm_info.name}>'<{/if}> />
+    <{if $confirm_info.if_require==2}><span style='color:red;font-weight:bold;'>*</span><{/if}>
+    <{/if}>
+</td>
+    <{if $client_confirm_count%2 != 0 }>
+</tr>
+<{/if}>
+<{counter print=false assign='client_confirm_count'}><!--   加1   -->
+<{/if}>
+<{/foreach}>
+<!--自定义字段  ------end--------->
+<{if $client_base.cle_province_name||$client_base.cle_address}>
+<tr>
+    <td class="span2" style="text-align: right"><label for="">详细地址：</label></td>
+    <td colspan="3">
+        <{if $client_base.cle_province_name}>
+        <select id="cle_province_id" name='cle_province_id' style="width:110px;" base_field='true' onchange="change_regions_type('cle_province_id','cle_city_id','2');">
+            <option value="0" >--选择省--</option>
+            <{foreach from=$regions_province_info item=province key=pkey}>
+            <option value="<{$pkey}>" <{if $pkey==$client_info.cle_province_id}>selected<{/if}> ><{$province}></option>
+            <{/foreach}>
+        </select>
+        <select id="cle_city_id" name="cle_city_id" style="width:110px;" base_field='true'>
+            <option value="0">--选择市--</option>
+            <{if $regions_city_info}>
+            <{foreach from=$regions_city_info item=city key=ckey}>
+            <option value="<{$ckey}>" <{if $ckey==$client_info.cle_city_id}>selected<{/if}> ><{$city}></option>
+            <{/foreach}>
+            <{/if}>
+        </select>
+        <{/if}>
+        <{if $client_base.cle_address}>
+        <input style="width: 50%;" type="text" name="cle_address" id="cle_address" base_field='true' value="<{$client_info.cle_address}>">
+        <{/if}>
+    </td>
+</tr>
+<{/if}>
+<{if $client_base.cle_remark}>
+<tr>
+    <td class="span2" style="text-align: right">
+        <label for="cle_remark">客户备注：</label>
+    </td>
+    <td colspan="3">
+        <textarea id="cle_remark" name="cle_remark" base_field='true' rows="3" cols="20" class="span12"><{$client_info.cle_remark}></textarea>
+    </td>
+</tr>
+<{/if}>
+<{if $client_base.cle_stat}>
+<tr>
+    <td colspan="4" class="form-inline" style="text-align: right">
+        <span>
+            <span class="label label-info">号码状态：</span>
+        <{foreach from=$client_state item=state key=skey}>
+            <label class="inline">
+                <input type="radio"  name="cle_stat" value="<{$state.name}>" base_field='true' <{if $client_info.cle_stat|default:'未拨打' == $state.name }> CHECKED <{/if}> />
+                <{if $client_info.cle_stat|default:'未拨打' == $state.name }>
+                <strong><{$state.name}></strong>
+                <{else}>
+                <{$state.name}>
+                <{/if}>
+            </label>
+        <{/foreach}>
+        </span>
+    </td>
+</tr>
+<{/if}>
+</tbody>
+</table>
+</div>
+<script language="JavaScript" type="text/javascript">
+$('#clientBaseInfo input').attr('readonly',true);
+$('#clientBaseInfo select').attr('disabled',true);
+$('#clientBaseInfo textarea').attr('readonly',true);
+</script>
+<{if $only_page==1}>
+<{include file="pagefooter.htm"}>
+<{/if}>

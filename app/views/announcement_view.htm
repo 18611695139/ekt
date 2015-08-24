@@ -1,0 +1,15 @@
+<{include file="pageheader.htm"}>
+<div class='easyui-panel' data-options="border:false" title='<{$anns_info.anns_title}>-详情'>
+    <div  class="main-div" style="padding: 10px;">
+		<div style="font-weight:bold;font-size:19px;text-align:center;">
+			<span><{$anns_info.anns_title}></span>
+		</div>
+		<div style="margin-top:10px;margin-bottom:10px;text-align:center;font-size:11.8px;">
+            作者：&nbsp;<{$anns_info.create_user_name}>&nbsp;&nbsp;&nbsp;&nbsp;创建时间：<{$anns_info.creat_time}>&nbsp;&nbsp;公告范围：<{$anns_info.dept_name}>
+        </div>
+		<div style="font-size:14px;padding-left:20px;">
+            <{$anns_info.anns_content}>
+        </div>
+	</div>
+</div>
+<{include file="pagefooter.htm"}>

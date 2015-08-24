@@ -1,0 +1,72 @@
+<table id="order_product_list" title='订单产品列表' width="100%" style="height:auto" rownumbers="true" iconCls="icon-search" singleSelect="true" idField="op_id" fitColumns="true" url="">
+	<thead>
+		<tr>
+		    <th field="op_id"  hidden="true" ></th> 
+		    <th field="product_id"  hidden="true" >产品ID</th> 
+		    <th field="product_num" width="100" align="center" >产品编号</th> 
+            <th field="product_name_view" width="100" align="center">产品名称</th>
+            <th field="product_thum_pic" width="100" align="center" >产品示意图</th>
+            <th field="product_thum_value" hidden="true" ></th>
+			<th field="product_class" width="100" align="center">产品分类</th>			
+			<th field="product_price" width="100" align="center">单价(元)</th>
+			<th field="product_discount" width="60" align="center">折扣(%)</th>
+			<th field="product_number" width="60" align="center">数量</th>
+		</tr>
+	</thead>
+</table>
+<input type='hidden' id='product_info' name='product_info' value='' />
+<input type='hidden' id='order_total_price' name='order_total_price' value='' />
+<div style='text-align:right;padding:10px;'>
+	<span style='color:red' id='save_product_message'></span>&nbsp;&nbsp;
+	<span style='font-weight:bold;'>累加总额：</span><span id='product_total' style='width:50px;'></span>元&nbsp;&nbsp;
+	<{if $power_update_order}>
+	<button type="button" class="btn btn-small btn-primary" id="save_product_btn" onclick="save_order_product_info()">
+        <span class="glyphicon glyphicon-saved"></span> 保存订单产品
+    </button>
+	<{/if}>
+</div>
+
+<script language="JavaScript" type="text/javascript">
+var original_goods_info = ''; /*原始订单产品*/
+var order_product_amount;/*产品订单数量*/
+var power_update_order = <{$power_update_order}>;
+var power_view_product = <{$power_view_product}>;
+var global_order_id = <{$order_id}>;
+var system_order_product_amount = <{$system_order_product_amount}>; /*判断系统允许一个还是多个产品*/
+
+/*订单原产品*/
+function global_order_product_info()
+{
+	/*编辑*/
+	<{if $order_product_info}>
+	<{section name=loop loop = $order_product_info}>
+	var pppic = '<{$order_product_info[loop].product_thum_pic}>';
+	if(pppic.length!=0)
+	{
+		var thum_pic = "<a href='###' title='查看产品详情' onclick=show_order_product_detail('<{$order_product_info[loop].product_id}>')><img src='<{$order_product_info[loop].product_thum_pic}>' border='0' align='absmiddle' /></a>";
+	}
+	else
+	{
+		var thum_pic = "<img src='./image/no_picture.jpg' title='无图' border='0' align='absmiddle' />";
+	}
+
+	$('#order_product_list').datagrid('appendRow',{
+		op_id:'<{$order_product_info[loop].op_id}>',
+		product_id:'<{$order_product_info[loop].product_id}>',
+		product_num:"<{$order_product_info[loop].product_num}>",
+		product_name:"<{$order_product_info[loop].product_name}>",
+		product_name_view:"<{$order_product_info[loop].product_name}><a href='###' title='查看产品详情' onclick=show_order_product_detail('<{$order_product_info[loop].product_id}>')><img src='image/file.png' /></a>",
+		product_thum_pic:thum_pic,
+		product_thum_value:'<{$order_product_info[loop].product_thum_pic}>',
+		product_class:'<{$order_product_info[loop].product_class}>',
+		product_price:'<{$order_product_info[loop].product_price}>',
+		product_number:"<input style='width:50px;' onkeyup='change_num_discount()'  id='product_number<{$order_product_info[loop].product_id}>' value='<{$order_product_info[loop].product_number}>' />",
+		product_discount:"<input style='width:50px;' onkeyup='change_num_discount()' id='product_discount<{$order_product_info[loop].product_id}>' value='<{$order_product_info[loop].product_discount}>' />"
+	});
+	<{/section}>
+	confirm_products_info();
+	original_goods_info = $("#product_info").val();
+	<{/if}>
+}
+</script>
+<script src="./jssrc/viewjs/order_product_info.js" type="text/javascript"></script>

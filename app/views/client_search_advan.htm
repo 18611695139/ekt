@@ -1,0 +1,267 @@
+  <form action="javascript:quick_search()" method="POST" name="searchForm" id="searchForm">
+  <table>
+  	<tbody>
+  	<tr>
+  		<td>客 户 名 称 </td>
+  		<td align="left" colspan="2"><input type="text" style='color:#cccccc;width:151px;' id="cle_name_search" name="cle_name_search" value="支持拼音首字母" onclick='search_cle_name()' onblur='if_null()' /></td>
+      	<{if $control_flag|default:'manage' != "data_deal"  && !$power_use_contact }>
+     	<td> 联系人名称 </td>
+     	<td align='left'><input type='text' id='con_name_search' name='con_name_search' value='' style='width:151px;' /></td>
+     	<{/if}>
+     	<{if $control_flag|default:'manage' != 'my_client'}>
+     	<{if ($control_flag|default:'manage' == "public") && ($role_type!=2 || $power_public_all)}>
+     	<td> 所 属 部 门 </td>
+     	<td align='left' colspan='2'>
+     		<input type="text" id="dept_id_search" name="dept_id_search" value='' style='width:151px;' />
+     	</td>
+     	<{elseif $control_flag|default:'manage' != "public" && $role_type!=2}>
+     	<td> 所属部门或人 </td>
+     	<td align='left' colspan='2'>
+     		<input type="text" id="dept_user_search" name="dept_user_search" value='' style='width:151px;' />&nbsp;&nbsp;<{if $no_user_search}>
+     		<span id='no_color'><input name='no_user_data' id='no_user_data' type='checkbox'/> 无所属人 </span><{/if}>
+     	</td>
+     	<{/if}>
+     	<{/if}>
+    </tr>
+    <tr>
+     	<td> 客 户 电 话 </td>
+     	<td align="left" colspan="2"><input type="text" id="cle_phone_search" name="cle_phone_search" value="" style='width:151px;' /></td>
+      	<{if $control_flag|default:'manage' != "data_deal" && !$power_use_contact }>
+      	<td> 联系人电话 </td>
+      	<td align='left'><input type='text' id='con_mobile_search' name='con_mobile_search' value='' style='width:151px;' /></td>
+      	<{/if}>
+     	<{if $control_flag|default:'manage' == "public"}>
+      	<td> 公共数据类型 </td>
+      	<td align='left'>
+      		<select name='cle_public_type' id='cle_public_type' style='width:151px;'>
+      			<option value=''>--请选择--</option>
+      			<option value='3'><{$client_public_type.3}></option>
+      			<option value='1'><{$client_public_type.1}></option>
+      			<option value='2'><{$client_public_type.2}></option>
+      		</select>
+      	</td>
+      	<{/if}>
+    </tr>
+    <tr>
+      	<td> 最近联系时间 </td>
+      	<td align='left' colspan='2'>
+      		<div class="input-append">
+         		<input type="text" name="cle_last_connecttime_search_start" id="cle_last_connecttime_search_start" class="input-small" readonly>
+         		<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'cle_last_connecttime_search_start'})">
+         			<span class="glyphicon glyphicon-calendar"></span>
+         		</button>
+      		</div> ~ 
+      		<div class="input-append">
+        		<input type="text" name="cle_last_connecttime_search_end" id="cle_last_connecttime_search_end" class="input-small" readonly>
+        		<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'cle_last_connecttime_search_end'})">
+         			<span class="glyphicon glyphicon-calendar"></span>
+        		</button>
+      		</div>
+     	</td>
+     	<td> 导入批次号 </td>
+     	<td align='left'><input type='text' id='impt_id_search' name='impt_id_search' value='' style='width:151px;' /></td>
+     	<{if $client_base.cle_stage}>
+     	<td> 客 户 阶 段 </td>
+     	<td align='left' >
+     		<select name='cle_stage' id='cle_stage' client_base='true' style='width:151px;'>
+     			<option value=''>--请选择--</option>
+                <{foreach from=$_stage item=stage key=key}>
+ 	 			<option value="<{$stage}>" ><{$stage}></option>
+ 	 			<{/foreach}>
+     		</select>
+     	</td>
+     	<{/if}>
+     </tr>
+     <tr>
+     	<td> 下次联系时间 </td>
+     	<td align='left' colspan='2'>
+     		<div class="input-append">
+         		<input type="text" name="con_rec_next_time_start" id="con_rec_next_time_start" class="input-small" readonly>
+         		<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'con_rec_next_time_start'})">
+         			<span class="glyphicon glyphicon-calendar"></span>
+         		</button>
+      		</div> ~ 
+      		<div class="input-append">
+        		<input type="text" name="con_rec_next_time_end" id="con_rec_next_time_end" class="input-small" readonly>
+        		<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'con_rec_next_time_end'})">
+         			<span class="glyphicon glyphicon-calendar"></span>
+        		</button>
+      		</div>
+     	</td>
+     	<td > 通 话 次 数 </td>
+     	<td align='left'><input type="text" id='cle_dial_number_search' name='cle_dial_number_search' value='' style='width:151px;'></td>
+     	<{if $client_base.cle_stat}>
+     	<td > 号 码 状 态 </td>
+     	<td align='left' colspan='2'>
+     		<select name='cle_stat' id='cle_stat' client_base='true' style='width:151px;'>><option value=''>--请选择--</option>
+     			<{foreach from=$client_state item=stat key=skey}>
+ 	 			<option value="<{$stat}>" ><{$stat}></option>
+ 	 			<{/foreach}>
+     		</select>
+     	</td>
+     	<{/if}>
+     </tr>
+     <tr>
+     	<td> 创 建 时 间 </td>
+     	<td align='left' colspan='2'>
+      		<div class="input-append">
+         		<input type="text" name="cle_creat_time_search_start" id="cle_creat_time_search_start" class="input-small" readonly>
+         		<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'cle_creat_time_search_start'})">
+         			<span class="glyphicon glyphicon-calendar"></span>
+         		</button>
+      		</div> ~ 
+      		<div class="input-append">
+        		<input type="text" name="cle_creat_time_search_end" id="cle_creat_time_search_end" class="input-small" readonly>
+        		<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'cle_creat_time_search_end'})">
+         			<span class="glyphicon glyphicon-calendar"></span>
+        		</button>
+      		</div>
+     	</td>
+     	<{if $client_base.cle_phone2}>
+     	<td> 办 公 电 话 </td>
+     	<td align='left'><input type='text' id='cle_phone2' name='cle_phone2' value='' client_base='true' style='width:151px;'/></td>
+     	<{/if}>
+     	<{if $client_base.cle_info_source}>
+	 	<td>信 息 来 源</td>
+	 	<td><select name="cle_info_source" id="cle_info_source" client_base='true' style='width:151px;'>
+ 	 		<option value="" SELECTED >--请选择--</option>
+ 			<{foreach from=$cle_info_source item=info_source key=skey}>
+ 	 		<option value="<{$info_source.name}>" ><{$info_source.name}></option>
+ 	 		<{/foreach}></select>
+ 	 	</td>
+ 	 	<{/if}>
+     </tr>
+     <tr>
+     	<td> 更 新 时 间 </td>
+     	<td align='left' colspan='2'>
+      		<div class="input-append">
+         		<input type="text" name="cle_update_time_search_start" id="cle_update_time_search_start" class="input-small" readonly>
+         		<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'cle_update_time_search_start'})">
+         			<span class="glyphicon glyphicon-calendar"></span>
+         		</button>
+      		</div> ~ 
+      		<div class="input-append">
+        		<input type="text" name="cle_update_time_search_end" id="cle_update_time_search_end" class="input-small" readonly>
+        		<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'cle_update_time_search_end'})">
+         			<span class="glyphicon glyphicon-calendar"></span>
+        		</button>
+      		</div>
+     	</td>
+     	<{if $client_base.cle_phone3}>
+     	<td> 其 他 电 话 </td>
+     	<td align='left'><input type="text" id="cle_phone3" name="cle_phone3" value="" client_base='true' style='width:151px;'/></td>
+     	<{/if}>
+     	<{if $role_type!=2}>
+     	<td> 调 配 次 数 </td>
+     	<td align='left'><input type="text" id="dployment_num_search" name="dployment_num_search" value="" style='width:151px;'/></td>
+     	<{/if}>
+     </tr>
+     <{if $client_base.cle_province_name||$client_base.cle_address}>
+     <tr>
+        <td> 详 细 地 址 </td>
+        <td colspan='6' align='left'>
+        	<{if $client_base.cle_province_name}>
+     		<select id="cle_province_id" name='cle_province_id' style="width:90px;" client_base='true' onchange="change_regions_type('cle_province_id','cle_city_id','2');">
+     			<option value="0" >--选择省--</option>
+				<{html_options options=$regions_info }>
+			</select>
+			<select id="cle_city_id" name="cle_city_id" style="width:90px;" client_base='true'>
+			<option value="0">--选择市--</option>
+			</select>
+			<{/if}>
+			<{if $client_base.cle_address}>
+       		<input type='text' id='cle_address' name='cle_address' value='' class="span5" client_base='true'/>
+       		<{/if}>
+       	</td>
+     </tr>
+     <{/if}>
+     <{if $client_base.cle_remark}>
+     <tr>
+     	 <td> 备 注 </td>
+     	 <td colspan='6' align='left'><input type='text' id='cle_remark' name='cle_remark' value='' class="span8" client_base='true' /></td>
+     </tr>
+     <{/if}>
+  	</tbody>
+ </table>
+ <table>
+  <tbody>
+     <tr>
+     	<td style='font-weight:bold;'>自定义字段(选择搜索)：</td>
+     </tr>
+     <tr>
+	     <td style='padding-left:16px;'>
+	     	<input name='field_confirm_box[]' id='check_1' type='checkbox'/>
+	   		<select name='field_confirm1' id='field_confirm1'   onchange='show_field_detail(1)' style='width:100px;'>
+	   			<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+	   		</select>
+	    	<select id='make1' name='make' style="width:60px;"><{html_options options=$condition}></select>
+	    	<span id='field_content1'><input type="text" id="f_c_1" name="f_c_1" value="" /></span>
+	     </td>
+	     <td style='padding-left:30px;'>
+	     	<input name='field_confirm_box[]' id='check_2' type='checkbox'/>
+	     	<select name='field_confirm2' id='field_confirm2' onchange='show_field_detail(2)' style='width:100px;'>
+	     		<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+	     	</select>
+	     	<select id='make2' name='make' style="width:60px;"><{html_options options=$condition}></select>
+	     	<span id='field_content2'><input type="text" id="f_c_2" name="f_c_2" value="" /></span>
+	     </td>
+     </tr>
+     <tr>
+	     <td style='padding-left:16px;'>
+	     	<input name='field_confirm_box[]' id='check_3' type='checkbox'/>
+	     	<select name='field_confirm3' id='field_confirm3' onchange='show_field_detail(3)' style='width:100px;'>
+	     		<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+	     	</select>
+	     	<select id='make3' name='make' style="width:60px;"><{html_options options=$condition}></select>
+	     	<span id='field_content3'><input type="text" id="f_c_3" name="f_c_3" value="" /></span>
+	     </td>
+	   	 <td style='padding-left:30px;'>
+	   		<input name='field_confirm_box[]' id='check_4' type='checkbox'/>
+	     	<select name='field_confirm4' id='field_confirm4'   onchange='show_field_detail(4)' style='width:100px;'>
+	     		<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+	     	</select>
+	     	<select id='make4' name='make' style="width:60px;"><{html_options options=$condition}></select>
+	     	<span id='field_content4'><input type="text" id="f_c_4" name="f_c_4" value="" /></span>
+	     </td>
+     </tr>
+     <tr>
+	     <td style='padding-left:16px;'>
+	     	<input name='field_confirm_box[]' id='check_5' type='checkbox'/>
+	    	<select name='field_confirm5' id='field_confirm5'   onchange='show_field_detail(5)' style='width:100px;'>
+	    		<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+	    	</select>
+	     	<select id='make5' name='make' style="width:60px;"><{html_options options=$condition}></select>
+	     	<span id='field_content5'><input type="text" id="f_c_5" name="f_c_5" value="" /></span>
+	     </td>
+	     <td style='padding-left:30px;'>
+	     	<input name='field_confirm_box[]' id='check_6' type='checkbox'/>
+	     	<select name='field_confirm6' id='field_confirm6'   onchange='show_field_detail(6)' style='width:100px;'>
+	     		<option value=''>--请选择--</option><{html_options options=$field_confirm selected=$field_confirm_selected}>
+	     	</select> 
+	     	<select id='make6' name='make' style="width:60px;"><{html_options options=$condition}></select>
+	     	<span id='field_content6'><input type="text" id="f_c_6" name="f_c_6" value=""/></span>
+	  	</td>
+  </tr>
+ </tbody>
+</table>
+<span style='padding-left:30px;'>&nbsp;</span>
+<button class="btn btn-primary" onclick="$('#searchForm').submit();">
+    <span class="glyphicon glyphicon-search"></span> 搜索
+</button>
+<{if $control_flag|default:'manage' != "data_deal" }>
+<button type="button" class="btn" onclick="base_search()">
+    <span class="glyphicon glyphicon-zoom-in"></span> 基本搜索
+</button>
+<{/if}>
+</form>
+<script language="JavaScript" type="text/javascript">
+var role_type = '<{$role_type}>';
+var user_session_id = '<{$user_session_id}>';
+var dept_session_id = '<{$dept_session_id}>';
+var no_user_search = '<{$no_user_search|default:0}>'; //是否有无所属人检索
+var control_flag = "<{$control_flag|default:'manage'}>";
+var list_type = "<{$list_type|default:''}>";
+var power_use_contact = "<{$power_use_contact|default:0}>";
+var power_public_all = "<{$power_public_all|default:0}>";
+</script>
+<script src="./jssrc/viewjs/client_search_advan.js?1.3" type="text/javascript"></script>

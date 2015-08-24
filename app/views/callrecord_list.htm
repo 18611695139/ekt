@@ -1,0 +1,49 @@
+<{include file="pageheader.htm"}>
+<div class="form-div" id="_search_panel">
+  <form action="javascript:quick_search()" method="POST" name="searchForm" id="searchForm" class="form-inline">
+     <img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+     电话<input id="search_key" name="search_key"  type="text" value="" style="width:150px;" />
+	<{if $power_callrecord || $role_type!=2}>
+	  坐席<input type="text" id="user_tree" name="user_tree" value="" style="width:150px;" />
+	 <{/if}>
+	 时间
+	 <div class="input-append">
+            <input type="text" name="start_date" id="start_date" value="<{$today_start}>" style="width:120px;" readonly>
+            <button type="button" role="date" class="btn" onclick="WdatePicker({el: 'start_date',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </button>
+        </div> ~
+        <div class="input-append">
+            <input type="text" name="end_date" id="end_date" value="<{$today_end}>" style="width:120px;" readonly>
+            <button type="button" role="date" class="btn" onclick="WdatePicker({el: 'end_date',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </button>
+        </div>
+	 时长>
+	 <input id="min_conn_secs" name="min_conn_secs" type='text' value="" style="width:60px;" />
+	 秒
+	<button class="btn btn-primary" onclick="$('#searchForm').submit();">
+        <span class="glyphicon glyphicon-search"></span> 搜索
+    </button>
+	<{if $power_callrecord || $role_type!=2}>
+	<img style="VERTICAL-ALIGN: middle" border='0' alt="分类" src="image/icon_listsearch.png"/>
+	<a id='sd0' href="javascript:sql_type='1';set_color('sd0'); quick_search();"  >全部数据</a><font color='#99cc00' face='Wingdings'>w</font>
+	<a id='sd1' href="javascript:sql_type='2';set_color('sd1'); quick_search();" style="color:red;" >我的数据</a>	
+	<{/if}>
+	<div style="display: block;margin: 5px"></div>
+   <{include file="player.htm"}>
+  </form>
+</div>
+<div id="call_recod_list"></div>
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+var start_date = "<{$today_start|default:''}>";
+var today_end = "<{$today_end|default:''}>";
+var message_authority = <{$message_authority}>;//发短信
+var power_phone_view = <{$power_phone_view}>;//客户电话（显示）
+var power_callrecord = <{$power_callrecord}>;//通话记录（全部）
+var power_download_record = <{$power_download_record}>;//录音下载
+var role_type = '<{$role_type}>';
+</script>
+<script src="./jssrc/viewjs/callrecord_list.js?1.4" type="text/javascript"></script>

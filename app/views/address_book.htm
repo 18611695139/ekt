@@ -1,0 +1,33 @@
+<{include file="pageheader.htm"}>
+<div class="form-div">
+ 
+    <table><tbody><tr>
+     <td>关键字：</td><td><input type="text" name="search_key" id="search_key" size="25" class="easyui-searchbox" searcher="quick_search" prompt="支持拼音、汉字查询" /></td>
+     <td>
+      <form action="javascript:quick_search()" method="POST" name="searchForm" id="searchForm">
+     <IMG style="VERTICAL-ALIGN: middle" border=0 alt='分类' src="image/icon_listsearch.png">
+	<FONT color=#cc0066>快速查询：</FONT>
+	<A id=sd0   href="javascript:sql_type='11';set_color('sd0'); quick_search();" style="color:red;" >所有通讯录</A>&nbsp;<FONT color=#99cc00 face=Wingdings>w</FONT>
+	<A id=sd1   href="javascript:sql_type='2';set_color('sd1'); quick_search();" >我的通讯录</A>&nbsp;<FONT color=#99cc00 face=Wingdings>w</FONT>	
+	<A id=sd2   href="javascript:sql_type='1';set_color('sd2'); quick_search();">公司通讯录</A>&nbsp;
+	<button type="button" class="btn btn-primary" onclick="add_own_address_book()">
+        <span class="glyphicon glyphicon-plus"></span> 添加通讯录
+    </button>
+	 <{if $power_company_address_book}>
+  	<button type="button" class="btn btn-primary" onclick="add_company_address_book()">
+        <span class="glyphicon glyphicon-plus"></span> 添加公司通讯录
+    </button>
+ 	 <{/if}>
+ 	 </form>
+ 	 </td></tr></tbody></table>
+  
+</div>
+<table id="address_book_table"></table> <!-- 通讯录列表  -->
+<div id="add_book"></div>
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/viewjs/address_book.js?1.1" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+var user_id = "<{$user_id}>";
+var power_company_address_book = <{$power_company_address_book}>;
+var power_sendsms = <{$power_sendsms}>;
+</script>

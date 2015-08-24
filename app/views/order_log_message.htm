@@ -1,0 +1,46 @@
+<div class="main-div" style="width:99%;" align="center">
+<fieldset>
+       <textarea  style="width:99%;height:250px;overflow:auto;" id="log_detail" readonly ></textarea>
+</fieldset>    
+</div>
+
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0" style="width:100%;" style="padding-top:6px; margin-top:10px">
+<tbody >
+	 <tr>
+	  <td class="micro-label">所属人：</td><td ><{$order_info.user_name}></td>
+	   <td class="micro-label">所属部门：</td><td><{$order_info.dept_name}></td>
+	 <td class="micro-label">下单时间：</td><td ><{$order_info.order_accept_time}></td>
+	 </tr>
+	 </tbody>
+</table>
+
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	//日志
+	var str = "";
+	<{foreach from=$order_log item=log_info key=lkey name=list_name}>
+	str += '[<{$log_info.log_time}>  <{$log_info.user_name}>  <{$log_info.user_ip}>  ';
+
+	var current = "<{$log_info.contents}>";
+	var new_str = current.split("|");
+	for(var i=0;i<new_str.length;i++)
+	{
+		if(i == 0 )
+		{
+			str += new_str[i]+"]\r\n";
+		}
+		else
+		{
+			<{if !$power_phone_view}>
+			new_str[i] =  new_str[i].replace(/^客户电话:.+$/,'客户电话:*********');
+			<{/if}>
+			str += new_str[i]+"\r\n";
+		}
+
+	}
+	str += '\r\n';
+	<{/foreach}>
+
+	$("#log_detail").val(str);
+});
+</script>

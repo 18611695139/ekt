@@ -1,0 +1,116 @@
+<table class="table table-hover table-bordered table-condensed">
+    <tr><th>组件【日期框】属性</th></tr>
+    <tr>
+        <td>
+            <label>标签</label>
+            <input id="label" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="标签" value="日期框">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="radio">
+                <input type="checkbox" id="required" value="1"> 是否必填项
+            </label>
+        </td>
+    </tr>
+     <tr>
+        <td>
+            <label>日期格式</label>
+            <label class="checkbox">
+                <input type="radio" name="dateFmt" id="dateFmt1" value="yyyy-MM-dd" > 年-月-日
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="dateFmt" id="dateFmt2" value="yyyy-MM-dd HH:mm:ss" checked> 年-月-日 时：分：秒
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>默认值</label>
+            <input id="defaultVal" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="默认值" value="">
+        </td>
+    </tr>
+</table>
+<script src="./jssrc/jquery.DateTimeMask.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+    var selectedWidget = selectedWidget || $();
+    var wgid = selectedWidget.attr('title');
+
+    //设置初始属性值
+    var label = selectedWidget.attr('label') || '日期框';
+    var required = selectedWidget.attr('required') || '';
+    var dateFmt = selectedWidget.attr('datefmt') || 'yyyy-MM-dd HH:mm:ss';
+    var defaultVal = selectedWidget.attr('defaultval') || '';
+    
+    //标签
+    $('#label').val(label)
+            .on('keyup', function() {
+                selectedWidget.find('.control-label').text($(this).val());
+                selectedWidget.attr('label', $(this).val());
+                if (required) {
+        			selectedWidget.find('.control-label').text($(this).val());
+                	selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+    			}
+     });
+     
+    //是否必填
+    $('#required').on('click', function() {
+        if($(this).attr('checked')) {
+            selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+            $('#'+wgid).attr('require', 'true');
+            selectedWidget.attr('required', 'required');
+            required = 'required';
+        } else {
+            selectedWidget.find('.control-label').text(selectedWidget.attr('label') || '日期框');
+            selectedWidget.removeAttr('required');
+            $('#'+wgid).removeAttr('require');
+            required = '';
+        }
+    });
+    if (required) {
+        $('#required').attr('checked', 'checked');
+    } else {
+        $('#required').removeAttr('checked');
+    }
+     
+      //默认值
+     $('#defaultVal').val('系统时间')
+     		.on('click',function(){
+     			if($(this).val()=='')
+     			{
+     				dateDefault();
+     				$('#defaultVal').trigger('keyup');
+     			}
+     		})
+            .on('keyup', function() {
+            	defaultVal = $(this).val();
+                $('#'+wgid).val(defaultVal);
+                selectedWidget.attr('defaultval', defaultVal);
+    });
+    
+     //日期格式
+    $('input[name="dateFmt"]').on('click', function() {
+        $('#'+wgid).removeClass().addClass($(this).val());
+        selectedWidget.attr('datefmt', $(this).val());
+        dateFmt = $(this).val();
+        if(defaultVal)
+        {
+        	dateDefault();
+        	$('#defaultVal').trigger('keyup');
+        }
+    });
+    $('input[name="dateFmt"][value="'+dateFmt+'"]').attr('checked', 'checked');
+    
+    function dateDefault()
+    {
+    	if(dateFmt=='yyyy-MM-dd HH:mm:ss')
+        {
+            $("#defaultVal").DateTimeMask({masktype:"1",isnow:true});
+        }
+       else
+       {
+            $("#defaultVal").DateTimeMask({isnull:true,isnow:true});
+       }
+    }
+
+</script>

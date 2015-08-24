@@ -1,0 +1,40 @@
+<table style="width:100%;">
+<tr>
+<{foreach key=base item=item from=$art_content name=k_content}>
+<{if $base%2 == 0 && $base !=0}>
+</tr>
+<tr>
+<{/if}>
+<td style="width:50%">
+<div class="easyui-panel" data-options="iconCls:'icon-tip'" tools='#more<{$class_name.$base.k_class_id}>'  style="height:250px;" title="<{$class_name.$base.k_class_name}>">
+
+<table style='padding:10px;'>  
+    <thead> 
+		<{foreach key=key item=content from=$item}>
+		 <tr> 
+		 <{if $content}>
+		 <{if $content.k_art_id}>
+			<td style="border:none;line-height:15px;width:60%;">
+				<span style="color:#808080;">【<a href='###' onclick="art_more(<{$content.k_class_id}>)" title='<{$content.k_class_name}>'><{$content.k_class_name}></a>】</span>
+				<a href="###" onclick="art_detail(<{$content.k_art_id}>,'<{$content.k_art_title}>',<{$content.k_class_id}>)" title='查看'><{$content.k_art_title}></a>
+			</td>
+			<td style="border:none;line-height:15px;">
+				<span  style="color:#808080;">&nbsp;&nbsp;&nbsp;&nbsp;<{$content.k_art_create_date}></span>
+			</td>
+			<{/if}>
+			<{/if}>
+			</tr>
+		<{/foreach}>
+    </thead>  
+</table>  
+</div>
+ <div id='more<{$class_name.$base.k_class_id}>'>
+ 	<a href="###"  style='width:50px;'  onclick="art_more(<{$class_name.$base.k_class_id}>)"> 更多>> </a>
+ 	</div>
+</td>
+<{/foreach}>
+<{if $smarty.foreach.k_content.total==1}>
+<td></td>
+<{/if}>
+</tr>
+</table>

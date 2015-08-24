@@ -1,0 +1,118 @@
+<table cellpadding="0" cellspacing="0" border="0" style="width:90%">
+<tr >
+<td style="font-weight:700;" >坐席工号：</td>
+<td><input id="pc_user_num" type="text" style='width:60px;'></td>
+
+<td style="font-weight:700;" >主叫号码：</td>
+<td>
+<select id="pc_caller"  onchange="set_caller_cookie()"></select>
+</td>
+
+<td ><a class="easyui-linkbutton"  href="javascript:void(0)" iconCls="icon-phone"  id="pc_consultinner_btn" >呼叫</a></td>
+</tr>
+</table>
+
+<div id="free_user_table"></div>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	//主叫号码
+	var _callers= new Array();
+	try
+	{
+		_callers =  wincall.fn_get_caller();
+	}
+	catch(e){}
+	if(_callers.length == 0)
+	{
+		<{if $outcaller_type==1}>
+		$("#pc_caller").append('<option value="<{$outcaller_num}>" ><{$outcaller_num}></option>');
+		<{else}>
+		$("#pc_caller").append('<option value="" >默认主叫</option>');
+		<{/if}>
+	}
+	else
+	{
+		var cookie_caller = get_cookie('est_caller');
+		for(var i=0;i<_callers.length;i++)//添加外呼主叫号码
+		{
+			var _checked = '';
+			<{if $outcaller_type==1}>
+			if(_callers[i] == '<{$outcaller_num}>')
+			{
+				_checked="selected";
+			}
+			<{else}>
+			if( cookie_caller && cookie_caller == _callers[i] )
+			{
+				_checked="selected";
+			}
+			<{/if}>
+			$("#pc_caller").append('<option value="'+_callers[i]+'"  '+_checked+' >'+_callers[i]+'</option>');
+		}
+	}
+
+	//空闲坐席列表
+	$('#free_user_table').datagrid({
+		title:'空闲坐席列表',
+		height:290,
+		nowrap: true,
+		striped: true,
+		fitColumns:true,
+		rownumbers:true,
+		singleSelect:true,
+		sortName:'user_id',
+		sortOrder:'desc',
+		idField:'user_id',
+		url:'index.php?c=user&m=get_free_users',
+		columns:[[
+		{title:'user_id',field:'user_id',hidden:true},
+		{title:'工号',field:'user_num',width:60,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			return value+"&nbsp;&nbsp;<a href='javascript:;' onclick=_consultinner_by_user_id('"+rowData.user_id+"'); title='呼叫'><img src='./image/phone.png' border='0' height='16' width='16' align='absmiddle' /></a>";
+		}},
+		{title:'姓名',field:'user_name',width:60},
+		{title:'分机号',field:'pho_num',width:60},
+		{title:'部门',field:'dept_name',width:60}
+		]]
+	});
+
+});
+
+$('#pc_consultinner_btn').click(function(){
+	var user_num = $('#pc_user_num').val();
+	if(user_num.length != 0)
+	{
+		_consultinner_by_user_num(user_num);
+	}
+	else
+	{
+		$.messager.alert('错误','<br>请填写坐席工号','error');
+	}
+});
+
+function _consultinner_by_user_num(user_num)
+{
+	$.ajax({
+			type:'POST',
+			url: 'index.php?c=user&m=get_user_id_by_num',
+			data: {'user_num':user_num},
+			dataType: 'json',
+			success: function(responce){
+				if(responce['error'] === 0)
+				{
+					var user_id = responce['content'];
+					_consultinner_by_user_id(user_id);
+				}
+				else
+				{
+					$.messager.alert('错误','<br>该坐席不存在或已转忙碌','error');
+				}
+			}
+		});
+}
+
+function _consultinner_by_user_id(user_id)
+{
+	var _caller = $('#pc_caller').val();
+	wincall.fn_consultinner(user_id,_caller);
+}
+</script>

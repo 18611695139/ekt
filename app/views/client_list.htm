@@ -1,0 +1,138 @@
+<{include file="pageheader.htm"}>
+<{if $statistics_type==''}>
+<div id='_search_panel' class='form-div'></div>
+<{/if}>
+<div id="client_list"></div>
+<div id="datagrid_client"></div>
+<div id="export_client"></div>
+<div id="client_data_deal"></div>
+
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script src="./jssrc/viewjs/client_list.js?1.2" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	<{if $statistics_type ==''}>
+	search_panel_info();
+	<{/if}>
+
+	//设置列表
+	$('#client_list').datagrid({
+		title:"客户列表",
+		height:get_list_height_fit_window('_search_panel'),
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		autoRowHeight:false,
+		rownumbers:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		sortName:'cle_id',
+		sortOrder:'desc',//降序排列
+		idField:'cle_id',
+		url:"index.php?c=client&m=list_client_query",
+		queryParams:{<{if $statistics_type==''}>"visit_type":"<{$visit_type|default:''}>"<{else}>"user_id":"<{$user_id|default:''}>","cle_stage_change_time_start":"<{$cle_stage_change_time_start|default:''}>","cle_stage_change_time_end":"<{$cle_stage_change_time_end|default:''}>","statistics_type":"<{$statistics_type|default:''}>","cle_stage":"<{$cle_stage|default:''}>","dept_id":"<{$dept_id|default:''}>"<{/if}>},
+		frozenColumns:[[
+		{field:'ck',checkbox:true},
+		{title:'操作',field:'opter_txt',width:50,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			return "<a href='###' onclick=link_client_accept('"+rowData.cle_id+"','link'); title='业务受理'>【受理】</a>";
+		}}
+		]],
+		columns:[[
+		<{section name=key loop=$cle_display_field}>
+		{title: "<{$cle_display_field[key].name}>" ,field: '<{$cle_display_field[key].fields}>' ,align:"CENTER",width:"<{$cle_display_field[key].field_list_width}>",sortable:true,formatter:function(value,rowData,rowIndex){
+			<{if $cle_display_field[key].fields == 'cle_name'  }>
+			return "<span><a href='###' onclick=link_client_accept('"+rowData.cle_id+"','link'); class='underline' title='业务受理'>"+value+"</a></span>";
+			<{elseif $cle_display_field[key].fields == 'cle_phone' || $cle_display_field[key].fields == 'con_mobile' ||$cle_display_field[key].fields == 'cle_phone2'||$cle_display_field[key].fields == 'cle_phone3'}>
+			if(value)
+			{
+				var show_real = value;
+				<{if !$power_phone_view}>
+				show_real = hidden_part_number(value);
+				<{/if}>
+				return "<a href='###' onclick=link_client_accept('"+rowData.cle_id+"','dial','"+value+"'); class='underline' title='业务受理'>"+show_real+"</a>&nbsp;&nbsp;<a href='javascript:;' onclick=link_client_accept('"+rowData.cle_id+"','dial','"+value+"'); title='呼叫'><img src='./image/phone.png' /></a><{if $power_sendsms}>&nbsp;&nbsp;<a href='javascript:;' onclick='sys_send_sms(\""+value+"\")' title='发短信'><img src='./image/message.png'  /></a><{/if}>";
+			}
+			<{elseif $cle_display_field[key].fields == "cle_address"}>
+			return "<span class='show-tooltip'>"+value+"</span>";
+			<{elseif $cle_display_field[key].fields == "cle_remark"}>
+			return "<span class='show-tooltip'>"+value+"</span>";
+			<{else}>
+			return value;
+			<{/if}>
+		}},
+		<{/section}>
+		{title:"cle_id" ,field:"cle_id",hidden:true}
+		]],
+		onLoadSuccess: function(){
+			$('#client_list').datagrid('clearSelections');
+			$('#client_list').datagrid('clearChecked');
+			$('.show-tooltip').tooltip({
+				trackMouse:true,
+				position:'right',
+				onShow: function(){
+					var content = '<div style="width:180px;">'+$(this).text().replace(/\n/g, "<br>")+'</div>';
+					$(this).tooltip('update',content);
+				}
+			});
+		},
+		toolbar:[
+		<{if $power_client_add}>
+		{
+			iconCls:'icon-add',
+			text:'添加客户',
+			handler:function(){
+				window.parent.addTab('添加客户',"index.php?c=client&m=new_client","menu_icon");
+			}
+		},'-',
+		<{/if}>
+		<{if $power_client_delete}>
+		{
+			iconCls:'icon-del',
+			text:'删除客户',
+			handler:function(){
+				remove_client();
+			}
+		} ,'-',
+		<{/if}>
+		<{if $power_client_release}>
+		{
+			iconCls:'icon-release',
+			text:"<span title = '只能放弃属于自己的数据' >选中放弃</span>",
+			handler:function(){
+				if_can_release();
+			}
+		},"-",
+		<{/if}>
+		<{if $power_client_export}>
+		{
+			iconCls:'icon-up',
+			text:'导出CSV',
+			handler:function(){
+				output_client('csv');
+			}
+		},'-',
+        {
+           iconCls:'icon-up',
+           text:'导出excel',
+           handler:function(){
+               output_client('excel');
+           }
+        },'-',
+		<{/if}>
+		{
+			iconCls:'icon-seting',
+			text:'列表设置',
+			handler:function(){
+				datagrid_client_window();
+			}
+		},'-'
+		]
+	});
+	var pager = $('#client_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+var delete_client_relative = <{$delete_client_relative|default:'0'}>;
+</script>
+<{include file="pagefooter.htm"}>

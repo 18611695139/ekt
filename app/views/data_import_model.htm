@@ -1,0 +1,22 @@
+<{include file="pageheader.htm"}>
+<div style="overflow: auto;height:80px;" class="list-div">
+     <table  style="width:<{$table_width}>px;"   >
+      <thead>
+         <tr>
+          <{foreach from=$table_head item=head key=tkey}>
+            <th style="width:30px;"><{$head}></th>
+          <{/foreach}>
+         </tr>
+     </thead>
+       <tbody >
+        
+         <tr id="model_tr">  
+          <{foreach from=$model_detail item=detail key=dkey}>
+             <td align="center"><{$detail.name}></td>   
+          <{/foreach}>    
+         </tr>
+       </tbody>
+    </table>
+    <input type="hidden" id="OK_model_id" name="OK_model_id"  value="<{$model_id}>" />
+</div>
+<{include file="pagefooter.htm"}>

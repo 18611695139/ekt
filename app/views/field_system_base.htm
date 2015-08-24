@@ -1,0 +1,69 @@
+<{include file="pageheader.htm"}>
+<table cellspacing="0" cellpadding="4" align='center' style="width:100%;border-collapse: collapse; border: 0px solid gray;" >
+	<{foreach from=$field_info item=val key=ke name=list_Name}>
+	<{if $smarty.foreach.list_Name.index%2 == 0 }>
+    <tr align="center">
+    <{/if}>
+	<{if $val.fields == 'cle_phone'||$val.fields == 'cle_phone2'||$val.fields == 'cle_phone3'||$val.fields == 'con_mobile'}>
+		<td style="text-align:right;width:15%"><input type="checkbox" id="<{$val.fields}>ck" <{if $val.state==1}>checked<{/if}> <{if $val.is_disabed==1}>disabled<{/if}> /></td>
+		<td style="text-align:left;">
+            <div class="input-append">
+                 <input type="text" id="<{$val.fields}>" value="<{$val.name}>" disabled/>
+                 <span class="add-on"><i class="glyphicon glyphicon-earphone"></i></span>
+            </div>
+		</td>
+	<{else}>
+		<td style="text-align:right;width:15%"><input type="checkbox" id="<{$val.fields}>ck" <{if $val.state==1}>checked<{/if}> <{if $val.is_disabed==1}>disabled<{/if}> /></td>
+		<td style="text-align:left;"><input type="text" id="<{$val.fields}>" maxlength="7" value="<{$val.name}>" disabled /></td>
+	<{/if}>
+    <{if $smarty.foreach.list_Name.index%2 != 0 }>
+    </tr>
+    <{/if}>
+	<{/foreach}>
+</table>
+<div style="text-align:center;padding-top:30px;padding-bottom:30px;">
+	<span style='color:red;' id='_base_field_<{$field_type}>'></span>
+	<button type="button" class="btn btn-primary" onclick="save_base_flied('<{$field_type}>')">
+    	<span class="glyphicon glyphicon-saved"></span> 保存配置
+	</button>
+</div>
+<script type="text/javascript" language="javascript">
+/*保存*/
+function save_base_flied(field_type)
+{
+	var _if_use = {};
+	<{foreach from=$field_info item=val key=ke}>
+	if($("#<{$val.fields}>ck").attr('checked')=='checked')
+	{
+		_if_use.<{$val.fields}> = 1;
+	}
+	else
+	{
+		_if_use.<{$val.fields}> = 0;
+	}
+	<{/foreach}>
+	$.ajax({
+		type:'POST',
+		url: "index.php?c=field_confirm&m=save_base_field_state",
+		data:{'_if_use':_if_use,'field_type':field_type},
+		dataType:"json",
+		success: function(responce){
+			if(responce['error']==0){
+				_show_base_msg(field_type,"<img src='./themes/default/icons/ok.png' />&nbsp;配置成功");
+			}else{
+				$.messager.alert("错误","<br>操作失败！",'error');
+			}
+		}
+	});
+}
+
+//显示基本字段编辑信息
+function _show_base_msg(field_type,msg)
+{
+	$("#_base_field_"+field_type).html(msg);
+	setTimeout(function(){
+		$("#_base_field_"+field_type).html("");
+	},2000);
+}
+</script>
+<{include file="pagefooter.htm"}>

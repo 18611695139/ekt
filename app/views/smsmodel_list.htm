@@ -1,0 +1,167 @@
+<{include file="pageheader.htm"}>
+<div class="form-div">
+  <form action="javascript:quick_search()" name="searchForm">
+   <table><tbody><tr>
+	<td>主题：</td><td><input type="text" name="search_theme" id="search_theme" size="15" class="easyui-searchbox" searcher="quick_search" prompt="请输入模板主题" /></td></tr></tbody></table>
+  </form>
+</div>
+<table id="smsmodel_list_table"></table> <!-- 模板列表  -->
+<div id="smsmodel_add_panel"></div>
+<{include file="pagefooter.htm"}> 
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	//设置列表
+	$('#smsmodel_list_table').datagrid({
+		title:'短信模板列表',
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		rownumbers:true,
+		fitColumns:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		sortName:'create_time',
+		sortOrder:'desc',//降序排列
+		idField:'mod_id',
+		url:'index.php?c=sms&m=list_smsmodel_query',
+		queryParams:{"condition":"<{$condition|default:''}>"},
+		frozenColumns:[[
+		{field:'ck',checkbox:true},
+		{title:'mod_id',field:'mod_id',hidden:true},
+		{title:'主题',field:'theme',width:200,sortable:true}
+		]],
+		columns:[[
+		{title:'内容',field:'content',width:300,align:"left"},
+		{title:'创建时间',field:'create_time',width:130,sortable:true, align:"left"},
+		{title:'操作',field:'opter_txt',width:80,sortable:true,formatter:function(value,rowData,rowIndex){
+			return "<span><a href='javascript:;' onclick=edit_model('"+rowData.mod_id+"') title='编辑'><img src='./image/icon_edit.gif' border='0' height='16' width='16' align='absmiddle'/></a>&nbsp;<a href='javascript:;' onclick=remove_model('"+rowData.mod_id+"') title='删除'><img src='./image/icon_drop.gif' border='0' height='16' width='16' align='absmiddle'/></a></span>";
+		}}
+		]],
+		onLoadSuccess: function(){
+			$('#smsmodel_list_table').datagrid('clearSelections');
+			$('#smsmodel_list_table').datagrid('clearChecked');
+		},
+		toolbar:[
+		{
+			iconCls:'icon-add',
+			text:'添加模板',
+			handler:function(){
+				$('#smsmodel_add_panel').window({
+					href:"index.php?c=sms&m=add_smsmodel",
+					top:100,
+					width:500,
+					title:"添加模板",
+					collapsible:false,
+					minimizable:false,
+					maximizable:false,
+					resizable:false,
+					cache:false
+				});
+			}
+		},
+		{
+			iconCls:'icon-del',
+			text:'删除模板',
+			handler:function(){
+				var ids = getSelections();
+				if(ids == '')
+				{
+					$.messager.alert('提示','<br>请选中要删除的数据！','error');
+					return;
+				}
+				$.messager.confirm('提示', '<br>您确定要删除这些数据么？', function(r){
+					if(r){
+						$.ajax({
+							type:"POST",
+							url:'index.php?c=sms&m=remove_smsmodel',
+							data:{'mod_id':ids},
+							dataType:'json',
+							success:function (responce){
+								if(responce['error']=='0'){
+									$('#smsmodel_list_table').datagrid('reload');
+								}
+								else
+								{
+									$.messager.alert('执行错误',responce['message'],'error');
+								}
+							}
+						});
+					}
+					else
+					{
+						return false;
+					}
+				});
+			}
+		}],
+		onDblClickRow:function (rowIndex, rowData)  //双击 编辑
+		{
+			edit_model(rowData.mod_id);
+		}
+	});
+	var pager = $('#smsmodel_list_table').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+
+});
+function getSelections(){
+	var ids = [];
+	var rows = $('#smsmodel_list_table').datagrid('getChecked');
+	for(var i=0;i<rows.length;i++){
+		ids.push(rows[i].mod_id);
+	}
+	return ids.join(',');
+}
+//编辑短信模板信息
+function edit_model(mod_id){
+	$('#smsmodel_add_panel').window({
+		href:"index.php?c=sms&m=edit_smsmodel&mod_id="+mod_id,
+        top:100,
+		width:500,
+		title:"编辑模板",
+		collapsible:false,
+		minimizable:false,
+		maximizable:false,
+		resizable:false,
+		cache:false
+	});
+}
+
+//单条删除模板信息
+function remove_model(mod_id){
+	$.messager.confirm('提示', '<br>您确定要删除这条短信模板数据么？', function(r){
+		if(r){
+			$.ajax({
+				type:'POST',
+				url: "index.php?c=sms&m=remove_smsmodel",
+				data: {"mod_id":mod_id},
+				dataType: "json",
+				success: function(responce){
+					if(responce["error"] == 0)
+					{
+						$('#smsmodel_list_table').datagrid('reload');
+					}
+					else
+					{
+						$.messager.alert('错误',responce["message"],'error');
+					}
+				}
+			});
+		}else{
+			return false;
+		}
+	});
+}
+/**
+* 关键字搜索
+*/
+function quick_search(value,name)
+{
+	var stu_search_theme = value;
+
+	var queryParams = $('#smsmodel_list_table').datagrid('options').queryParams;
+	queryParams.search_theme = stu_search_theme;
+	$('#smsmodel_list_table').datagrid('reload');
+}
+</script>

@@ -1,0 +1,180 @@
+<{include file="pageheader.htm"}>
+<div class="main-div"align="center" style="height:30px;">
+<div style='padding-top:5px;'>
+ <span style='font-weight:bold;'>可分配的数据</span>有 <span id='total_num' style='color:red;'><{$batch_total}></span>&nbsp;条。
+  <input type="hidden" id='current' name='current' size="10" value="0" class='easyui-numberbox' disabled>
+ </div>
+</div>
+
+<div id='dept_user_list'> </div>
+<div style="text-align:right;padding:5px;">
+<a class="easyui-linkbutton" iconCls="icon-ok" href="javascript:void(0)"  id="sure_batch_btn" onclick="sure_deployment_misscall()" >确定分配</a><img id="loading" src="./image/loading.gif" style="display:none;">
+</div>
+<div id="batch_chart"> </div>
+<{include file="pagefooter.htm"}>
+<script language="JavaScript" type="text/javascript">
+var current = $('#total_num').html();
+current = parseInt(current);
+
+$(document).ready(function(){
+	$('#sure_batch_btn').linkbutton({'disabled':true});
+	//分配到部门及人
+	$('#dept_user_list').treegrid({
+		title:'未接来电 - 批量分配',
+		nowrap: true,
+		striped: true,
+		collapsible:true,
+		collapsible:false,
+		rownumbers:true,
+		fitColumns:true,
+		checkOnSelect:false,
+		url:'index.php?c=missed_calls&m=deployment_batch_list',
+		idField:'id',
+		treeField:'text',
+		frozenColumns:[[
+		{title:'部门 | 人员',field:'text',width:250,formatter:function(value,rowData,rowIndex){
+			return "<span style='color:red'>"+value+"</span>";
+		}}
+		]],
+		columns:[[
+		{title:'未处理数据',field:'data_left',width:150},
+		{title:'已有数据',field:'data_total',width:150},
+		{title:'分配数量',field:'id',width:150,formatter:function(value,rowData,rowIndex){
+			if(rowData.pid == 0){
+				return null;
+			}
+			else if(rowData.attributes == 'last'){
+				value = value.split('user');
+				return "<input type='text' size='10' id='"+rowData.pid+"?"+value[1]+"' user='"+rowData.pid+"?"+value[1]+"' value='0' onkeyup='set_total_num()' >";
+			}
+			else{
+				return "<input type='text' size='10' id='"+value+"?0' user='"+value+"?0' value='0' onkeyup='set_total_num()'>";
+			}
+		}}
+		]],
+		toolbar:[
+		{
+			iconCls:'icon-chart',
+			text:"平均分配",
+			handler:function(){
+				$('#batch_chart').window({
+					title: '平均分配',
+					iconCls: "icon-chart",
+					top:150,
+					width:280,
+					closed: false,
+					collapsible:false,
+					minimizable:false,
+					maximizable:false,
+					cache:false,
+					content:"<div style='padding-left:40px;padding-top:10px;padding-bottom:10px;background:#fff;border:1px solid #ccc;'><b> 分配条数: </b><input id='batch_chart_num' name='batch_chart_num' size='8' value=''><input type='button' class='button' value='确定' onclick='missing_batch_chart()'></div>"
+				});
+			}
+		},'-'
+		]
+	});
+});
+
+//平均分配
+function missing_batch_chart()
+{
+	var chart_num = $('#batch_chart_num').val();
+	chart_num = parseInt(chart_num);
+	if(chart_num > current)
+	{
+		$.messager.alert('提示','<br>平均分配的未接来电总数：'+chart_num+'条<br>大于本次可分配数量：'+current+'条','info');
+		return false;
+	}
+	var datch_total = 0; //要分配的部门或员工总数
+	$('input[type=text]').each(function(){
+		datch_total += 1;
+	});
+	if(datch_total==0)
+	{
+		$.messager.alert('错误','当前列表没有可分配数据的部门与坐席');
+		return false;
+	}
+	var num = parseInt(chart_num/datch_total);
+	$('input[type=text]').each(function(){
+		$(this).val(num);
+	});
+	set_total_num();
+	//关闭
+	$('#batch_chart').window('close');
+}
+
+//添加总条数
+function set_total_num()
+{
+	var total_num = $('#total_num').html();
+	var assign_total = 0;
+	$('input[type=text]').each(function(){
+		var num = parseInt($(this).val());
+		if(isNaN(num))
+		{
+			num = 0;
+		}
+		$(this).val(num);
+		assign_total += num;
+	});
+	if(assign_total >total_num)
+	{
+		$.messager.alert("错误","本次分配数量大于待分配数");
+		$('#sure_batch_btn').linkbutton({'disabled':true});
+		return;
+	}
+	$('#sure_batch_btn').linkbutton({'disabled':false});
+	$("#current").val(assign_total);
+}
+
+//确认分配
+function sure_deployment_misscall()
+{
+	$('#sure_batch_btn').linkbutton({'disabled':true});
+	$("#loading").show();
+
+	var assign_total = 0;
+	var assign_str = "";//保存分配的数据 以-和#分隔。
+	$('input[type=text]').each(function(){
+		var num = parseInt($(this).val());
+		if(num >0){
+			var user = $(this).attr('user');
+			assign_str += user+"-"+num+"#";
+		}
+		else{
+			num = 0;
+		}
+		assign_total += num;
+	});
+	if(assign_total == 0 ){
+		$.messager.alert('错误','分配数据为0');
+		return false;
+	}
+	if(assign_total > current){
+		$.messager.alert('提示','<br>坐席分配的未接来电总数：'+assign_total+'条<br>大于本次可分配数量：'+current+'条','info');
+		return false;
+	}
+
+	//实际分配
+	$.ajax({
+		type:'POST',
+		url: "index.php?c=missed_calls&m=missed_calls_batch_deployment",
+		data: {'search_condition':'<{$search_condition}>',"assign_str":assign_str,"total_limit":assign_total},
+		dataType: "json",
+		success: function(responce){
+			$("#loading").hide();
+			if(responce['error']=='0')
+			{
+				var new_batch_total = current - responce['content'];
+				$.messager.alert("提示","分配成功，本次分配了"+responce['content']+"条数据","info");
+				$('#total_num').html(new_batch_total);
+				$("#dept_user_list").treegrid('reload');
+			}
+			else
+			{
+				$.messager.alert('提示',responce['message'],'error');
+			}
+		}
+	});
+}
+</script>

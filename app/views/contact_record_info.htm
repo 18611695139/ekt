@@ -1,0 +1,189 @@
+<form style="padding:10px;" class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label" for="con_rec_content">联系内容</label>
+		<div class="controls">
+			<textarea id="con_rec_content" name="con_rec_content" cols="20" rows="3" style="width:60%;"></textarea>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="con_rec_next_time">下次联系时间</label>
+		<div class="controls">
+			<div class="input-append">
+            	<input type="text" name="con_rec_next_time" id="con_rec_next_time" value="" style="width:150px;" readonly>
+            	<button type="button" role="date" class="btn" onclick="WdatePicker({el: 'con_rec_next_time'})">
+                	<span class="glyphicon glyphicon-calendar"></span>
+            	</button>
+        	</div>
+        	<a href="###" id="remind_button" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remind'" title="提醒" onclick="create_remind();" >创建提醒</a>
+		</div>
+	</div>
+	<div class="control-group" id="tr_rem_time" style="display:none;">
+		<label class="control-label" for="con_rec_content">提醒时间(时/分)</label>
+		<div class="controls">
+			<{html_select_time use_24_hours=true display_seconds=false minute_interval=10 prefix='rmd_' hour_extra="title='时'" minute_extra="title='分'"}><span style="color: red;">提示：下次联系时间为提醒日期</span>
+		</div>
+	</div>
+	<div class="control-group" id="tr_rmd_sendsms" style="display:none;">
+		<label class="control-label" for="rmd_sendsms">短信提示</label>
+		<div class="controls">
+			<input type="checkbox" name='rmd_sendsms' id='rmd_sendsms' value="1" <{if $user_sms_phone =='' }> disabled <{else}> CHECKED <{/if}> /> <{$user_sms_phone}> <span style="color: red;">提示：<{if $user_sms_phone}>短信将发送至该号码<{else}>短信号码可在坐席个人设置中修改<{/if}></span>
+		</div>
+	</div>
+	<div class="control-group" id="tr_rmd_remark" style="display:none;">
+		<label class="control-label" for="rmd_remark">提醒内容</label>
+		<div class="controls">
+			<textarea id="rmd_remark" name="rmd_remark" cols="20" rows="3" style="width:60%;"></textarea>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<{if $power_client_update&&!$order_id}>
+			<input type="checkbox" id="save_client_contact_data" name="save_client_contact_data" title="同步保存客户数据" /> 同步保存客户信息
+			<{/if}>
+			<button type="button" class="btn btn-small btn-primary" id="submit_contact" onclick="insert_contact_record();">
+            	<span class="glyphicon glyphicon-saved"></span> 保存联系记录
+        	</button>
+        	<span style='color:red;' id='_remind_msg'>&nbsp;</span>
+		</div>
+	</div>
+</form>
+
+<script language="JavaScript" type="text/javascript">
+$('select[name="rmd_Hour"]').css('width','80px');
+$('select[name="rmd_Minute"]').css('width','80px');
+//新建联系记录
+function insert_contact_record()
+{
+	if( "<{$cle_id|default:'0'}>" == "0" && "<{$order_id|default:'0'}>" == "0")
+	{
+		$.messager.alert("提示","<br>缺少参数！","info");
+		return false;
+	}
+
+	var contact_data = {};
+	<{if $cle_id}>
+	contact_data.cle_id     = '<{$cle_id}>';
+	<{/if}>
+	<{if $order_id}>
+	contact_data.order_id     = '<{$order_id}>';
+	<{/if}>
+	contact_data.rec_callid = rec_callid;
+	contact_data.con_rec_content      = $("#con_rec_content").val();//联系内容
+	contact_data.con_rec_next_time    = $("#con_rec_next_time").val();//下次联系时间
+	if(contact_data.con_rec_content=='' && contact_data.con_rec_next_time=='')
+	{
+		return false;
+	}
+
+	//创建提醒
+	var button_text = $("#remind_button").linkbutton("options").text;
+	if( button_text == '关闭提醒' )
+	{
+		contact_data.create_reamind = 1;
+
+		//类型  0我的提醒  1客户提醒  2订单提醒
+		contact_data.rmd_type       = "<{$rmd_type|default:'0'}>";
+		<{if $rmd_type == 1 }>
+		contact_data.rmd_param_int  = "<{$cle_id|default:'0'}>";
+		contact_data.rmd_param_char = "客户："+$("#cle_name").val();
+		<{else if $rmd_type ==2 }>
+		contact_data.rmd_param_int  = "<{$order_id|default:'0'}>";
+		contact_data.rmd_param_char = "订单："+$("#order_num").val();
+		<{/if}>
+
+		if( contact_data.con_rec_next_time == "" )
+		{
+			contact_data.con_rec_next_time = "<{$date}>";
+		}
+		contact_data.rmd_time	     = contact_data.con_rec_next_time+" "+$('select[name="rmd_Hour"]').val()+":"+$('select[name="rmd_Minute"]').val();//提醒时间
+		contact_data.rmd_sendsms     = $("#rmd_sendsms").attr('checked')=='checked'?1:0;//是否短信提醒
+		contact_data.user_sms_phone  = "<{$user_sms_phone|default:''}>";//短信提醒号码
+		contact_data.rmd_remark      = $("#rmd_remark").val();//提醒内容
+	}
+
+	$.ajax({
+		type:'POST',
+		url: "index.php?c=contact_record&m=insert_contact_record",
+		data: contact_data,
+		dataType: "json",
+		success: function(responce){
+			if(responce["error"] == 0)
+			{
+				$('#contact_record').datagrid('reload');
+				$('#con_rec_content').val('');
+				$("#rmd_remark").val('');
+				if( button_text == '关闭提醒' )
+				{
+					_show_contact_msg("<img src='./themes/default/icons/ok.png' />&nbsp;联系记录、提醒创建成功");
+					create_remind();
+				}
+				else
+				_show_contact_msg("<img src='./themes/default/icons/ok.png' />&nbsp;联系记录创建成功");
+				<{if $power_client_update&&!$order_id}>
+				if($("#save_client_contact_data").attr("checked") == "checked")
+				{
+					//数据比较，得到修改过的数据
+					var current_data = get_current_value();
+					var changed_data = data_comparison(original_data,current_data);
+					changed_data     = json2url(changed_data);
+					if( changed_data != "" )
+					{
+						save_client();
+					}
+				}
+				<{/if}>
+			}
+			else
+			{
+				$.messager.alert('错误','执行错误','error');
+			}
+		}
+	});
+}
+
+//创建提醒
+function create_remind()
+{
+	var button_text = $("#remind_button").linkbutton("options").text;
+	var remind_date = $("#con_rec_next_time").val();
+	//创建提醒
+	if( button_text == "创建提醒" )
+	{
+		//提醒时间
+		$("#tr_rem_time").css("display",'');
+		//短信提醒
+		$("#tr_rmd_sendsms").css("display",'');
+		//提醒内容
+		$("#tr_rmd_remark").css("display",'');
+
+		if( remind_date == "")
+		{
+			$("#con_rec_next_time").val("<{$date}>");
+		}
+		$("#remind_button").linkbutton({text:"关闭提醒"});
+	}
+	else
+	{
+		//提醒时间
+		$("#tr_rem_time").css("display",'none');
+		//短信提醒
+		$("#tr_rmd_sendsms").css("display",'none');
+		//提醒内容
+		$("#tr_rmd_remark").css("display",'none');
+
+		if( remind_date == "<{$date|default:''}>")
+		{
+			$("#con_rec_next_time").val("");
+		}
+		$("#remind_button").linkbutton({text:"创建提醒"});
+	}
+}
+//显示消息
+function _show_contact_msg(msg)
+{
+	$("#_remind_msg").html(msg);
+	setTimeout(function(){
+		$("#_remind_msg").html("");
+	},3000);
+}
+</script>

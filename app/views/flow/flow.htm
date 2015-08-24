@@ -1,0 +1,567 @@
+<{include file="pageheader.htm"}>
+    <link href="themes/chosen/chosen.min.css" rel="stylesheet" type="text/css">
+    <script src="themes/chosen/chosen.jquery.min.js" type="text/javascript"></script>
+    <script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+    <style>
+        .bold {
+            font-weight: bold;
+            color: #3A87AD;
+        }
+    </style>
+  
+    <div class="container-fluid">
+      <div class="row-fluid">
+      	<div class="span12">
+             <form class="form-horizontal" id='actionForm' action="<{$opter_txt}>" method="post">
+              <input type="hidden" id="flow_id" name="flow_id" value="<{$flow_info.flow_id|default:0}>">
+              <input type="hidden" id="node_info" name="node_info" value="">
+              <input type="hidden" id="addNodeId" name="addNodeId" value="">
+              <input type="hidden" id="delNodeId" name="delNodeId" value="">
+              <table class="table table-bordered table-hover table-condensed"><tbody>
+                <tr>
+					<td class="span6">
+						<div style="margin-bottom: 0;" class="control-group">
+					   		<label class="control-label" for="flow_name">流程名称<span style='color:red;'>*</span></label>                         
+					  		<div class="controls">                             
+					   			 <input type="text" id="flow_name" name="flow_name" value='<{$flow_info.flow_name}>' placeholder="流程名称"/>                      
+					   		</div>                     
+					   	</div>
+					 </td>                                
+					 <td class="span6">
+					    <div style="margin-bottom: 0;" class="control-group">
+					      <label class="control-label" for="flow_status0">流程状态</label>
+					      <div class="controls">                             
+					      	<label class="checkbox inline">
+                            <input name="flow_status" id="flow_status0" type="radio" value="0" />未启用
+                            </label>
+                            <label class="checkbox inline">
+                            <input name="flow_status" id="flow_status1" type="radio" value="1" />启用
+                            </label>
+                             <label class="checkbox inline">
+                            <input name="flow_status" id="flow_status2" type="radio" value="2" />过期
+                            </label>
+                             <label class="checkbox inline">
+                            <input name="flow_status" id="flow_status3" type="radio" value="3" />禁用
+                            </label> 
+					      </div>                     
+					     </div>
+					 </td> 
+				</tr>
+				<tr>
+					<td class='span6'>
+						<div style="margin-bottom: 0;" class="control-group">
+					   		<label class="control-label" for="valid_from">有效开始时间</label>
+					  		<div class="controls">                             
+					   			<div class="input-append">
+                                	<input type="text" name="valid_from" id="valid_from" value="<{$flow_info.valid_from}>" readonly />
+                               		<button type="button" role="date" class="btn" onclick="new WdatePicker({el: 'valid_from',dateFmt:'yyyy-MM-dd HH:mm:ss' })">
+                                		<span class="glyphicon glyphicon-calendar"></span>
+                                	</button>
+                            	</div>                      
+					   		</div>                     
+					   	</div>
+					</td>
+					<td class='span6'>
+						<div style="margin-bottom: 0;" class="control-group">
+					   		<label class="control-label" for="valid_to">有效结束时间</label>
+					  		<div class="controls">                             
+					   			<div class="input-append">
+                                	<input type="text" name="valid_to" id="valid_to" value="<{$flow_info.valid_to}>" readonly />
+                               		<button type="button" role="date" class="btn" onclick="new WdatePicker({el: 'valid_to',dateFmt:'yyyy-MM-dd HH:mm:ss' })">
+                                		<span class="glyphicon glyphicon-calendar"></span>
+                                	</button>
+                            	</div>                      
+					   		</div>                     
+					   	</div>
+					</td>
+				</tr>
+				<tr>
+          			<td colspan="2">
+          	 			<div style="margin-bottom: 0;" class="control-group">
+                   			<label class="control-label" for="flow_description">流程说明</label>
+                   			<div class="controls">
+                     			<textarea rows="3" cols="20" class="span8" name="flow_description" id="flow_description"><{$flow_info.flow_description}></textarea>
+                    		</div>
+             			 </div>
+          			</td>
+          		</tr>
+				</tbody></table>                     
+             </form>
+          </div>
+        </div>
+    </div>
+ 
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span6">
+                <table id="nodes" class="table table-bordered table-hover table-condensed">
+                    <tr>
+                        <th class="span1">#</th>
+                        <th class="span3">节点名称</th>
+                        <th class="span4">动作</th>
+                        <th class="span2">参与人</th>
+                        <th class="span2">操作</th>
+                    </tr>
+                </table>
+                <button id="btn-add-node" type="button" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-plus"></span> 添加节点
+                </button>
+                 <button id="btn-save-flow" type="button" class="btn btn-primary" >
+                    <span class="glyphicon glyphicon-saved"></span> 保存流程信息
+                </button>
+            </div>
+            <div class="span6">
+                <form class="form-horizontal well well-small">
+                    <div class="control-group">
+                        <label class="control-label" for="node_name">节点名称<span style='color:red;'>*</span></label>
+                        <div class="controls">
+                            <input type="text" id="node_name" placeholder="节点名称">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="node_form">操作表单<span style='color:red;'>*</span></label>
+                        <div class="controls">
+                            <select id="node_form" data-placeholder="请选择一个表单">
+                            <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="participant_type">参与人类型</label>
+                        <div class="controls">
+                            <select id="participant_type" data-placeholder="请选择参与人类型">
+                                <option value="1">员工</option>
+                                <option value="2">部门</option>
+                                <option value="3">角色</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="node_participant">参与人<span style='color:red;'>*</span></label>
+                        <div class="controls">
+                            <select id="node_participant" multiple data-placeholder="请选择参与人">
+                            </select>
+                        </div>
+                    </div>
+                     <div class="control-group">
+                        <label class="control-label" for="node_use_time">过期时间</label>
+                        <div class="controls">
+                           <input type="text" id="node_use_time" class='span2' placeholder="过期时间"> 小时（未在该时间内完成则属于超时）
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">动作<span style='color:red;'>*</span></label>
+                        <div class="controls">
+                            <table id='action' class="table table-bordered table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        <td colspan="2">
+                                            <button id="btn-add-move" type="button" class="btn btn-primary btn-small">
+                                                <span class="glyphicon glyphicon-plus"></span> 添加动作
+                                            </button>
+                                            <button id="btn-end" type="button" class="btn btn-small">
+                                                <span class="glyphicon glyphicon-plus"></span> 结束动作
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th class="span4">名称</th>
+                                        <th class="span8">跳转</th>
+                                    </tr>
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+   <script language="JavaScript" type="text/javascript">
+   var $nodes = 1, selectedNode = null, nodeInfo={};
+   var actionOption = {},delNodeId={},addNodeId={};
+   var form_config = {
+   	no_results_text: "没有选项",
+   	placeholder_text_single: '请选择一个表单',
+   	search_contains: true,
+   	allow_single_deselect: false
+   };
+   var $node_participant = $("#node_participant");
+   var participant_config = {
+   	no_results_text: "没有选项",
+   	placeholder_text_multiple: '请选择参与人',
+   	search_contains: true,
+   	display_selected_options: false
+   };
+   var participant_type_config = {
+   	no_results_text: "没有选项",
+   	placeholder_text_multiple: '请选择参与人类型',
+   	search_contains: true,
+   	display_selected_options: false
+   };
+
+   $(document).ready(function(){
+   	$('input:radio[name="flow_status"][value="<{$flow_info.flow_status|default:0}>"]').attr("checked",true);//流程状态
+   	<{if $flow_info.node_info}>
+   	nodeInfo = eval("(" + '<{$flow_info.node_info}>' + ")");
+   	$.each(nodeInfo, function(node_id, value) {
+   		actionOption[node_id] = '<option value="'+node_id+'">'+value.node_name+'</option>';//动作跳转下拉内容
+   	});
+   	$.each(nodeInfo, function(node_id, value) {
+   		var $tr = $('<tr id="'+node_id+'">' +
+   		'<td>'+$nodes+'</td>' +
+   		'<td>'+value.node_name+'</td>' +
+   		'<td></td>' +
+   		'<td></td>' +
+   		'<td><button type="button" role="remove" class="btn btn-small btn-danger">' +
+   		'<span class="glyphicon glyphicon-trash"></span> 删除</button></td>' +
+   		'<input role="node_id" value="'+node_id+'" type="hidden" /></tr>');
+
+   		$('#nodes').append($tr);
+
+   		//点击行事件
+   		$tr.on('click', function() {
+   			$('#nodes').find('tr').removeClass('info').find('td').removeClass('bold');
+   			$(this).removeClass('info').addClass('info').find('td').addClass('bold');
+   			//当前信息
+   			selectedNode = $(this);
+   			//获取节点
+   			loadAttribute();
+   		});
+
+   		//点击删除按钮
+   		$tr.find('button[role="remove"]').on('click', function() {
+   			var node_id = $tr.find('input[role="node_id"]').val();
+   			nodeInfo[node_id] = {};
+   			$tr.remove();
+   			$('#node_name').val('');
+   			actionOption[node_id] = '';//动作跳转下拉内容
+   			$('select[name="jump[]"]').find('option[value="'+node_id+'"]').remove();
+   			//jumpOption(actionOption);
+   			$('.jump'+node_id).text('');
+   			if(addNodeId[node_id]==undefined )
+   			delNodeId[node_id] = node_id;
+   			else
+   			addNodeId[node_id] = 0;
+   		});
+   		$tr.trigger("click");
+   		$nodes++;
+   	});
+   	$('#nodes').find('tr:nth-child(2)').trigger("click");//默认选中列表第一个节点
+   	<{/if}>
+   });
+
+   //添加节点
+   $('#btn-add-node').on('click', function() {
+   	var $tr = $('<tr id="0-'+$nodes+'">' +
+   	'<td>'+$nodes+'</td>' +
+   	'<td>新增节点</td>' +
+   	'<td></td>' +
+   	'<td></td>' +
+   	'<td><button type="button" role="remove" class="btn btn-small btn-danger">' +
+   	'<span class="glyphicon glyphicon-trash"></span> 删除</button></td>' +
+   	'<input role="node_id" value="0-'+$nodes+'" type="hidden" /></tr>');
+
+   	//节点信息
+   	nodeInfo['0-'+$nodes] = {'node_id':'0-'+$nodes,'node_name':'新增节点','form_id':'','node_use_time':'','participant_type':'','node_participant':'','action':{}};
+   	//动作跳转下拉内容
+   	actionOption['0-'+$nodes] = '<option value="0-'+$nodes+'">新增节点</option>';
+   	$('select[name="jump[]"]').append('<option value="0-'+$nodes+'">新增节点</option>');
+   	$('#nodes').append($tr);
+   	addNodeId['0-'+$nodes] = '0-'+$nodes;
+   	$nodes++;
+
+   	//点击行事件
+   	$tr.on('click', function() {
+   		$('#nodes').find('tr').removeClass('info').find('td').removeClass('bold');
+   		$(this).removeClass('info').addClass('info').find('td').addClass('bold');
+   		//当前信息
+   		selectedNode = $(this);
+   		//获取节点
+   		loadAttribute();
+   	});
+
+   	//点击删除按钮
+   	$tr.find('button[role="remove"]').on('click', function() {
+   		var node_id = $tr.find('input[role="node_id"]').val();
+   		nodeInfo[node_id] = {};
+   		$tr.remove();
+   		$('#node_name').val('');
+   		actionOption[node_id] = '';//动作跳转下拉内容
+   		$('select[name="jump[]"]').find('option[value="'+node_id+'"]').remove();
+   		//jumpOption(actionOption);
+   		$('.jump'+node_id).text('');
+   		if(addNodeId[node_id]==undefined )
+   		delNodeId[node_id] = node_id;
+   		else
+   		addNodeId[node_id] = 0;
+   	});
+
+   	$tr.trigger("click");//选中新添加的节点
+   });
+
+   //节点名称
+   $('#node_name').on('keyup',function(){
+   	selectedNode.find('td:nth-child(2)').text($(this).val());
+   	var node_id = selectedNode.find('input[role="node_id"]').val();
+   	nodeInfo[node_id]['node_name'] = $(this).val();//节点相应信息修改
+   	actionOption[node_id] = '<option value="'+node_id+'">'+$(this).val()+'</option>';//动作跳转下拉内容
+   	$('select[name="jump[]"]').find('option[value="'+node_id+'"]').text($(this).val());
+   	$('.jump'+node_id).text($(this).val());
+   });
+
+   //耗时
+   $('#node_use_time').on('keyup',function(){
+   	var node_id = selectedNode.find('input[role="node_id"]').val();
+   	nodeInfo[node_id]['node_use_time'] = $(this).val();
+   });
+
+   //表单选择框样式
+   var form_info = eval("("+'<{$form_info}>'+")");
+   var form_info_del = eval("("+'<{$form_info_del}>'+")");
+   $.each(form_info, function(index, value) {
+        if (form_info_del && form_info_del.indexOf(index) > -1)  $("#node_form").append('<option value="'+index+'" disabled>'+value+'</option>');
+        else $("#node_form").append('<option value="'+index+'">'+value+'</option>');
+   });
+   $("#node_form").chosen(form_config)
+   .on('change',function(){
+   	//节点相应信息修改
+   	var node_id = selectedNode.find('input[role="node_id"]').val();
+   	nodeInfo[node_id]['form_id'] = $(this).val();
+   });
+
+   //参与人类型选择框样式
+   $("#participant_type")
+   .on('change', function() {
+   	var val = $(this).val();
+   	$node_participant.chosen('destroy');
+   	switch (val) {
+   		case '1'://员工
+   		var $users = eval("(" + '<{$users}>' + ")");
+   		$node_participant.empty();
+   		$.each($users, function(index, value) {
+   			$node_participant.append('<option value="'+index+'">'+value+'</option>');
+   		});
+   		$node_participant.chosen(participant_config);
+   		break;
+   		case '2'://部门
+   		var $departments = eval("(" + '<{$departments}>' + ")");
+   		$node_participant.empty();
+   		$.each($departments, function(index, value) {
+   			$node_participant.append('<option value="'+index+'">'+value+'</option>');
+   		});
+   		$node_participant.chosen(participant_config);
+   		break;
+   		case '3'://角色
+   		var $roles = eval("(" + '<{$roles}>' + ")");
+   		$node_participant.empty();
+   		$.each($roles, function(index, value) {
+   			$node_participant.append('<option value="'+index+'">'+value+'</option>');
+   		});
+   		$node_participant.chosen(participant_config);
+   		break;
+   	}
+   }).chosen(participant_type_config);
+
+   //参与人选择框样式
+   var $users = eval("(" + '<{$users}>' + ")");
+   $node_participant.empty();
+   $.each($users, function(index, value) {
+   	$node_participant.append('<option value="'+index+'">'+value+'</option>');
+   });
+   $node_participant.chosen(participant_config);
+
+   //参与人编辑
+   $node_participant.on('change',function(){
+   	var participant_type = $("#participant_type").val();
+   	var node_id = selectedNode.find('input[role="node_id"]').val();
+   	var node_participant = '';
+   	$node_participant.find("option:selected").each(function(){
+   		node_participant += $(this).text()+',';
+   	});
+   	selectedNode.find('td:nth-child(4)').text(node_participant);
+   	//节点信息相应修改
+   	nodeInfo[node_id]['node_participant'] = $(this).val();
+   	nodeInfo[node_id]['participant_type'] = $("#participant_type").val();
+
+   });
+
+   //添加动作
+   $('#btn-add-move').on('click', function() {
+   	var tr = $('<tr class="action-tr">'+
+   	'<td><input type="text" name="action[]" class="input-block-level"/></td>'+
+   	'<td><select name="jump[]" class="input-block-level"><option value="">--请选择--</option></select></td></tr>');
+   	$('#action').append(tr);
+   	var node_id = selectedNode.find('input[role="node_id"]').val();
+   	$.each(actionOption,function(nid,optionText){
+   		if(nid!=node_id && optionText != undefined && optionText.length != 0 )
+   		{
+   			tr.find('select[name="jump[]"]').append(optionText);
+   		}
+   	});
+   	//动作名称
+   	$('input[name="action[]"]').on('keyup',function(){
+   		actionDeal();
+   	});
+   	//动作跳转
+   	$('select[name="jump[]"]').on('change',function(){
+   		actionDeal();
+   	});
+   });
+
+   //结束动作
+   $('#btn-end').on('click',function(){
+   	var names = document.getElementsByName('action[]');
+   	for(i=1;i<names.length;i++)
+   	{
+   		if(names[i].value=='结束')
+   		{
+   			return;
+   		}
+   	}
+   	var tr = $('<tr class="action-tr">'+
+   	'<td><input type="text" name="action[]" value="结束" class="input-block-level" /></td>'+
+   	'<td><input type="hidden" name="jump[]" value="结束"/></td></tr>');
+   	$('#action').append(tr);
+   	//动作名称
+   	$('input[name="action[]"]').on('keyup',function(){
+   		actionDeal();
+   	});
+   	//动作跳转
+   	$('select[name="jump[]"]').on('change',function(){
+   		actionDeal();
+   	});
+   	tr.find('input[name="action[]"]').trigger("keyup");
+   });
+
+   //动作事件处理
+   function actionDeal()
+   {
+   	var action = {};
+   	var actionName = '';
+   	var node_id = selectedNode.find('input[role="node_id"]').val();
+   	var names = document.getElementsByName('action[]');
+   	$('[name="jump[]"]:input').each(function(i){
+   		if(names[i].value!='')
+   		{
+   			action[i] = {'name':names[i].value,'jump':this.value};
+   			if(this.value=='结束')
+   			actionName += names[i].value+',';
+   			else
+   			{
+   				if(this.value!='' && nodeInfo[this.value]['node_name']!=undefined)
+   				{
+   					actionName += names[i].value+'=><span class="jump'+this.value+'">'+nodeInfo[this.value]['node_name']+'</span>,';
+   				}
+   				else
+   				actionName += names[i].value+'=>,';
+   			}
+   		}
+   	});
+   	selectedNode.find('td:nth-child(3)').html(actionName);
+   	//节点相应信息修改
+   	nodeInfo[node_id]['action'] = action;
+   }
+
+   //动作跳转下拉内容处理
+   function jumpOption(actionOption)
+   {
+   	$('select[name="jump[]"]').empty();
+   	$.each(actionOption,function(nid,optionText){
+   		if(optionText != undefined && optionText.length != 0 )
+   		{
+   			$('select[name="jump[]"]').append(optionText);
+   		}
+   	});
+   }
+
+   //加载节点信息
+   function loadAttribute()
+   {
+   	var node_id = selectedNode.find('input[role="node_id"]').val();//当前节点id
+   	//节点名称
+   	$('#node_name').val(nodeInfo[node_id]['node_name']);
+   	//操作表单
+   	$('#node_form').chosen('destroy');
+   	$('#node_form').val(nodeInfo[node_id]['form_id']);
+   	$("#node_form").chosen(form_config);
+   	$('#node_form').trigger('change');
+   	//参与人类型 1员工2部门3角色
+   	$('#participant_type').chosen('destroy');
+   	$('#participant_type').val(nodeInfo[node_id]['participant_type']);
+   	$('#participant_type').chosen(participant_type_config);
+   	$('#participant_type').trigger('change');
+   	//参与人
+   	if(nodeInfo[node_id]['node_participant']!='')
+   	{
+   		$node_participant.chosen('destroy');
+
+   		$.each(nodeInfo[node_id]['node_participant'], function(index, value) {
+   			$('#node_participant option[value="'+value+'"]').attr("selected",true);//操作表单
+   		});
+   		$('#node_participant').trigger('change');
+
+   		$node_participant.chosen(participant_config);
+   	}
+   	//耗时
+   	$('#node_use_time').val(nodeInfo[node_id]['node_use_time']);
+   	//动作
+   	$('tr').remove(".action-tr");
+   	if(nodeInfo[node_id]['action'].length!=0)
+   	{
+   		$.each(nodeInfo[node_id]['action'], function(index, value) {
+   			if(value.jump=='结束')
+   			{
+   				var actionTr = $('<tr class="action-tr">'+
+   				'<td><input type="text" name="action[]" value="'+value.name+'" class="input-block-level" /></td>'+
+   				'<td><input type="hidden" name="jump[]" value="结束"/></td></tr>');
+   			}
+   			else
+   			{
+   				var actionTr = $('<tr class="action-tr">'+
+   				'<td><input type="text" name="action[]" value="'+value.name+'" class="input-block-level" /></td>'+
+   				'<td><select name="jump[]" class="input-block-level"><option value="">--请选择--</option></select></td></tr>');
+   			}
+   			$('#action').append(actionTr);
+   			
+   			$.each(actionOption,function(nid,optionText){
+   				if(nid!=node_id && optionText != undefined && optionText.length != 0 )
+   				{
+   					actionTr.find('select[name="jump[]"]').append(optionText);
+   				}
+   			});
+   			//jumpOption(actionOption);//获取跳转下拉内容
+   			//动作名称
+   			$('input[name="action[]"]').on('keyup',function(){
+   				actionDeal();
+   			});
+   			//动作跳转
+   			$('select[name="jump[]"]').on('change',function(){
+   				actionDeal();
+   			});
+   			actionTr.find('select[name="jump[]"]').val(value.jump);
+   		});
+   		$('input[name="action[]"]').trigger('keyup');
+   	}
+   }
+
+   /*保存流程信息*/
+   $('#btn-save-flow').on('click',function(){
+   	$('#btn-save-flow').attr('disabled',true);
+   	var flow_id = $('#flow_id').val();
+   	$('#node_info').val(json2str(nodeInfo));
+   	if(flow_id==0)
+   	{
+   		$('#actionForm').submit();
+   	}
+   	else
+   	{
+   		$('#addNodeId').val(json2str(addNodeId));
+   		$('#delNodeId').val(json2str(delNodeId));
+   		$('#actionForm').submit();
+   	}
+   });
+ </script>
+<{include file="pagefooter.htm"}>

@@ -1,0 +1,91 @@
+<div class='main-div'>
+<table borderColor="#ffffff" cellSpacing="0" cellPadding="0" align="center" border="0" style="width:98%">
+ <tbody>
+	 <tr>
+         <td class="narrow-label"><label for="product_name">产品名称：</label></td>		           
+         <td colspan="3"><{$product_info.product_name}></td>         
+      </tr>
+     
+        <tr>
+       	<td class="narrow-label"><label for="product_num">产品编号：</label></td>		           
+         <td ><{$product_info.product_num}></td> 
+         <td class="narrow-label"><label for="product_price">产品价格：</label></td>		           
+         <td ><{$product_info.product_price}> 元</td>
+      </tr>
+      <!--自定义字段  -----begin-------->
+    <{counter start=0 print=false assign='product_count'}><!--  计算  -->
+    <{foreach from=$product_confirm item=confirm_info key=ckey name=list_Name}>
+     <{assign var="real_field" value=$confirm_info.fields}>
+      <{if $confirm_info.data_type==3}>
+      <tr>
+	 	<td class="micro-label"><label for="<{$confirm_info.fields}>"><{$confirm_info.name}>：</label></td ><td colspan="11"><{$order_info.$real_field}></td>
+	  </tr>
+	 <!-- 从新计算 -->
+	 <{counter start=0 print=false assign='product_count'}>
+      <{else}>
+       <{if $product_count%2 == 0 }>
+        <tr>
+       <{/if}>
+       <td class="narrow-label"  ><label for="<{$confirm_info.fields}>"  ><{$confirm_info.name}>：<label></td> 
+       <td ><{$product_info.$real_field}></td>
+      <{if $product_count%2 != 0 }>
+      </tr>
+      <{/if}>
+      <{counter print=false assign='product_count'}><!--   加1   -->
+     <{/if}>
+    <{/foreach}>
+    <!--自定义字段  ------end--------->
+     <tr>
+      	  <td class="narrow-label"><label for="product_state">产品状态：</label></td>		           
+         <td >
+         	<{if $product_info.product_state==1}>上架<{else}>下架<{/if}> 
+         </td>       
+         <td class="narrow-label"><label for="product_class_id">产品分类：</label></td>		           
+         <td ><{$product_info.product_class_pname}></td> 
+      </tr>
+     <tr>
+         <td class="narrow-label"><label>产品图片：</label></td>		           
+         <td colspan='5'>
+         <{if $product_info.product_thum_pic}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_pic}>' class='preview' ><img  src='<{$product_info.product_thum_pic}>'/></a>&nbsp;
+             <{else}>
+           <img src='<{$product_info.no_picture}>' title='无图' />
+         <{/if}>
+         <{if $product_info.product_other_thum_pic1}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_other_pic1}>' class='preview' ><img  src='<{$product_info.product_other_thum_pic1}>'/></a>&nbsp;
+         <{/if}>
+          <{if $product_info.product_other_thum_pic2}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_other_pic2}>' class='preview' ><img  src='<{$product_info.product_other_thum_pic2}>'/></a>&nbsp;
+         	<{/if}>
+          <{if $product_info.product_other_thum_pic3}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_other_pic3}>' class='preview' ><img  src='<{$product_info.product_other_thum_pic3}>'/></a>&nbsp;
+         	<{/if}>
+          <{if $product_info.product_other_thum_pic4}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_other_pic4}>' class='preview' ><img  src='<{$product_info.product_other_thum_pic4}>'/></a>&nbsp;
+         <{/if}>
+          <{if $product_info.product_other_thum_pic5}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_other_pic5}>' class='preview' ><img  src='<{$product_info.product_other_thum_pic5}>'/></a>&nbsp;
+         	<{/if}>
+          <{if $product_info.product_other_thum_pic6}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_other_pic6}>' class='preview' ><img  src='<{$product_info.product_other_thum_pic6}>'/></a>&nbsp;
+         	<{/if}>
+          <{if $product_info.product_other_thum_pic7}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_other_pic7}>' class='preview' ><img  src='<{$product_info.product_other_thum_pic7}>'/></a>&nbsp;
+         	<{/if}>
+          <{if $product_info.product_other_thum_pic8}>
+         	<a href='###' title='点击查看大图' path='<{$product_info.product_other_pic8}>' class='preview' ><img  src='<{$product_info.product_other_thum_pic8}>'/></a>&nbsp;
+          <{/if}>
+         </td>
+     </tr>
+ </tbody> 
+</table>
+</div>
+<script type="text/javascript" src="./jssrc/jquery.preview.js"></script>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	if($('a.preview').length){
+		var img = preloadIm();
+		imagePreview(img);
+	}
+});
+</script>

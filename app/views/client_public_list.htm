@@ -1,0 +1,158 @@
+<{include file="pageheader.htm"}>
+<div id='_search_panel' class='form-div'></div>
+<div id="client_list"></div>
+<div id="datagrid_client"></div>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	$('#_search_panel').panel({
+		href:'index.php?c=client_public&m=base_search_public',
+		onLoad:function(width, height){
+			$('#client_list').datagrid('resize',{
+				height:get_list_height_fit_window('_search_panel')
+			});
+		}
+	});
+	//设置列表
+	$('#client_list').datagrid({
+		title:"公共客户列表",
+		height:get_list_height_fit_window('_search_panel'),
+		nowrap: true,
+		striped: true,
+		pagination:true,
+		autoRowHeight:false,
+		rownumbers:true,
+		checkOnSelect:false,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		sortName:'cle_id',
+		sortOrder:'desc',//降序排列
+		idField:'cle_id',
+		url:"index.php?c=client_public&m=list_client_public_query",
+		queryParams:{},
+		frozenColumns:[[
+		{title:'操作',field:'opter_txt',width:60,align:"CENTER",formatter:function(value,rowData,rowIndex){
+			return "<a href='###' onclick=take_up_client('"+rowData.cle_id+"','link'); title='占用客户'>【占用】</a>";
+		}},
+		{title:'类型',field:'cle_public_type',width:60,align:"CENTER"}
+		]],
+		columns:[[
+		<{section name=key loop=$cle_display_field}>
+		{title: "<{$cle_display_field[key].name}>" ,field: '<{$cle_display_field[key].fields}>' ,align:"CENTER",width:"<{$cle_display_field[key].field_list_width}>",sortable:true,formatter:function(value,rowData,rowIndex){
+			<{if $cle_display_field[key].fields == 'cle_phone' || $cle_display_field[key].fields == 'con_mobile' }>
+			if(value)
+			{
+				var show_real = value;
+				<{if !$power_phone_view}>
+				show_real = hidden_part_number(value);
+				<{/if}>
+				return "<a href='###' onclick=take_up_client('"+rowData.cle_id+"','dial'); class='underline' title='业务受理'>"+show_real+"</a>&nbsp;&nbsp;<a href='javascript:;' onclick=take_up_client('"+rowData.cle_id+"','dial'); title='呼叫'><img src='./image/phone.png' /></a>";
+			}
+			<{elseif $cle_display_field[key].fields == "cle_address"}>
+			return "<span class='show-tooltip'>"+value+"</span>";
+			<{elseif $cle_display_field[key].fields == "cle_remark"}>
+			return "<span class='show-tooltip'>"+value+"</span>";
+			<{else}>
+			return value;
+			<{/if}>
+		}},
+		<{/section}>
+		{title:"cle_id" ,field:"cle_id",hidden:true}
+		]],
+		onLoadSuccess: function(){
+			$('#client_list').datagrid('clearSelections');
+			$('.show-tooltip').tooltip({
+				trackMouse:true,
+				position:'right',
+				onShow: function(){
+					var content = '<div style="width:180px;">'+$(this).text().replace(/\n/g, "<br>")+'</div>';
+					$(this).tooltip('update',content);
+				}
+			});
+		},
+		toolbar:[
+		{
+			iconCls:'icon-seting',
+			text:'列表设置',
+			handler:function(){
+				datagrid_client_window();
+			}
+		},'-'
+		]
+	});
+	var pager = $('#client_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+
+/*占用数据*/
+function take_up_client(cle_id,type)
+{
+	$.ajax({
+		type:'POST',
+		url: "index.php?c=client_public&m=take_up_client",
+		data: {"cle_id":cle_id},
+		dataType: "json",
+		success: function(responce){
+			if(responce["error"] == 0)
+			{
+				$('#client_list').datagrid('load');
+				$.messager.confirm('提示', '<br>占用成功，确定要打开其【业务受理】页面？', function(r){
+					if(r){
+						// type: dial号码跳转  link姓名跳转
+						if( type == 'dial' )
+						{
+							// 电话号码跳转 - 业务受理
+							window.parent.addTab('业务受理','index.php?c=client&m=accept&system_pagination=0&system_autocall=1&cle_id='+cle_id,'menu_icon');
+						}
+						else if( type == 'link' )
+						{
+							// 姓名/客户编号跳转 - 业务受理
+							window.parent.addTab('业务受理','index.php?c=client&m=accept&system_pagination=0&cle_id='+cle_id,'menu_icon');
+						}
+					}
+					else
+					{
+						return false;
+					}
+				});
+			}
+			else
+			{
+				$.messager.alert('错误',responce["message"] ,'error');
+			}
+		}
+	});
+}
+
+//显示列表设置
+function datagrid_client_window()
+{
+	$('#datagrid_client').window({
+		title: '显示列表设置',
+		href:"index.php?c=datagrid_confirm&display_type=0",
+		iconCls: "icon-edit",
+		top:10,
+		width:360,
+		closed: false,
+		collapsible:false,
+		minimizable:false,
+		maximizable:false,
+		cache:false
+	});
+}
+//基本搜索
+function base_search()
+{
+	$('#_search_panel').panel('open').panel('refresh','index.php?c=client_public&m=base_search_public');
+}
+
+//高级搜索
+function advanced_search()
+{
+	$('#_search_panel').panel('open').panel('refresh','index.php?c=client&m=advance_search&flag=public');
+}
+</script>
+<{include file="pagefooter.htm"}>

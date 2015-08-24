@@ -1,0 +1,13 @@
+<div style='padding:5px;width:97%'>
+<{section name=loop loop=$contact_record_detail}>
+<div class='main-div'>
+<fieldset>
+	   <legend><{$contact_record_detail[loop].con_rec_time}></legend>
+	   <div align="LEFT">
+	   <{$contact_record_detail[loop].con_rec_content}>
+	   </div>
+  </fieldset>
+</div>
+<{/section}>
+
+</div>

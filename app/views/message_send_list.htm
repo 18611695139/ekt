@@ -1,0 +1,176 @@
+<{include file="pageheader.htm"}>	
+	
+	<div id="company_address" title="发件箱" icon="icon_fajian"  style="display:block;">
+		<div class="form-div" id='_search_panel'>
+			<form action="javascript:quick_search()" name="searchForm" id="searchForm">
+			<table><tbody>
+			<tr><td>关键字：</td><td><input type="text" name="keyword" id="keyword" size="25" class="easyui-searchbox" searcher="quick_search" prompt="请输入搜索内容"/></td>
+			<td><IMG alt='转到收件箱' src='image/switch.png'>
+			<A href='javascript:quick_sreveive_box()' title='转到收件箱' style='color:red;'>转到收件箱</A></td></tr>
+			</tbody></table>
+			</form>
+		</div>
+	
+		<div><table id="list_table" class="scroll" cellpadding="0" cellspacing="0"></table></div>
+	</div>	
+	
+
+<div id="window" title="详细信息" style="width:600px;height:300px;padding:10px;display:none">
+		<div style="padding-top:5px;padding-bottom:5px;background:#fff;">
+
+					<label>详细信息：</label>
+					<div id="SR_content" style="border:1px solid #ccc;width:100%;height:200px;font-family:verdana;padding-top:5px"></div>
+			
+		</div>
+		
+</div>
+<style>
+.icon_shoujian{
+	background:url('./image/shoujian.png') no-repeat;
+}
+.icon_fajian{
+	background:url('./image/fajian.png') no-repeat;
+}
+</style>
+<{include file="pagefooter.htm"}>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+
+	//设置 发件箱 列表
+	$('#list_table').datagrid({
+		title:'发件箱-已发送消息',
+		height:get_list_height_fit_window('_search_panel'),
+		nowrap: true,
+		striped: true,
+		fitColumns:true,
+		pagination:true,
+		pageSize:get_list_rows_cookie(),
+		checkOnSelect:false,
+		rownumbers:true,
+		sortName:'msg_show_time',
+		sortOrder:'DESC',//降序排列
+		idField:'msg_id',
+		url:'index.php?c=message&m=get_message_query',
+		queryParams:{"msg_type":"-2"},   //   msg_type:-2 发件箱
+		frozenColumns:[[
+		{field:'ck',checkbox:true},
+		{title:'msg_id',field:'msg_id',hidden:true}
+		]],
+		columns:[[
+		{title:'信息内容',field:'msg_content',width:350,sortable:true,align:'center',formatter:function(value,rowData,rowIndex){
+			if(value)
+			return "<a href='javascript:;' onclick=_view("+rowData.msg_id+',-2'+") class='underline'  title='查看信息' >"+value+"</a>";
+
+		}},
+		{title:'发信人',field:'msg_send_user_name',width:80,sortable:true,align:'center'},
+		{title:'收信人',field:'msg_receive_user_name',width:50,sortable:true,align:'center'},
+		{title:'发送时间',field:'msg_insert_time',width:100,sortable:true,align:'center'}
+		]],
+		onLoadSuccess: function(){
+			$('#list_table').datagrid('clearSelections');
+			$('#list_table').datagrid('clearChecked');
+		},
+		toolbar:[{
+			text:'删除消息',
+			iconCls:'icon-del',
+			handler:function(){
+				var ids = send_getSelections();
+				if(ids == '')
+				{
+					$.messager.alert('提示','<br>请选中要删除的数据！','error');
+					return;
+				}
+				$.messager.confirm('提示', '<br>您确定要删除这些数据么？', function(r){
+					if(r){
+						$.ajax({
+							type:"POST",
+							url:'index.php?c=message&m=delete_message',
+							data:{"msg_id":ids},
+							dataType:'json',
+							success:function (responce){
+								if(responce['error']=='0'){
+									$('#list_table').datagrid('reload');
+									$('#list_table1').datagrid('clearSelections');
+								}
+								else
+								{
+									$.messager.alert('执行错误',responce['message'],'error');
+								}
+
+							}
+						});
+					}
+					else
+					{
+						return false;
+					}
+				});
+			}
+		}]
+	});
+	var pager = $('#list_table').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+
+/**
+*发件箱 列表得到选中的id
+*/
+function send_getSelections()
+{
+	var ids = [];
+	var rows = $('#list_table').datagrid('getChecked');
+	for(var i=0;i<rows.length;i++){
+		ids.push(rows[i].msg_id);
+	}
+	return ids.join(',');
+}
+
+/**
+* 发件箱  关键字搜索
+*/
+function quick_search(value,name)
+{
+	var queryParams = $('#list_table').datagrid('options').queryParams;
+	queryParams.search_key = value;
+	$('#list_table').datagrid('reload');
+}
+/**
+* 发件箱  
+*/
+function _view(msg_id,kind){
+	$('#list_table1').datagrid('clearSelections');//去除所有选中标志
+	$.ajax({
+		type: 'post',
+		url: 'index.php?c=message&m=message_view',
+		data: {'msg_id':msg_id},   //  kind=0:发件箱      kind=1：收件箱
+		dataType: 'json',
+		success: function(responce)
+		{
+			var record_content = responce['content'];
+			if(responce['error'] == 0 )
+			{
+				$('#window').css('display','block');
+				$('#window').window({
+					title: '详细信息',
+					top:100,
+					closed: false,
+					collapsible:false,
+					minimizable:false,
+					onBeforeOpen: function(){
+						$('#SR_content').html(record_content);
+					}
+				});
+			}
+		}
+	});
+}
+
+function quick_sreveive_box()//显示收件箱
+{
+	est_header("Location:index.php?c=message");
+}
+
+</script>  

@@ -1,0 +1,34 @@
+<table cellpadding="0" cellspacing="0" border="0" style="width:260px;padding:5px;" id="tb_callouter">
+<tr >
+<td style="font-weight:700;padding:10px 5px 5px 5px;" align="right"> 技能组：</td>
+<td>
+<select id="transque_id" name="transque_id" style="width:130px;" >
+ <{foreach from=$other_ques item=que key=key}>
+  <option value="<{$que.que_id}>" ><{$que.que_name}></option>
+ <{/foreach}>
+</select>
+</td>
+</tr>
+<tr>
+<td align="center" colspan="2" style="width:180px;padding:5px 0px 0px 0px">
+ <button type="button" class="btn btn-small btn-primary" id="" onclick="action_transque()">
+ 转技能组
+ </button>
+</td>
+</tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+function action_transque()
+{
+	var que_id = $('#transque_id').val();
+	if(que_id!=undefined && que_id.length!=0)
+	{
+		wincall.fn_transque(que_id);
+		$('#transque_panel').window('close');
+	}
+	else
+	{
+		$.messager.alert('警告','请先选择技能组','error');
+	}
+}
+</script>

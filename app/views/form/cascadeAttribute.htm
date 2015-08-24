@@ -1,0 +1,379 @@
+<table class="table table-hover table-bordered table-condensed">
+    <tr><th>组件【级联框】属性</th></tr>
+    <tr>
+        <td>
+            <label>标签</label>
+            <input id="label" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="标签" value="级联框">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>级数</label>
+            <label class="checkbox inline">
+                <input type="radio" class="radio" name="series" id="series1" value="2" checked> 两级
+            </label>
+            <label class="checkbox inline">
+                <input type="radio" class="radio" name="series" id="series2" value="3"> 三级
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        	<label>必选设置</label>
+            <label class="checkbox">
+                <input type="radio" name="required" value="0" checked> 非必须项
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="required" value="1"> 第一级必选
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="required" value="2"> 第一、两级必选
+            </label>
+            <label class="checkbox" id='casecade_required3'>
+                <input type="radio" name="required" value="3"> 三级都必选
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td id="options">
+         <label>选项设置</label>
+            <ul class="nav nav-tabs">
+                <li id="custom">
+                    <a href="#customOptions" title="custom" data-toggle="tab">自定义选项</a>
+                </li>
+                <li id="database">
+                    <a href="#databaseOptions" title="database" data-toggle="tab">数据库选项</a>
+                </li>
+            </ul>
+
+            <div id="tabContent" class="tab-content">
+                <div id="customOptions" class="tab-pane">
+                    <form class="form-inline">
+                		<select name="setSeries1" id="setSeries1" style="width:120px;">
+                        	<option value="">--第1级选项--</option>
+                    	</select>
+                        <button type="button" name="btn-set" id="btn-set1" class="btn btn-small btn-primary">
+                            设置选项
+                        </button>
+                    </form>
+                    <form class="form-inline">
+                    	<select name="setSeries2" id="setSeries2" style="width:120px;">
+                        	<option value="">--第2级选项--</option>
+                    	</select>
+                        <button type="button" name="btn-set" id="btn-set2" class="btn btn-small btn-primary">
+                            设置选项
+                        </button>
+                     </form>
+                </div>
+                <div id="databaseOptions" class="tab-pane">
+                    <div class="controls">
+                        <label for="table">数据库表[比如users]</label>
+                        <input id="table" name="table"  style="margin-bottom: 2px" type="text" placeholder="数据库表">
+                    </div>
+                    <div class="controls">
+                        <label for="fieldValue">值字段[比如id]</label>
+                        <input id="fieldValue"  name="fieldValue" style="margin-bottom: 2px" type="text" placeholder="值字段">
+                    </div>
+                    <div class="controls">
+                        <label for="fieldText">文本字段[比如name]</label>
+                        <input id="fieldText"  name="fieldText" style="margin-bottom: 2px" type="text" placeholder="文本字段">
+                    </div>
+                    <div class="controls">
+                        <label for="parentValue">父值字段[比如parent]</label>
+                        <input id="parentValue"  name="parentValue" style="margin-bottom: 2px" type="text" placeholder="父值字段">
+                    </div>
+                    <div class="controls">
+                        <label for="parentTable">父数据库表[比如table]</label>
+                        <input id="parentTable"  name="parentTable" style="margin-bottom: 2px" type="text" placeholder="父数据库表">
+                    </div>
+                    <div class="controls">
+                        <label for="parentTableValue">父表相关联字段[比如id]</label>
+                        <input id="parentTableValue"  name="parentTableValue" style="margin-bottom: 2px" type="text" placeholder="父表相关联字段">
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<div id='set_cascade_option_window'></div>
+<script language="JavaScript" type="text/javascript">
+var selectedWidget = selectedWidget || $();
+var wgid = selectedWidget.attr('title');
+var form_id = form_id || '0';
+
+//设置初始属性值
+var label = selectedWidget.attr('label') || '级联框';
+var required = selectedWidget.attr('require') || '0';
+var series = selectedWidget.attr('series') || '2';//级数
+var optionType = selectedWidget.attr('optiontype') || 'custom';
+var table = selectedWidget.attr('table') || '';
+var fieldValue = selectedWidget.attr('fieldvalue') || '';
+var fieldText = selectedWidget.attr('fieldtext') || '';
+var parentValue = selectedWidget.attr('parentvalue') || '';
+var parentTable = selectedWidget.attr('parenttable') || '';
+var parentTableValue = selectedWidget.attr('parenttablevalue') || '';
+
+$(document).ready(function(){
+	loadOptions();
+	$('#set_cascade_option_window').window({
+		title: '【级联框】选项自定义设置',
+		iconCls: "icon-add",
+		top:50,
+		width:350,
+		collapsible:false,
+		minimizable:false,
+		maximizable:false,
+		cache:false,
+		shadow:false,
+		closed:true
+	});
+});
+
+//选项设置类型
+$('a[data-toggle="tab"]').on('show', function() {
+	selectedWidget.attr('optiontype', $(this).attr('title'));
+});
+$('#'+optionType).removeClass().addClass('active');
+$('#'+optionType+'Options').removeClass('active').addClass('active');
+
+//标签
+$('#label').val(label)
+.on('keyup', function() {
+	selectedWidget.find('.control-label').text($(this).val());
+	selectedWidget.attr('label', $(this).val());
+	if (required!=0) {
+		selectedWidget.find('.control-label').text($(this).val());
+		selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+	}
+});
+
+//是否必填
+$('input[name=required]').on('click', function() {
+	selectedWidget.find('.control-label').text(selectedWidget.attr('label') || '级联框');
+	selectedWidget.removeAttr('require');
+	$('#'+wgid+'_1').removeAttr('require');
+	$('#'+wgid+'_2').removeAttr('require');
+	if(series==3)
+	{
+		$('#'+wgid+'_3').removeAttr('require');
+	}
+	var required = $(this).val();
+	if(required!=0)
+	{
+		selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+		selectedWidget.attr('require',required);
+		if(required==1)
+		{
+			$('#'+wgid+'_1').attr('require', 'true');
+		}
+		else if(required==2)
+		{
+			$('#'+wgid+'_1').attr('require', 'true');
+			$('#'+wgid+'_2').attr('require', 'true');
+		}
+		else if(required==3)
+		{
+			$('#'+wgid+'_1').attr('require', 'true');
+			$('#'+wgid+'_2').attr('require', 'true');
+			$('#'+wgid+'_3').attr('require', 'true');
+		}
+	}
+});
+$('input[name="required"][value="'+required+'"]').attr('checked', 'checked');
+
+//级数
+$('input[name=series]').on('click', function() {
+	var container = selectedWidget.find('.controls');
+	var total = 2;
+	if($(this).val()==3)
+	{
+		total = 3;
+		$('#customOptions').append(' <form class="form-inline" id="cascadeForm3">\
+                    <select name="setSeries3" id="setSeries3" style="width:120px;">\
+                        <option value="">--第3级选项--</option>\
+                    </select>\
+                    <button type="button" name="btn-set" id="btn-set3" class="btn btn-small btn-primary"> 设置选项 </button></form>');
+		$('#btn-set3').on('click',function(){
+			var parent = $('#setSeries2').val();
+			if(parent=='')
+			{
+				error_message('请先选择第1、2级选项！')
+				return;
+			}
+			get_option_page(3,parent);
+		});
+		$('#casecade_required3').css('display','');
+	}
+	else
+	{
+		$('#customOptions').find('#cascadeForm3').remove();
+		if(form_id==0)
+		{
+			if(cascadeOption[wgid]!=undefined)
+			{
+				if(cascadeOption[wgid][3]!=undefined)
+				cascadeOption[wgid][3] = {};
+			}
+		}
+		$('#casecade_required3').css('display','none');
+	}
+	$('input[name="required"][value="0"]').trigger("click");
+	container.empty();
+	for(i=1;i<=total;i++)
+	{
+		container.append('<select name="'+wgid+'_'+i+'" id="'+wgid+'_'+i+'" style="width:100px;" data-placeholder="请选择"> \
+                        	 	<option value=""> </option> \
+                        	</select> ');
+	}
+	series = $(this).val();
+	selectedWidget.attr('series', $(this).val());
+});
+$('input[name="series"][value="'+series+'"]').attr('checked', 'checked');
+if(series=='2')
+{
+	$('#casecade_required3').css('display','none');
+}
+else
+{
+	$('#casecade_required3').css('display','');
+}
+
+//选项设置按钮
+$('#btn-set1').on('click',function(){
+	get_option_page(1,0);
+});
+$('#btn-set2').on('click',function(){
+	var parent = $('#setSeries1').val();
+	if(parent=='')
+	{
+		error_message('请先选择第1级选项！')
+		return;
+	}
+	get_option_page(2,parent);
+
+});
+
+//数据库表
+$('#table').val(table).on('keyup', function() {
+	selectedWidget.attr('table', $(this).val());
+});
+//值字段
+$('#fieldValue').val(fieldValue).on('keyup', function() {
+	selectedWidget.attr('fieldvalue', $(this).val());
+});
+//文本字段
+$('#fieldText').val(fieldText).on('keyup', function() {
+	selectedWidget.attr('fieldtext', $(this).val());
+});
+//父值字段
+$('#parentValue').val(parentValue).on('keyup', function() {
+	selectedWidget.attr('parentvalue', $(this).val());
+});
+//父数据表
+$('#parentTable').val(parentTable).on('keyup', function() {
+	selectedWidget.attr('parenttable', $(this).val());
+});
+//相关联父表字段
+$('#parentTableValue').val(parentTableValue).on('keyup', function() {
+	selectedWidget.attr('parenttablevalue', $(this).val());
+});
+
+//加载选项
+function loadOptions() {
+	get_region_info(0,1);
+	if(series==3)
+	{
+		$('#customOptions').append(' <form class="form-inline" id="cascadeForm3">\
+                    <select name="setSeries3" id="setSeries3" style="width:120px;">\
+                        <option value="">--第3级选项--</option>\
+                    </select>\
+                    <button type="button" name="btn-set" id="btn-set3" class="btn btn-small btn-primary"> 设置选项 </button></form>');
+		$('#btn-set3').on('click',function(){
+			var parent = $('#setSeries2').val();
+			if(parent=='')
+			{
+				error_message('请先选择第1、2级选项！')
+				return;
+			}
+			get_option_page(3,parent);
+		});
+	}
+}
+
+//设置选项页面
+function get_option_page(type,parent)
+{
+	$('#set_cascade_option_window').window('refresh', "index.php?c=form&m=get_casede_option_page&type="+type+"&parent="+parent);
+	$('#set_cascade_option_window').window('open');
+}
+
+function error_message(msg)
+{
+	if($('#customOptions').find('#error_msg').html()==undefined)
+	{
+		$('#customOptions').append('<div id="error_msg" class="alert alert-error">错误：'+msg+'</div>');
+		setTimeout(function(){
+			$('#customOptions').find('#error_msg').remove();
+		},3000);
+	}
+}
+
+$('#setSeries1').on('change',function(){
+	var parent_1 = $(this).val();
+	get_region_info(parent_1,2,3);
+});
+$('#setSeries2').on('change',function(){
+	var parent_2 = $(this).val();
+	get_region_info(parent_2,3);
+});
+
+//获取级联信息(添加表单时用)
+function get_region_info(parent,next_field)
+{
+	if(arguments[2])
+	{
+		$("#setSeries"+arguments[2]+"").empty();
+		$("#setSeries"+arguments[2]+"").append('<option value="">--第'+arguments[2]+'级选项--</option>');  //添加一项option
+	}
+
+	$("#setSeries"+next_field+"").empty();
+	$("#setSeries"+next_field+"").append('<option value="">--第'+next_field+'级选项--</option>');  //添加一项option
+	if(parent.length!=0 && form_id == 0)
+	{
+		if(cascadeOption[wgid]!=undefined)
+		{
+			if(cascadeOption[wgid][next_field]!=undefined)
+			{
+				if(cascadeOption[wgid][next_field][parent]!=undefined)
+				{
+					$.each(cascadeOption[wgid][next_field][parent],function(index,value){
+						$("#setSeries"+next_field+"").append("<option value='"+value.id+"'>"+value.name+"</option>");  //添加一项option
+					});
+				}
+			}
+		}
+	}
+	else
+	{
+		if(parent.length!=0)
+		{
+			$.ajax({
+				type:'POST',
+				url: "index.php?c=form&m=get_cascade_info",
+				data:{"parent_id":parent,"deep":next_field,'form_id':form_id,'field':wgid},
+				dataType:"json",
+				success: function(responce){
+					if(responce['error']=='0')
+					{
+						$.each(responce['content'],function(id,value){
+							$("#setSeries"+next_field+"").append("<option value='"+id+"'>"+value+"</option>");  //添加一项option
+						});
+					}
+				}
+			});
+		}
+	}
+}
+
+
+</script>

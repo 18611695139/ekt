@@ -1,0 +1,60 @@
+ <{include file="pageheader.htm"}>
+<div align="center" style="background-color: #F4FAFB;border:1px;width:100%;height:375px;overflow:auto;" class="main-div">
+<div align="center" style="float:left;width:50%;">
+			<table cellspacing="0" cellpadding="5" style="padding: 2px;">
+				<tbody>
+				<tr bgcolor="#D0E4F9">
+				<td><b>序号</b></td><td><b>模板名称</b></td><td>&nbsp;</td>
+				</tr>
+  				<{foreach from=$model_info item=info key=mkey}>
+  				<tr>
+  					<td><{$mkey+1}></td>
+  					<td ><a id="<{$info.model_id}>" href="###" onclick="select_model(<{$info.model_id}>);"><{$info.model_name}></a></td>
+  					<td><a  href='###' onclick="parent.delete_model(<{$info.model_id}>)" title="删除模板"><img src='./image/no.gif' align='absmiddle' border='0' height='16' width='16' /></a></td>
+ 			    </tr>
+   				<{/foreach}>
+ 				</tbody>
+				</table>
+</div>
+	 <div style="float:left;width:45%;border-left:2px solid gray">
+			<table cellspacing="0" cellpadding="5" style="padding: 2px;">
+				<tbody>
+     				<tr>
+     					<td colspan="2" bgcolor="#D0E4F9"><b>导入项【<{$model_name}>】</b></td>
+     					</tr>
+     			   <{if $model_fields}>		
+        			<{foreach from=$model_fields item=info key=key}>
+        			<tr>
+	          			<td><{$key+1}></td>
+	          			<td><{$info.name}></td>
+        			</tr>
+        			<{/foreach}>
+        			<{else}>
+        			<tr>
+	          			<td colspan="2">请添加模板选项！</td>
+        			</tr>
+        			<{/if}>
+        			</tbody>
+			</table>
+</div>
+
+</div>
+
+<input type="hidden" id="model_id" name="model_id" value="<{$model_id}>" />
+ <{include file="pagefooter.htm"}>
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function(){
+	//标记选中模板
+	var model_id=$('#model_id').val();
+	if(model_id){
+		$('#'+model_id).css("color","red");
+	}
+});
+
+//选择模板
+function select_model(model_id)
+{
+	//刷新iframe
+	parent.refresh_iframe(model_id);
+}
+</script>

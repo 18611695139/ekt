@@ -1,0 +1,48 @@
+<div id="toolbar" style="text-align:right;">
+<div style='width:65px;'><input id="breakin" type="button"  value="强插" title="强插" onclick="javascript:parent.wincall.fn_breakin();" /></div>
+<div style="width:65px;"><input id="intercept" type="button"  value="拦截" title="拦截" onclick="javascript:parent.wincall.fn_intercept();" /></div>
+</div>
+
+<link href='themes/default/index.css' rel='stylesheet' type='text/css' />
+<script language="JavaScript" type="text/javascript">
+
+//定义常量
+var BUTTON_ON = 1;
+var BUTTON_OFF = 2;
+var MOUSE_ON = 3;
+
+$(document).ready(function(){	
+	//强插
+	btn_state_change("breakin",BUTTON_ON);
+	//拦截
+	btn_state_change("intercept",BUTTON_ON);
+	
+	$("#toolbar input[type='button']").mouseover(function (){
+		btn_state_change($(this).attr('id'),MOUSE_ON);
+	}).mouseout(function (){
+		btn_state_change($(this).attr('id'),BUTTON_ON);
+	});
+});
+
+//按钮状态修改 1启用，2禁用 3激活
+function btn_state_change(name,type)
+{
+	var img = name;
+	if(type == 1)
+	{
+		$('#'+name).attr('disabled',false);
+		$('#'+name).css('cursor','hand');
+		$('#'+name).css('background','url(./image/btn_'+img+'_e.gif)');
+	}
+	else if(type == 2)
+	{
+		$('#'+name).attr('disabled',true);
+		$('#'+name).css('cursor','default');
+		$('#'+name).css('background','url(./image/btn_'+img+'_d.gif)');
+	}
+	else if(type == MOUSE_ON)
+	{
+		$('#'+name).css('background','url(./image/btn_'+img+'_on.gif)');
+	}
+}
+</script>

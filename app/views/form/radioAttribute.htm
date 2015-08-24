@@ -1,0 +1,162 @@
+<table class="table table-hover table-bordered table-condensed">
+    <tr><th>组件【单选框】属性</th></tr>
+    <tr>
+        <td>
+            <label>标签</label>
+            <input id="label" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="标签" value="单选框">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="radio">
+                <input type="checkbox" id="required" value="1"> 是否必填项
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td id="options">
+            <label>选项设置
+                <button id="btn-plus" type="button" class="btn btn-mini btn-primary"><span class="glyphicon glyphicon-plus"></span></button>
+            </label>
+            <div class="controls">
+                <input id="option1" name="option" class="span10" style="margin-bottom: 2px" type="text" value="选项">
+                <button type="button" name="btn-minus" class="btn btn-mini btn-danger">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </button>
+            </div>
+            <div class="controls">
+                <input id="option2" name="option" class="span10" style="margin-bottom: 2px" type="text" value="选项">
+                <button type="button" name="btn-minus" class="btn btn-mini btn-danger">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </button>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>选项排列</label>
+            <label class="checkbox inline">
+                <input type="radio" class="radio" name="arrange" id="arrange1" value="checkbox inline" checked> 横向
+            </label>
+            <label class="checkbox inline">
+                <input type="radio" class="radio" name="arrange" id="arrange2" value="checkbox"> 纵向
+            </label>
+        </td>
+    </tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+    var selectedWidget = selectedWidget || $();
+    var wgid = selectedWidget.attr('title');
+
+    //设置初始属性值
+    var label = selectedWidget.attr('label') || '单选框';
+    var required = selectedWidget.attr('required') || '';
+    var arrange = selectedWidget.attr('arrange') || 'radio inline';
+    var options = selectedWidget.attr('options') || '';
+    loadOptions();
+
+    //标签
+    $('#label').val(label)
+            .on('keyup', function() {
+                selectedWidget.find('.control-label').text($(this).val());
+                selectedWidget.attr('label', $(this).val());
+                if (required) {
+        			selectedWidget.find('.control-label').text($(this).val());
+                	selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+    			}
+            });
+
+    //是否必填
+    $('#required').on('click', function() {
+        if($(this).attr('checked')) {
+            selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+            selectedWidget.find('.control-label').attr('require', 'true');
+            selectedWidget.attr('required', 'required');
+            required = 'required';
+        } else {
+            selectedWidget.find('.control-label').text(selectedWidget.attr('label') || '单选框');
+            selectedWidget.removeAttr('required');
+            selectedWidget.find('.control-label').removeAttr('require');
+            required = '';
+        }
+    });
+    if (required) {
+        $('#required').attr('checked', 'checked');
+    } else {
+        $('#required').removeAttr('checked');
+    }
+    //选项排列
+    $('input[name=arrange]').on('click', function() {
+        $('input[name="'+wgid+'"]').parent().removeClass().addClass($(this).val());
+        selectedWidget.attr('arrange', $(this).val());
+    });
+    $('input[name="arrange"][value="'+arrange+'"]').attr('checked', 'checked');
+
+    //添加选项按钮
+    $('#btn-plus').on('click', function() {
+        $('#options').append($('<div class="controls"> \
+                <input id="option2" name="option" class="span10" style="margin-bottom: 2px" type="text" value="选项"> \
+                <button type="button" name="btn-minus" class="btn btn-mini btn-danger"> \
+                <span class="glyphicon glyphicon-minus"></span> \
+        </button> \
+        </div>'));
+        $('button[name="btn-minus"]').on('click', function() {
+            $(this).parent().remove();
+            setOptions();
+        });
+        //选项名称
+        $('input[name="option"]').on('keyup', function() {
+            setOptions();
+        });
+        setOptions();
+    });
+    //删除选项按钮
+    $('button[name="btn-minus"]').on('click', function() {
+        $(this).parent().remove();
+        setOptions();
+    });
+    //选项名称
+    $('input[name="option"]').on('keyup', function() {
+        setOptions();
+    });
+
+    //设置对应选项
+    function setOptions() {
+        var currentOptions = $('#options').find('input[name="option"]');
+        var optionsArrange = $('input[name="arrange"]:checked').val();
+        var container = selectedWidget.find('.controls');
+        var opValues = [];
+        container.empty();
+        $.each(currentOptions, function(index, value) {
+            container.append('<label class="'+optionsArrange+'">' +
+                    '<input name="'+wgid+'" type="radio" value="'+$(value).val()+'"> ' +
+                    $(value).val() + '</label>'
+            );
+            opValues[index] = $(value).val();
+        });
+        selectedWidget.attr('options', opValues.join('|'));
+    }
+    //加载选项
+    function loadOptions() {
+        options = options.split('|');
+        var opLength = options.length || 0;
+        $('#options').find('.controls').remove();
+        for (var i=0;i<opLength;i++) {
+            $('#options').append($('<div class="controls"> \
+                <input id="option2" name="option" class="span10" style="margin-bottom: 2px" type="text" value="'+options[i]+'"> \
+                <button type="button" name="btn-minus" class="btn btn-mini btn-danger"> \
+                <span class="glyphicon glyphicon-minus"></span> \
+                </button> \
+                </div>')
+            );
+            $('button[name="btn-minus"]').on('click', function() {
+                $(this).parent().remove();
+                setOptions();
+            });
+            //选项名称
+            $('input[name="option"]').on('keyup', function() {
+                setOptions();
+            });
+        }
+    }
+</script>

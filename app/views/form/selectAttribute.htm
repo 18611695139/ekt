@@ -1,0 +1,209 @@
+<table class="table table-hover table-bordered table-condensed">
+    <tr><th>组件【单选框】属性</th></tr>
+    <tr>
+        <td>
+            <label>标签</label>
+            <input id="label" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="标签" value="单选框">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="radio">
+                <input type="checkbox" id="required" value="1"> 是否必填项
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="radio">
+                <input type="checkbox" id="multiple" value="1"> 是否多选
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td id="options">
+            <ul class="nav nav-tabs">
+                <li id="custom">
+                    <a href="#customOptions" title="custom" data-toggle="tab">自定义选项</a>
+                </li>
+                <li id="database">
+                    <a href="#databaseOptions" title="database" data-toggle="tab">数据库选项</a>
+                </li>
+            </ul>
+
+            <div id="tabContent" class="tab-content">
+                <div id="customOptions" class="tab-pane">
+                    <label>选项设置
+                        <button id="btn-plus" type="button" class="btn btn-mini btn-primary"><span class="glyphicon glyphicon-plus"></span></button>
+                    </label>
+                    <div class="controls">
+                        <label for="option1"></label>
+                        <input id="option1" name="option" class="span10" style="margin-bottom: 2px" type="text" value="选项">
+                        <button type="button" name="btn-minus" class="btn btn-mini btn-danger">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                    </div>
+                </div>
+                <div id="databaseOptions" class="tab-pane">
+                    <div class="controls">
+                        <label for="table">数据库表[比如users]</label>
+                        <input id="table" name="table" style="margin-bottom: 2px" type="text" placeholder="数据库表">
+                    </div>
+                    <div class="controls">
+                        <label for="fieldValue">值字段[比如id]</label>
+                        <input id="fieldValue" name="fieldValue" style="margin-bottom: 2px" type="text" placeholder="值字段">
+                    </div>
+                    <div class="controls">
+                        <label for="fieldText">文本字段[比如name]</label>
+                        <input id="fieldText" name="fieldText" style="margin-bottom: 2px" type="text" placeholder="文本字段">
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+    var selectedWidget = selectedWidget || $();
+    var wgid = selectedWidget.attr('title');
+
+    //设置初始属性值
+    var label = selectedWidget.attr('label') || '下拉框';
+    var required = selectedWidget.attr('required') || '';
+    var multiple = selectedWidget.attr('multiple') || '';
+    var optionType = selectedWidget.attr('optiontype') || 'custom';
+    var options = selectedWidget.attr('options') || '';
+    var table = selectedWidget.attr('table') || '';
+    var fieldValue = selectedWidget.attr('fieldvalue') || '';
+    var fieldText = selectedWidget.attr('fieldtext') || '';
+    loadOptions();
+
+    //选项设置类型
+    $('a[data-toggle="tab"]').on('show', function() {
+       selectedWidget.attr('optiontype', $(this).attr('title'));
+    });
+    $('#'+optionType).removeClass().addClass('active');
+    $('#'+optionType+'Options').removeClass('active').addClass('active');
+
+    //标签
+    $('#label').val(label)
+            .on('keyup', function() {
+                selectedWidget.find('.control-label').text($(this).val());
+                selectedWidget.attr('label', $(this).val());
+                 if (required) {
+        			selectedWidget.find('.control-label').text($(this).val());
+                	selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+    			}
+            });
+
+    //是否必填
+    $('#required').on('click', function() {
+        if($(this).attr('checked')) {
+            selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+            $('#'+wgid).attr('require', 'true');
+            selectedWidget.attr('required', 'required');
+            required = 'required';
+        } else {
+            selectedWidget.find('.control-label').text(selectedWidget.attr('label') || '下拉框');
+            selectedWidget.removeAttr('required');
+            $('#'+wgid).removeAttr('require');
+            required = '';
+        }
+    });
+    if (required) {
+        $('#required').attr('checked', 'checked');
+    } else {
+        $('#required').removeAttr('checked');
+    }
+    //是否多选
+    $('#multiple').on('click', function() {
+        if($(this).attr('checked')) {
+            $('#'+wgid).attr('multiple', 'multiple');
+            selectedWidget.attr('multiple', 'multiple');
+        } else {
+            selectedWidget.removeAttr('multiple');
+            $('#'+wgid).removeAttr('multiple');
+        }
+    });
+    if (multiple) {
+        $('#multiple').attr('checked', 'checked');
+    } else {
+        $('#multiple').removeAttr('checked');
+    }
+
+    //数据库表
+    $('#table').val(table).on('keyup', function() {
+        selectedWidget.attr('table', $(this).val());
+    });
+    //值字段
+    $('#fieldValue').val(fieldValue).on('keyup', function() {
+        selectedWidget.attr('fieldvalue', $(this).val());
+    });
+    //值字段
+    $('#fieldText').val(fieldText).on('keyup', function() {
+        selectedWidget.attr('fieldtext', $(this).val());
+    });
+
+    //添加选项按钮
+    $('#btn-plus').on('click', function() {
+        $('#customOptions').append($('<div class="controls"> \
+                <input name="option" class="span10" style="margin-bottom: 2px" type="text" value="选项"> \
+                <button type="button" name="btn-minus" class="btn btn-mini btn-danger"> \
+                <span class="glyphicon glyphicon-minus"></span> \
+        </button> \
+        </div>'));
+        $('button[name="btn-minus"]').on('click', function() {
+            $(this).parent().remove();
+            setOptions();
+        });
+        //选项名称
+        $('input[name="option"]').on('keyup', function() {
+            setOptions();
+        });
+        setOptions();
+    });
+    //删除选项按钮
+    $('button[name="btn-minus"]').on('click', function() {
+        $(this).parent().remove();
+        setOptions();
+    });
+    //选项名称
+    $('input[name="option"]').on('keyup', function() {
+        setOptions();
+    });
+
+    //设置对应选项
+    function setOptions() {
+        var currentOptions = $('#customOptions').find('input[name="option"]');
+        var container = $('#'+wgid);
+        var opValues = [];
+        container.empty();
+        $.each(currentOptions, function(index, value) {
+            container.append('<option value="'+$(value).val()+'">'+$(value).val()+'</option>');
+            opValues[index] = $(value).val();
+        });
+        selectedWidget.attr('options', opValues.join('|'));
+    }
+    //加载选项
+    function loadOptions() {
+        options = options.split('|');
+        var opLength = options.length || 0;
+        $('#customOptions').find('.controls').remove();
+        for (var i=0;i<opLength;i++) {
+            $('#customOptions').append($('<div class="controls"> \
+                <input name="option" class="span10" style="margin-bottom: 2px" type="text" value="'+options[i]+'"> \
+                <button type="button" name="btn-minus" class="btn btn-mini btn-danger"> \
+                <span class="glyphicon glyphicon-minus"></span> \
+                </button> \
+                </div>')
+            );
+            $('button[name="btn-minus"]').on('click', function() {
+                $(this).parent().remove();
+                setOptions();
+            });
+            //选项名称
+            $('input[name="option"]').on('keyup', function() {
+                setOptions();
+            });
+        }
+    }
+</script>

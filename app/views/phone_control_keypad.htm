@@ -1,0 +1,32 @@
+<table id="kaypad_table" cellpadding="0" cellspacing="0" border="0" style="width:180px;padding:15px 5px 0px 15px">
+<tr>
+<td><a href="#" class="easyui-linkbutton" ><b>1</b></a></td>
+<td><a href="#" class="easyui-linkbutton" ><b>2</b></a></td>
+<td><a href="#" class="easyui-linkbutton" ><b>3</b></a></td>
+</tr>
+<tr >
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>4</b></a></td>
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>5</b></a></td>
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>6</b></a></td>
+</tr>
+<tr>
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>7</b></a></td>
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>8</b></a></td>
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>9</b></a></td>
+</tr>
+<tr>
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>*</b></a></td>
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>0</b></a></td>
+<td style="padding-top:5px"><a href="#" class="easyui-linkbutton" ><b>#</b></a></td>
+</tr>
+</table>
+
+<script language="JavaScript" type="text/javascript">
+$(document).ready(function() {
+	$('#kaypad_table a').click(function(){
+		wincall.fn_dtmf($(this).text());
+	})
+
+});
+
+</script>

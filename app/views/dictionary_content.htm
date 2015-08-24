@@ -1,0 +1,66 @@
+<{if $p_id== 2}>
+<div style="padding:5px 0px 5px 20px;color:red;">
+注：客户阶段的修改会改变与之相关的统计。
+</div>
+<{else}>
+<div style="padding:10px;"></div>
+<{/if}>
+<table id="_dictionary_table_<{$p_id}>" cellspacing="0" cellpadding="0" align="center" style="width:98%;border-collapse: collapse; border: 0px solid gray;">
+ <tbody>
+  <!--客户阶段-->
+  <{if $p_id== 2}>
+  <tr>
+  	<td>&nbsp;</td>
+  	<td><input name='stage_title' value='客户阶段内容' style='border:0;font-weight:900;text-align:center;' readonly />&nbsp;&nbsp;&nbsp;&nbsp;<span style="width:60px;font-weight:bold;">阶段等级</span></td>
+  </tr>
+  <{/if}>
+  <{if $dinfo}>
+  	<{foreach from=$dinfo item=info key=dkey}>
+  	<tr style="padding: 2px;">
+  		<th style="text-align:right;width:15%;padding-right:10px;"><{$dkey+1}></th>
+  			<td align="left">
+  				<input type="text" size="40" name='_dictionary_option' value="<{$info.name}>" <{if $p_id==6}><{if $info.name=='未拨打' || $info.name=='呼通' || $info.name=='未呼通' || $info.name=='空号错号'}>disabled<{/if}><{/if}> />
+  				<!--客户阶段 等级-->
+  				<{if $p_id== 2}>
+  				<select name='client_name' class="span2">
+  					<{foreach from=$client_type item=cle_type key=cykey}>
+   					<option value="<{$cykey}>" <{if $all_cle_types[$info.name]==$cykey}>selected<{/if}> ><{$cle_type}></option>
+  					<{/foreach}>
+  				</select>
+  				<{/if}>
+  			</td>
+  	</tr>
+  	<{/foreach}>
+  <{else}>
+  	<{assign var="loop" value="5"}>
+	<{section name="loop" loop=$loop}>
+	<tr style="padding: 2px;">
+		<th style="text-align:right;width:15%;padding-right:10px;"><{$smarty.section.loop.index+1}></th>
+		<td align="left">
+			<input type="text" name='_dictionary_option' value="" />
+			<!--客户阶段 等级-->
+    		<{if $p_id== 2}>
+    		<select name='client_name' class="span2" >
+    			<{foreach from=$client_type item=cle_type key=cykey}>
+    			<option value="<{$cykey}>" <{if $all_cle_types[$info.name]==$cykey}>selected<{/if}> ><{$cle_type}></option>
+    			<{/foreach}>
+    		</select>
+    		<{/if}>
+		</td>
+	</tr>
+	<{/section}>
+  <{/if}>
+ </tbody>
+</table>
+<div align="center" style="padding-top:20px;padding-bottom:10px;">
+<button class="btn btn-primary" type="button" onclick="_dictionary_add_option(<{$p_id}>)">
+    <span class="glyphicon glyphicon-plus"></span> 添加
+</button>
+<button class="btn btn-primary" type="button" onclick="_dictionary_save(<{$p_id}>,'<{if $if_refesh}><{$if_refesh}><{else}>0<{/if}>')">
+    <span class="glyphicon glyphicon-saved"></span> 保存
+</button>
+<button class="btn btn-primary" type="button" onclick="_dictionary_tab_reload()">
+    <span class="glyphicon glyphicon-share-alt"></span> 重置
+</button>
+<span id='_dictionary_save_tip_<{$p_id}>' style='color:red;'></span>
+</div>

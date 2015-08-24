@@ -1,0 +1,112 @@
+<{include file="pageheader.htm"}>
+<div id='_search_panel' class='form-div'>
+ <form action="javascript:quick_search()" name="searchForm" id="searchForm">
+		<img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+		部门/坐席 <input type="text" id="dept_user_search" name="dept_user_search" value='' style='width:150px;' />&nbsp;&nbsp;
+         日期  <span class="combo datebox" style="width: 165px;"><input type="text" class="combo-text validatebox-text" id='deal_date_search_start' name='deal_date_search_start' value="<{$today_start}>" style="width: 141px;" ><span><span class="combo-arrow combo-arrow-hover" onclick="WdatePicker({el: 'deal_date_search_start',dateFmt:'yyyy-MM-dd HH:mm:ss'})" ></span></span></span> ~  <span class="combo datebox" style="width: 165px;"><input type="text" class="combo-text validatebox-text" id='deal_date_search_end' name='deal_date_search_end' value="<{$today_end}>"  style="width: 141px;" ><span><span class="combo-arrow combo-arrow-hover" onclick="WdatePicker({el: 'deal_date_search_end',dateFmt:'yyyy-MM-dd HH:mm:ss'})" ></span></span></span>
+         订单状态 <select id='order_state_search' name='order_state_search'>
+         <option value=''>--请选择--</option>
+        <{foreach from=$order_state item=o_state key=skey}>
+			<option value='<{$o_state.name}>'><{$o_state.name}></option>
+ 		<{/foreach}>
+         </select>
+    
+          <a class="easyui-linkbutton" iconCls="icon-search" href="javascript:void(0)"  onclick="$('#searchForm').submit();" >搜索</a>
+          <span style="color:red;">注：默认显示当天的有下单的坐席数据</span>
+    </form>
+</div>
+
+<div id='statistics_list'></div>
+<{include file="pagefooter.htm"}>
+<script src="./jssrc/datepicker/WdatePicker.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+var state_time = '<{$today_date}>';
+var end_time = '<{$today_date}>';
+$(document).ready(function() {
+	//部门
+	$('#dept_user_search').combotree({
+		url:'index.php?c=user&m=get_dept_user_tree',
+		onClick:function(node){
+			$(this).tree('expand', node.target);
+		},
+		onBeforeLoad : function(row,param){
+			if (!row)
+			{ // load top level rows
+				param.id = 0;   // set id=0, indicate to load new page rows
+			}
+		}
+	});
+	$('#dept_user_search').combotree('setValue','<{$dept_session_id}>');
+
+
+	<{section name=state loop=$order_state}><{/section}>
+	$('#statistics_list').datagrid({
+		title:'订单统计列表',
+		//		height:get_list_height_fit_window('_search_panel'),
+		nowrap: true,
+		striped: true,
+		rownumbers:true,
+		checkOnSelect:false,
+		remoteSort:false,
+		showFooter: true,
+		pagination:true,
+		pageSize:get_list_rows_cookie(),
+		pageList:[50,30,10],
+		fitColumns:true,
+		url:'index.php?c=order&m=get_order_statistics_info',
+		queryParams:{'start_date':'<{$today_start}>','end_date':'<{$today_end}>'},
+		frozenColumns:[[
+		{title:'坐席',field:'user_name',align:"CENTER",width:120},
+		{title:'所属部门',field:'dept_name',align:"CENTER",width:120},
+		{title:'订单数',field:'order_total',align:"CENTER",width:120},
+		{title:'订单总额(元)',field:'price',align:"CENTER",width:120},
+		{title:'订单产品数',field:'product_number',align:"CENTER",width:120}
+		]],
+		columns:[[
+		{title: "订单状态",align:"CENTER",colspan:<{$smarty.section.state.total}>}
+		],[
+		<{section name=key loop=$order_state}>
+		{title: "<{$order_state[key].name}>" ,field: '<{$order_state[key].state_id}>' ,align:"CENTER",width:80,formatter:function(value,rowData,rowIndex){
+			return value;
+		}},
+		<{/section}>
+		{field:'user_id',hidden:true}
+		]]
+	});
+	var pager = $('#statistics_list').datagrid('getPager');
+	$(pager).pagination({onChangePageSize:function(rows){
+		set_list_rows_cookie(rows);
+	}});
+});
+
+/*搜索*/
+function quick_search()
+{
+	var search_data = {};
+	search_data.start_date = $("#deal_date_search_start").val();
+	search_data.end_date = $("#deal_date_search_end").val();
+	search_data.order_state = $("#order_state_search").val();
+	var dept_user = $("#dept_user_search").combotree('getValue');
+	dept_user = dept_user.split('user');
+	if(dept_user[0]=='')
+	{
+		search_data.user_id = dept_user[1];/*所属人*/
+	}
+	else
+	{
+		search_data.dept_id = dept_user[0];/*部门*/
+	}
+
+	$('#statistics_list').datagrid('options').queryParams = {};
+	var queryParams = $('#statistics_list').datagrid('options').queryParams;
+	$.each(search_data,function(field,value){
+		if(typeof(value) != undefined && value.length != 0 )
+		{
+			queryParams[field] = value;
+		}
+	});
+
+	$('#statistics_list').datagrid('load');
+}
+
+</script>

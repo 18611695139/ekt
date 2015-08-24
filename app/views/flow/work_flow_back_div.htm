@@ -1,0 +1,14 @@
+<div style="padding:10px 20px;">
+ <textarea rows="3" cols="10" name="backReason" id="backReason"></textarea>
+<label>
+ <button type="button" class="btn btn-primary" onclick="save_with_back()">确定保存</button>
+</label>
+</div>
+<script language="JavaScript" type="text/javascript">
+function save_with_back()
+{
+	var back = $('#backReason').val();
+	$('#back_reason').val(back);
+	$('#theForm').submit();
+}
+</script>

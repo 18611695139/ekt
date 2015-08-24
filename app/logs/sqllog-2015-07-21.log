@@ -1,0 +1,670 @@
+[09:21:02] SELECT `user_id`, `user_num`, `user_password`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_channel`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `user_id` =  '1'
+[09:21:02] SELECT * FROM (`est_role`) WHERE `role_id` =  '1'
+[09:21:02] UPDATE `est_users` SET `user_last_login` = '2015-07-21 09:21:02', `user_last_ip` = '180.157.155.155' WHERE `user_id` =  '1'
+[09:21:02] SELECT `que_id`, `que_name`, `que_type` FROM (`est_queue`)
+[09:21:02] SELECT * FROM (`est_config`) LIMIT 1
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:21:02] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437441692 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:21:02] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437441692 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:21:02] SELECT * FROM (`est_department`) WHERE `dept_id` =  '1' LIMIT 1
+[09:21:02] SELECT `dept_id`, `dept_pid`, `dept_deep` FROM (`est_department`) WHERE `dept_deep` <= '1'
+[09:21:02] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:21:02] SELECT `dept_id`, `dept_pid`, `dept_name`, `dept_deep` FROM (`est_department`) ORDER BY `dept_id`
+[09:21:02] SELECT `user_id`, `user_name`, `user_num`, `dept_id`, `dept_name` FROM (`est_users`) WHERE `dept_id` IN (1)
+[09:21:02] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:21:02] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  1 AND `state` =  1 ORDER BY `id` ASC
+[09:21:02] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:21:02] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:21:02] SELECT cus_phone FROM est_cdr WHERE start_time>='1437439862' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:21:02] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:21:02] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437441692 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:21:02] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437441692 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:21:02] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:21:02] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:21:02] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:21:02] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:21:02] SELECT cus_phone FROM est_cdr WHERE start_time>='1437439862' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:21:02] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:21:02] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437441692 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:21:02] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437441692 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:21:02] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:21:02] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:21:02] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437441692 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:21:02] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437441692 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:21:02] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:21:02] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:21:02] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:21:02] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:21:02] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:21:02] SELECT cus_phone FROM est_cdr WHERE start_time>='1437439862' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:21:02] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:21:02] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:21:02] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:21:02] SELECT cus_phone FROM est_cdr WHERE start_time>='1437439862' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:21:02] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:21:03] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:21:03] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:21:03] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:21:03] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437441693 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:21:03] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437441693 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:21:03] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:21:03] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:21:03] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:21:03] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:21:03] SELECT cus_phone FROM est_cdr WHERE start_time>='1437439863' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:21:03] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:21:18] SELECT count(*) as total FROM (`est_users`) WHERE `user_id` > 0
+[09:21:18] SELECT * FROM (`est_users`) WHERE `user_id` > 0 ORDER BY `user_id` DESC LIMIT 10
+[09:21:19] SELECT `role_id`, `role_name`, `role_type` FROM (`est_role`)
+[09:21:24] UPDATE `est_users` SET `user_outcaller_type` = '0' WHERE `user_id` =  '1'
+[09:21:24] SELECT `user_id` FROM (`est_users`) WHERE `user_id` =  '1'
+[09:21:24] SELECT count(*) as total FROM (`est_users`) WHERE `user_id` > 0
+[09:21:24] SELECT * FROM (`est_users`) WHERE `user_id` > 0 ORDER BY `user_id` DESC LIMIT 10
+[09:21:31] SELECT `user_id`, `user_num`, `user_password`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_channel`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `user_id` =  '1'
+[09:21:31] UPDATE `est_users` SET `user_last_login` = '2015-07-21 09:21:31', `user_last_ip` = '180.157.155.155' WHERE `user_id` =  '1'
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:21:32] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437441722 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:21:32] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437441722 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:21:32] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:21:32] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:21:32] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:21:32] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:21:32] SELECT cus_phone FROM est_cdr WHERE start_time>='1437439892' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:21:32] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:21:32] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437441722 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:21:32] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437441722 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:21:32] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:21:32] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:21:32] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:21:32] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:21:32] SELECT cus_phone FROM est_cdr WHERE start_time>='1437439892' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:21:32] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:21:32] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:21:32] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437441722 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:21:32] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437441722 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:21:32] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:21:32] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:21:32] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:21:32] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:21:32] SELECT cus_phone FROM est_cdr WHERE start_time>='1437439892' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:21:32] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:35:55] SELECT * FROM (`est_config`) LIMIT 1
+[09:35:55] (SELECT cle_id FROM est_client WHERE cle_phone = '13311345925' OR cle_phone2 = '13311345925' OR cle_phone3 = '13311345925') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '13311345925') ORDER BY `cle_id` DESC LIMIT 10
+[09:35:55] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` IN (0, 1)  AND `state` =  1 ORDER BY `id` ASC
+[09:35:55] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:35:55] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:35:55] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  6 ORDER BY `sorts` ASC
+[09:35:55] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:36:07] (SELECT cle_id FROM est_client WHERE cle_phone = '13311345925' OR cle_phone2 = '13311345925' OR cle_phone3 = '13311345925') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '13311345925') ORDER BY `cle_id` DESC LIMIT 10
+[09:36:07] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:36:07] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:36:07] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:36:59] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:37:00] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:37:00] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:37:00] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:37:11] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:37:11] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:37:11] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:37:11] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:37:15] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:37:16] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:37:16] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:37:16] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:37:22] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:37:22] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:37:22] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:37:22] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:37:25] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:37:26] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:37:26] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:37:26] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:37:37] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:37:37] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:37:37] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:37:37] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:38:22] SELECT `user_id`, `user_num`, `user_password`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_channel`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `user_id` =  '1'
+[09:39:04] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[09:39:04] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[09:39:04] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[09:39:04] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437442774 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[09:39:04] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437442774 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[09:39:04] SELECT * FROM (`est_department`) WHERE `dept_id` =  '1' LIMIT 1
+[09:39:04] SELECT `dept_id`, `dept_pid`, `dept_deep` FROM (`est_department`) WHERE `dept_deep` <= '1'
+[09:39:04] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[09:39:04] SELECT `dept_id`, `dept_pid`, `dept_name`, `dept_deep` FROM (`est_department`) ORDER BY `dept_id`
+[09:39:04] SELECT `user_id`, `user_name`, `user_num`, `dept_id`, `dept_name` FROM (`est_users`) WHERE `dept_id` IN (1)
+[09:39:04] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[09:39:04] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  1 AND `state` =  1 ORDER BY `id` ASC
+[09:39:04] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[09:39:04] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[09:39:04] SELECT cus_phone FROM est_cdr WHERE start_time>='1437440944' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[09:39:04] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[09:42:35] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:42:35] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:42:35] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:42:35] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:42:50] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:42:50] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:42:50] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:42:50] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:49:41] SELECT `user_id`, `user_num`, `user_password`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_channel`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `user_id` =  '1'
+[09:51:46] SELECT * FROM (`est_config`) LIMIT 1
+[09:51:46] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:51:46] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` IN (0, 1)  AND `state` =  1 ORDER BY `id` ASC
+[09:51:46] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:51:46] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:51:46] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  6 ORDER BY `sorts` ASC
+[09:51:46] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:52:27] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:52:27] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:52:27] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:52:27] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:52:39] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:52:39] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:52:39] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:52:39] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[09:58:38] (SELECT cle_id FROM est_client WHERE cle_phone = '17002106868' OR cle_phone2 = '17002106868' OR cle_phone3 = '17002106868') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '17002106868') ORDER BY `cle_id` DESC LIMIT 10
+[09:58:38] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[09:58:38] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[09:58:38] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[10:26:34] SELECT `user_id`, `user_num`, `user_password`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_channel`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `user_id` =  '2'
+[10:26:34] SELECT * FROM (`est_role`) WHERE `role_id` =  '1'
+[10:26:34] UPDATE `est_users` SET `user_last_login` = '2015-07-21 10:26:34', `user_last_ip` = '43.255.177.139' WHERE `user_id` =  '2'
+[10:26:34] SELECT `que_id`, `que_name`, `que_type` FROM (`est_queue`)
+[10:26:34] SELECT * FROM (`est_config`) LIMIT 1
+[10:26:37] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:26:37] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:26:37] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:26:37] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445627 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:26:37] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445627 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:26:37] SELECT * FROM (`est_department`) WHERE `dept_id` =  '1' LIMIT 1
+[10:26:37] SELECT `dept_id`, `dept_pid`, `dept_deep` FROM (`est_department`) WHERE `dept_deep` <= '1'
+[10:26:37] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:26:37] SELECT `dept_id`, `dept_pid`, `dept_name`, `dept_deep` FROM (`est_department`) ORDER BY `dept_id`
+[10:26:37] SELECT `user_id`, `user_name`, `user_num`, `dept_id`, `dept_name` FROM (`est_users`) WHERE `dept_id` IN (1)
+[10:26:37] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:26:37] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  1 AND `state` =  1 ORDER BY `id` ASC
+[10:26:37] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:26:37] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:26:37] SELECT cus_phone FROM est_cdr WHERE start_time>='1437443797' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:26:37] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:26:37] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:26:37] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:26:37] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:26:37] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445627 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:26:37] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445627 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:26:37] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:26:37] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:26:37] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:26:37] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:26:37] SELECT cus_phone FROM est_cdr WHERE start_time>='1437443797' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:26:37] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:26:56] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:26:56] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:26:56] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:26:56] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445646 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:26:56] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445646 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:26:56] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:26:56] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:26:56] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:26:56] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:26:56] SELECT cus_phone FROM est_cdr WHERE start_time>='1437443816' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:26:56] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:26:57] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:26:57] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:26:57] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:26:57] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445647 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:26:57] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445647 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:26:57] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:26:57] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:26:57] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:26:57] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:26:57] SELECT cus_phone FROM est_cdr WHERE start_time>='1437443817' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:26:57] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:29:24] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:29:24] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:29:24] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:29:24] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445794 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:29:24] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445794 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:29:24] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:29:24] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:29:24] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:29:24] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:29:24] SELECT cus_phone FROM est_cdr WHERE start_time>='1437443964' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:29:24] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:29:28] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:29:28] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:29:28] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:29:28] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445798 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:29:28] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445798 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:29:28] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:29:28] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:29:28] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:29:28] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:29:28] SELECT cus_phone FROM est_cdr WHERE start_time>='1437443968' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:29:28] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:29:29] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:29:29] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:29:29] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:29:29] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445799 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:29:29] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445799 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:29:29] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:29:29] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:29:29] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:29:29] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:29:29] SELECT cus_phone FROM est_cdr WHERE start_time>='1437443969' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:29:29] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:29:40] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:29:40] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` IN (0, 1)  AND `state` =  1 ORDER BY `id` ASC
+[10:29:41] SELECT `id`, `name`, `fields`, `state` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  0 ORDER BY `id` ASC
+[10:29:41] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:29:41] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:29:41] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:29:41] SELECT `dept_id`, `dept_name` FROM (`est_department`)
+[10:29:43] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:29:43] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:29:43] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND cle_stat = '呼通' AND cle_last_connecttime >= '2015-07-21' AND cle_last_connecttime <= '2015-07-21' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:29:45] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:29:46] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:29:46] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:29:46] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `dept_id` IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:29:47] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[10:29:47] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[10:29:47] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  6 ORDER BY `sorts` ASC
+[10:29:48] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[10:30:05] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:05] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:05] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:05] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:07] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:07] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:07] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND cle_stat = '未呼通' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:08] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:08] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:08] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND cle_stat = '未拨打' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:09] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:09] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:09] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND cle_stat = '未拨打' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:10] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:10] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:10] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND cle_stat = '未拨打' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-24' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:11] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:11] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:11] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND cle_stat = '未拨打' AND con_rec_next_time >= '2015-06-21' AND con_rec_next_time <= '2015-07-20' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:12] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:12] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:12] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND cle_stat = '呼通' AND cle_last_connecttime >= '2015-07-21' AND cle_last_connecttime <= '2015-07-21' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:13] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:13] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:13] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:14] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:14] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:14] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:14] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `dept_id` IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:16] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:16] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:16] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `cle_stat` = '未呼通' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:17] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:17] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:17] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `cle_stat` = '未拨打' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:18] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:18] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:18] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `cle_stat` = '未拨打' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[10:30:19] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[10:30:20] SELECT `model_id`, `model_name`, `model_type`, `model_detail` FROM (`est_model`) WHERE `model_type` =  1 AND `model_creat_user_id` =  '2'
+[10:30:23] SELECT `resource_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:23] SELECT `resource_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:23] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:23] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '0' AND cle_first_connecttime = '0000-00-00' AND dployment_num = '0' AND cle_public_type = 3 AND dept_id IN (1) ORDER BY `cle_creat_time` desc LIMIT 10
+[10:30:29] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:29] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` IN (0, 1)  AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:30:29] SELECT `cle_name`, `cle_pingyin`, `cle_phone`, `cle_address`, `cle_info_source`, `cle_stage`, `cle_stat`, `cle_remark`, `cle_first_connecttime`, `cle_last_connecttime`, `con_rec_next_time`, `user_id`, `dployment_num`, `dept_id`, `cle_executor_time`, `cle_creat_time`, `cle_creat_user_id`, `cle_update_time`, `cle_update_user_id`, `impt_id`, `con_name`, `con_mobile`, `con_mail`, `con_remark`, `cle_dial_number`, `cle_province_name`, `cle_city_name`, `cle_phone2`, `cle_phone3`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) LEFT JOIN `est_contact` ON `est_contact`.`cle_id` = `est_client`.`cle_id` AND est_contact.con_if_main = 1 WHERE `user_id` = '0' ORDER BY `cle_id` desc LIMIT 10
+[10:30:29] SELECT `user_id`, `user_name`, `user_num`, `dept_id`, `dept_name` FROM (`est_users`)
+[10:30:32] SELECT `datadeal_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[10:30:32] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 ORDER BY `id` ASC
+[10:30:32] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[10:30:32] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[10:30:32] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[10:30:32] SELECT `user_id`, `user_num`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `dept_id` = 1 AND user_id > 0
+[10:31:16] UPDATE `est_users` SET `user_last_login` = '2015-07-21 10:31:16', `user_last_ip` = '43.255.177.139' WHERE `user_id` =  '2'
+[10:31:16] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:31:16] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:31:16] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:31:16] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445906 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:31:16] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445906 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:31:16] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:31:16] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:31:16] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:31:16] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:31:16] SELECT cus_phone FROM est_cdr WHERE start_time>='1437444076' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:31:16] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:31:17] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:31:17] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:31:17] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:31:17] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445907 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:31:17] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445907 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:31:17] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:31:17] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:31:17] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:31:17] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:31:17] SELECT cus_phone FROM est_cdr WHERE start_time>='1437444077' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:31:17] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:32:41] UPDATE `est_users` SET `user_last_login` = '2015-07-21 10:32:41', `user_last_ip` = '43.255.177.139' WHERE `user_id` =  '2'
+[10:32:41] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:32:41] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:32:41] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:32:41] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445991 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:32:41] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445991 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:32:41] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:32:41] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:32:41] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:32:41] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:32:41] SELECT cus_phone FROM est_cdr WHERE start_time>='1437444161' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:32:41] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:32:42] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:32:42] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:32:42] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:32:42] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437445992 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:32:42] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437445992 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:32:42] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:32:42] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:32:42] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:32:42] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:32:42] SELECT cus_phone FROM est_cdr WHERE start_time>='1437444162' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:32:42] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:33:09] SELECT `user_id`, `user_num`, `user_password`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_channel`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `user_id` =  '1'
+[10:33:09] UPDATE `est_users` SET `user_last_login` = '2015-07-21 10:33:09', `user_last_ip` = '43.255.177.139' WHERE `user_id` =  '1'
+[10:33:10] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:33:10] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:33:10] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:33:10] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437446020 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[10:33:10] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437446020 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[10:33:10] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:33:10] SELECT `user_id`, `user_name`, `user_num`, `dept_id`, `dept_name` FROM (`est_users`) WHERE `dept_id` IN (1)
+[10:33:10] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:33:10] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:33:10] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:33:10] SELECT cus_phone FROM est_cdr WHERE start_time>='1437444190' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:33:10] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[10:33:10] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:33:10] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:33:10] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 1  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:33:10] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437446020 AND msg_if_readed = 0 AND msg_receive_user_id = 1 LIMIT 10
+[10:33:10] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437446020 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '1'
+[10:33:10] SELECT * FROM (`est_anns`) WHERE (create_user_id = '1' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:33:10] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:33:10] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:33:10] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '1' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:33:10] SELECT cus_phone FROM est_cdr WHERE start_time>='1437444190' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:33:10] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='1' AND state=0 LIMIT 10
+[10:51:13] SELECT `user_id`, `user_num`, `user_password`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_channel`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `user_id` =  '2'
+[10:51:13] SELECT * FROM (`est_role`) WHERE `role_id` =  '1'
+[10:51:13] UPDATE `est_users` SET `user_last_login` = '2015-07-21 10:51:13', `user_last_ip` = '43.255.177.139' WHERE `user_id` =  '2'
+[10:51:13] SELECT `que_id`, `que_name`, `que_type` FROM (`est_queue`)
+[10:51:13] SELECT * FROM (`est_config`) LIMIT 1
+[10:51:14] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:51:14] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:51:14] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:51:14] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437447104 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:51:14] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437447104 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:51:14] SELECT * FROM (`est_department`) WHERE `dept_id` =  '1' LIMIT 1
+[10:51:14] SELECT `dept_id`, `dept_pid`, `dept_deep` FROM (`est_department`) WHERE `dept_deep` <= '1'
+[10:51:14] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:51:14] SELECT `dept_id`, `dept_pid`, `dept_name`, `dept_deep` FROM (`est_department`) ORDER BY `dept_id`
+[10:51:14] SELECT `user_id`, `user_name`, `user_num`, `dept_id`, `dept_name` FROM (`est_users`) WHERE `dept_id` IN (1)
+[10:51:14] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:51:14] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  1 AND `state` =  1 ORDER BY `id` ASC
+[10:51:14] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:51:14] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:51:14] SELECT cus_phone FROM est_cdr WHERE start_time>='1437445274' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:51:14] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:51:14] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:51:14] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:51:14] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:51:14] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437447104 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:51:14] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437447104 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:51:14] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:51:14] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:51:14] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:51:14] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:51:14] SELECT cus_phone FROM est_cdr WHERE start_time>='1437445274' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:51:14] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:56:57] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:56:57] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:56:57] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:56:57] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437447447 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:56:57] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437447447 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:56:57] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:56:57] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:56:57] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:56:57] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:56:57] SELECT cus_phone FROM est_cdr WHERE start_time>='1437445617' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:56:57] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:56:58] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437447448 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:56:58] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437447448 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:56:58] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:56:58] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:56:58] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:56:58] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437447448 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:56:58] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437447448 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:56:58] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:56:58] SELECT cus_phone FROM est_cdr WHERE start_time>='1437445618' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:56:58] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:56:58] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:56:58] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:56:58] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437447448 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:56:58] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437447448 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:56:58] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:56:58] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:56:58] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:56:58] SELECT cus_phone FROM est_cdr WHERE start_time>='1437445618' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:56:58] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:56:58] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:56:58] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:56:58] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:56:58] SELECT cus_phone FROM est_cdr WHERE start_time>='1437445618' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:56:58] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[10:56:58] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[10:56:58] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437447448 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[10:56:58] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437447448 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[10:56:58] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[10:56:58] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[10:56:58] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[10:56:58] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[10:56:58] SELECT cus_phone FROM est_cdr WHERE start_time>='1437445618' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[10:56:58] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[11:00:09] (SELECT cle_id FROM est_client WHERE cle_phone = '18601307686' OR cle_phone2 = '18601307686' OR cle_phone3 = '18601307686') UNION (SELECT cle_id FROM est_contact WHERE con_mobile = '18601307686') ORDER BY `cle_id` DESC LIMIT 10
+[11:00:09] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` IN (0, 1)  AND `state` =  1 ORDER BY `id` ASC
+[11:00:09] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[11:00:09] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[11:00:09] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  6 ORDER BY `sorts` ASC
+[11:00:09] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[11:08:58] SELECT `user_id`, `user_num`, `user_password`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_channel`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `user_id` =  '2'
+[11:08:58] SELECT * FROM (`est_role`) WHERE `role_id` =  '1'
+[11:08:58] UPDATE `est_users` SET `user_last_login` = '2015-07-21 11:08:58', `user_last_ip` = '123.123.89.119' WHERE `user_id` =  '2'
+[11:08:58] SELECT `que_id`, `que_name`, `que_type` FROM (`est_queue`)
+[11:08:58] SELECT * FROM (`est_config`) LIMIT 1
+[11:09:00] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[11:09:00] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[11:09:00] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[11:09:00] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437448170 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[11:09:00] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437448170 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[11:09:00] SELECT * FROM (`est_department`) WHERE `dept_id` =  '1' LIMIT 1
+[11:09:00] SELECT `dept_id`, `dept_pid`, `dept_deep` FROM (`est_department`) WHERE `dept_deep` <= '1'
+[11:09:00] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[11:09:00] SELECT `dept_id`, `dept_pid`, `dept_name`, `dept_deep` FROM (`est_department`) ORDER BY `dept_id`
+[11:09:00] SELECT `user_id`, `user_name`, `user_num`, `dept_id`, `dept_name` FROM (`est_users`) WHERE `dept_id` IN (1)
+[11:09:00] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[11:09:00] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  1 AND `state` =  1 ORDER BY `id` ASC
+[11:09:00] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:09:00] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[11:09:00] SELECT cus_phone FROM est_cdr WHERE start_time>='1437446340' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[11:09:00] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[11:09:01] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[11:09:01] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[11:09:01] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[11:09:01] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437448171 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[11:09:01] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437448171 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[11:09:01] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[11:09:01] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[11:09:01] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:09:01] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[11:09:01] SELECT cus_phone FROM est_cdr WHERE start_time>='1437446341' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[11:09:01] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[11:09:12] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:09:12] SELECT `id`, `name`, `fields`, `state` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  0 ORDER BY `id` ASC
+[11:09:12] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:09:12] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:09:12] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[11:09:12] SELECT `dept_id`, `dept_name` FROM (`est_department`)
+[11:09:14] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:09:14] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:09:14] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND dept_id IN (1) ORDER BY `cle_id` desc LIMIT 10
+[11:09:20] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[11:09:20] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[11:09:20] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[11:09:25] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[11:09:25] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[11:09:25] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[11:09:25] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437448195 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[11:09:25] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437448195 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[11:09:25] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[11:09:25] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[11:09:25] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:09:25] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[11:09:25] SELECT cus_phone FROM est_cdr WHERE start_time>='1437446365' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[11:09:25] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[11:09:28] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:09:29] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:09:29] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:09:29] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `dept_id` IN (1) ORDER BY `cle_id` desc LIMIT 10
+[11:09:32] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:09:32] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:09:32] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `dept_id` IN (1) ORDER BY `cle_id` desc LIMIT 10
+[11:09:32] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:09:32] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:09:32] SELECT `cle_name`, `cle_phone`, `cle_stat`, `dept_id`, `user_id`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) WHERE `dept_id` IN (1) ORDER BY `cle_id` desc LIMIT 10
+[11:09:36] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[11:09:36] SELECT `model_id`, `model_name`, `model_type`, `model_detail` FROM (`est_model`) WHERE `model_type` =  1 AND `model_creat_user_id` =  '2'
+[11:09:46] SELECT count(*) as total FROM (`est_import_log`) WHERE `impt_type` = 1 AND dept_id IN (1)
+[11:09:46] SELECT * FROM (`est_import_log`) WHERE `impt_type` = 1 AND dept_id IN (1) ORDER BY `impt_time` desc LIMIT 10
+[11:09:50] SELECT `model_id`, `model_name`, `model_type`, `model_detail` FROM (`est_model`) WHERE `model_type` =  1 AND `model_creat_user_id` =  '2'
+[11:10:14] SELECT `client_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:10:14] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` IN (0, 1)  AND `state` =  1 ORDER BY `id` ASC
+[11:10:14] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` IN (0, 1)  AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:10:14] SELECT `cle_name`, `cle_pingyin`, `cle_phone`, `cle_address`, `cle_info_source`, `cle_stage`, `cle_stat`, `cle_remark`, `cle_first_connecttime`, `cle_last_connecttime`, `con_rec_next_time`, `user_id`, `dployment_num`, `dept_id`, `cle_executor_time`, `cle_creat_time`, `cle_creat_user_id`, `cle_update_time`, `cle_update_user_id`, `impt_id`, `con_name`, `con_mobile`, `con_mail`, `con_remark`, `cle_dial_number`, `cle_province_name`, `cle_city_name`, `cle_phone2`, `cle_phone3`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) LEFT JOIN `est_contact` ON `est_contact`.`cle_id` = `est_client`.`cle_id` AND est_contact.con_if_main = 1 WHERE `user_id` = '0' ORDER BY `cle_id` desc LIMIT 10
+[11:10:14] SELECT `user_id`, `user_name`, `user_num`, `dept_id`, `dept_name` FROM (`est_users`)
+[11:10:33] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` IN (0, 1)  AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:10:33] SELECT `cle_name`, `cle_pingyin`, `cle_phone`, `cle_address`, `cle_info_source`, `cle_stage`, `cle_stat`, `cle_remark`, `cle_first_connecttime`, `cle_last_connecttime`, `con_rec_next_time`, `user_id`, `dployment_num`, `dept_id`, `cle_executor_time`, `cle_creat_time`, `cle_creat_user_id`, `cle_update_time`, `cle_update_user_id`, `impt_id`, `con_name`, `con_mobile`, `con_mail`, `con_remark`, `cle_dial_number`, `cle_province_name`, `cle_city_name`, `cle_phone2`, `cle_phone3`, `est_client`.`cle_id`, `cle_public_type` FROM (`est_client`) LEFT JOIN `est_contact` ON `est_contact`.`cle_id` = `est_client`.`cle_id` AND est_contact.con_if_main = 1 WHERE `user_id` = '0' ORDER BY `cle_id` desc LIMIT 10
+[11:10:43] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[11:10:43] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[11:10:43] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[11:10:43] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437448273 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[11:10:43] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437448273 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[11:10:43] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[11:10:43] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[11:10:43] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:10:43] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[11:10:43] SELECT cus_phone FROM est_cdr WHERE start_time>='1437446443' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[11:10:43] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10
+[11:10:44] SELECT `datadeal_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:10:44] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 ORDER BY `id` ASC
+[11:10:44] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  2 ORDER BY `sorts` ASC
+[11:10:44] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  1 ORDER BY `sorts` ASC
+[11:10:44] SELECT `region_id`, `region_name` FROM (`est_region`) WHERE `region_type` =  1 AND `parent_id` =  1
+[11:10:44] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  6 ORDER BY `sorts` ASC
+[11:10:45] SELECT `user_id`, `user_num`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `dept_id` = 1 AND user_id > 0
+[11:10:50] SELECT count(*) as total FROM (`est_message`) WHERE `msg_receive_user_id` = 2 AND msg_if_readed = 0
+[11:10:50] SELECT * FROM (`est_message`) WHERE `msg_receive_user_id` = 2 AND msg_if_readed = 0 ORDER BY `msg_show_time` desc LIMIT 10
+[11:10:51] SELECT count(*) as total FROM (`est_remind`) WHERE `user_id` = 2 AND rmd_deal = 0
+[11:10:51] SELECT * FROM (`est_remind`) WHERE `user_id` = 2 AND rmd_deal = 0 ORDER BY `rmd_time` ASC LIMIT 10
+[11:10:53] SELECT `user_id`, `user_name`, `user_num` FROM (`est_users`) WHERE `user_id` > 0 LIMIT 20
+[11:10:53] SELECT count(*) as total FROM (`est_cdr`) WHERE `user_id` = 2 AND start_time >= '1437408000' AND start_time <= '1437494399'
+[11:10:53] SELECT * FROM (`est_cdr`) WHERE `user_id` = 2 AND start_time >= '1437408000' AND start_time <= '1437494399' ORDER BY `start_time` desc LIMIT 10
+[11:11:07] SELECT count(*) as total FROM (`est_lost_cdr`) WHERE `start_time` >= '1436803200' AND start_time <= '1438099199' AND user_id = 0 AND (dept_id IN (1) OR dept_id =0)
+[11:11:07] SELECT * FROM (`est_lost_cdr`) WHERE `start_time` >= '1436803200' AND start_time <= '1438099199' AND user_id = 0 AND (dept_id IN (1) OR dept_id =0) ORDER BY `start_time` desc LIMIT 10
+[11:11:10] SELECT count(*) as total FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) )
+[11:11:10] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `anns_id` desc LIMIT 10
+[11:11:11] SELECT count(*) as total FROM (`est_address_book`) WHERE (tx_executor = '-1' OR tx_executor = 2)
+[11:11:11] SELECT * FROM (`est_address_book`) WHERE (tx_executor = '-1' OR tx_executor = 2) ORDER BY `tx_id` desc LIMIT 10
+[11:11:23] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  3 ORDER BY `sorts` ASC
+[11:11:23] SELECT `order_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:11:23] SELECT `id`, `name`, `fields`, `field_type`, `if_custom`, `field_list_width`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  3 AND `state` =  1 ORDER BY `id` ASC
+[11:11:24] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  3 ORDER BY `sorts` ASC
+[11:11:24] SELECT `order_list_display` AS list_display FROM (`est_users`) WHERE `user_id` =  '2' LIMIT 1
+[11:11:24] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  3 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:11:24] SELECT count(*) as total, sum(order_price) as total_sum FROM (`est_order`) WHERE `user_id` = 2 AND dept_id IN (1)
+[11:11:27] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  3 ORDER BY `sorts` ASC
+[11:11:27] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  5 ORDER BY `sorts` ASC
+[11:11:30] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  3 ORDER BY `sorts` ASC
+[11:11:31] SELECT `user_id`, `user_num`, `user_name`, `user_phone`, `user_ol_model`, `role_id`, `role_name`, `role_type`, `dept_id`, `dept_name`, `user_tel_server`, `user_cti_server`, `user_sms_phone`, `user_if_tip`, `user_remark`, `user_last_login`, `user_phone_type`, `user_last_ip`, `user_outcaller_type`, `user_outcaller_num`, `user_notebook`, `user_login_state`, `user_workbench_layout`, `user_display_dialpanel`, `user_outcall_popup`, `user_to_selfphone` FROM (`est_users`) WHERE `dept_id` = 1 AND user_id > 0
+[11:11:31] SELECT sum(order_price) as total_price FROM (`est_order`) WHERE `order_accept_time` >='2015-07-21 00:00:00' AND order_accept_time <='2015-07-21 23:59:59' AND dept_id IN (1)
+[11:11:31] SELECT count(*) as total FROM (`est_order`) WHERE `order_accept_time` >='2015-07-21 00:00:00' AND order_accept_time <='2015-07-21 23:59:59' AND dept_id IN (1) GROUP BY `user_id`
+[11:11:31] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  3 ORDER BY `sorts` ASC
+[11:11:31] SELECT `user_id`, sum(order_price) as price, `dept_id`, sum(product_number) AS product_number, count(*) as order_total FROM (`est_order`) LEFT JOIN `est_order_product` ON `est_order`.`order_id` = `est_order_product`.`order_id`  WHERE `order_accept_time` >='2015-07-21 00:00:00' AND order_accept_time <='2015-07-21 23:59:59' AND dept_id IN (1) GROUP BY `user_id` LIMIT 10
+[11:11:44] SELECT `role_id`, `role_name`, `role_type` FROM (`est_role`)
+[11:11:56] SELECT count(*) as total FROM (`est_users`) WHERE `user_id` > 0
+[11:11:56] SELECT * FROM (`est_users`) WHERE `user_id` > 0 ORDER BY `user_id` DESC LIMIT 10
+[11:12:03] SELECT `role_id`, `role_name`, `role_type` FROM (`est_role`)
+[11:12:12] SELECT `id`, `name`, `fields`, `state` FROM (`est_fields`) WHERE `field_type` =  0 AND `if_custom` =  0 ORDER BY `id` ASC
+[11:12:15] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:12:23] SELECT `id`, `name`, `fields`, `state` FROM (`est_fields`) WHERE `field_type` =  1 AND `if_custom` =  0 ORDER BY `id` ASC
+[11:12:24] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:12:25] SELECT `id`, `name`, `fields`, `state` FROM (`est_fields`) WHERE `field_type` =  2 AND `if_custom` =  0 ORDER BY `id` ASC
+[11:12:25] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  2 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:12:26] SELECT `id`, `name`, `fields`, `state` FROM (`est_fields`) WHERE `field_type` =  3 AND `if_custom` =  0 ORDER BY `id` ASC
+[11:12:27] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  3 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:12:28] SELECT `id`, `name`, `fields`, `state` FROM (`est_fields`) WHERE `field_type` =  4 AND `if_custom` =  0 ORDER BY `id` ASC
+[11:12:30] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  4 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:12:35] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  '2' ORDER BY `sorts` ASC
+[11:12:35] SELECT * FROM (`est_dictionary`) WHERE `id` =  '2'
+[11:12:35] SELECT `cle_stage`, `cle_type` FROM (`est_client_type`)
+[11:12:43] SELECT * FROM (`est_dictionary`) WHERE `id` =  '6'
+[11:12:45] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  '1' ORDER BY `sorts` ASC
+[11:12:45] SELECT * FROM (`est_dictionary`) WHERE `id` =  '1'
+[11:12:47] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  '3' ORDER BY `sorts` ASC
+[11:12:47] SELECT * FROM (`est_dictionary`) WHERE `id` =  '3'
+[11:12:48] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  '5' ORDER BY `sorts` ASC
+[11:12:48] SELECT * FROM (`est_dictionary`) WHERE `id` =  '5'
+[11:12:49] SELECT * FROM (`est_dictionary_detail`) WHERE `parent_id` =  '4' ORDER BY `sorts` ASC
+[11:12:49] SELECT * FROM (`est_dictionary`) WHERE `id` =  '4'
+[11:13:20] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  rmd_time < '2015-07-21 00:00:00' limit 10
+[11:13:20] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 00:00:00' <= rmd_time AND rmd_time <= '2015-07-21 23:59:59' limit 10
+[11:13:20] SELECT rmd_id,rmd_param_int,rmd_param_char,rmd_remark,rmd_time FROM est_remind WHERE rmd_deal = 0 AND user_id = 2  AND  '2015-07-21 23:59:59' < rmd_time AND rmd_time <= '2015-07-28 23:59:59' limit 10
+[11:13:20] SELECT msg_id,msg_send_user_id,msg_receive_user_id,msg_send_user_name,msg_receive_user_name,msg_content,msg_content_text ,msg_insert_time FROM est_message WHERE msg_show_time <= 1437448430 AND msg_if_readed = 0 AND msg_receive_user_id = 2 LIMIT 10
+[11:13:20] SELECT COUNT(*) AS `numrows` FROM (`est_message`) WHERE `msg_show_time` <= 1437448430 AND `msg_if_readed` =  '0' AND `msg_receive_user_id` =  '2'
+[11:13:20] SELECT * FROM (`est_anns`) WHERE (create_user_id = '2' OR dept_id IN (1) ) ORDER BY `creat_time` desc LIMIT 10
+[11:13:20] SELECT user_id,dept_id,deal_date,conn_num,conn_success,transformation,new_increment FROM est_statistics_stage WHERE deal_date='2015-07-21' AND dept_id IN (1) LIMIT 10
+[11:13:20] SELECT `id`, `name`, `fields`, `state`, `field_type`, `data_type`, `if_require`, `default`, `jl_series`, `jl_field_type`, `datefmt` FROM (`est_fields`) WHERE `field_type` =  0 AND `state` =  1 AND `if_custom` =  '1' ORDER BY `custom_poz` ASC
+[11:13:20] SELECT `cle_id`, `cle_name`, `cle_stat`, `cle_stage`, `cle_last_connecttime`, `cle_public_type` FROM (`est_client`) WHERE `user_id` = '2' AND con_rec_next_time >= '2015-07-21' AND con_rec_next_time <= '2015-07-21' AND dept_id IN (1) ORDER BY `con_rec_next_time` desc LIMIT 10
+[11:13:20] SELECT cus_phone FROM est_cdr WHERE start_time>='1437446600' AND result=0 AND conn_secs>0 AND cus_phone!=''
+[11:13:20] SELECT id,start_time,caller,state,reason,cle_id FROM est_lost_cdr WHERE user_id='2' AND state=0 LIMIT 10

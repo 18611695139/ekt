@@ -1,0 +1,144 @@
+<div class="form-div">
+<img src="image/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+客户名称<input name="cle_name_ord_search" id="cle_name_ord_search" value="" type="text" style="width:100px;" />&nbsp;&nbsp;&nbsp;&nbsp;
+客户电话<input name="cle_phone_ord_search" id="cle_phone_ord_search" value="<{$phone|default:''}>" type="text" style="width:100px;" />
+<a class="easyui-linkbutton" iconCls="icon-search" href="javascript:void(0)"  onclick="quick_search_ord_cle();" >搜索</a>
+</div>
+<div id="order_client_list"></div>
+<script language="JavaScript" type="text/javascript">
+var type = '<{$type|default:""}>';
+$(document).ready(function() {
+	$('#order_client_list').datagrid({
+		iconCls:'icon-search',
+		height:310,
+		nowrap: false,
+		striped: true,
+		collapsible:true,
+		url:'index.php?c=client&m=list_client_query',
+		remoteSort: false,
+		idField:'cle_id',
+		fitColumns:true,
+		rownumbers:true,
+		singleSelect:true,
+		sortName:'cle_id',
+		sortOrder:'desc',
+		queryParams:{"user_id":"<{$user_id|default:''}>"},
+		columns:[[
+		{title:'cle_id',field:'cle_id',hidden:true},
+		{title: "选择" ,field: 'opex_select' ,align:"CENTER",width:"60",sortable:false,formatter:function(value,rowData,rowIndex){
+			return "<a href='###' onclick='choose_client("+rowIndex+");'  title='选择客户'>【选择】</a>";
+		}},
+		{title:'客户名称',field:'cle_name',width:200,align:"center",sortable:true},
+		{title:'客户电话',field:'cle_phone',width:150,align:"center",sortable:true,formatter:function(value,rowData,rowIndex){
+			//客户电话的‘*’号隐藏号码处理
+			<{if $power_phone_view }>
+			return value;
+			<{else}>
+			if( value )
+			{
+				return hidden_part_number(value);
+			}
+			<{/if}>
+		}}
+		]],
+		pagination:true,
+		onDblClickRow:function(){
+			/*添加选中客户信息*/
+			add_client_to();
+		}
+	});
+});
+
+// 快速查找
+function quick_search_ord_cle(){
+	var cle_phone = $('#cle_phone_ord_search').val();
+	var cle_name  = $('#cle_name_ord_search').val();
+
+	var queryParams = $('#order_client_list').datagrid('options').queryParams;
+	queryParams.cle_phone   = cle_phone;
+	queryParams.cle_name     = cle_name;
+	$('#order_client_list').datagrid('load');
+}
+
+//得到对应的联系人信息
+function get_client_contact(cle_id)
+{
+	if( cle_id )
+	{
+		var com = $('#con_name'+type).combogrid("grid");
+		var queryParams = com.datagrid('options').queryParams;
+		queryParams.cle_id = cle_id;
+
+		//原有联系人信息清空
+		$('#con_name'+type).combogrid("clear");
+		$("#real_con_mobile"+type).val("");
+		$("#con_mobile"+type).val("");
+
+		$('#con_name'+type).combogrid({
+			url:"index.php?c=contact&m=get_contact_list",
+			onLoadSuccess:function(data)
+			{
+				if(data.total>0)
+				{
+					$('#con_name'+type).combogrid("setText",data.rows[0].con_name);
+					var sec_con_mobile = data.rows[0].con_mobile
+					$("#real_con_mobile"+type).val(sec_con_mobile);
+					//不显示全部号码
+					<{if !$power_phone_view }>
+					if( sec_con_mobile )
+					{
+						sec_con_mobile =  hidden_part_number(sec_con_mobile);
+					}
+					<{/if}>
+					$("#con_mobile"+type).val(sec_con_mobile);
+				}
+			}
+		});
+	}
+}
+
+/*列表中 - 选择客户*/
+function choose_client(rowIndex)
+{
+	var selected = $('#order_client_list').datagrid('selectRow',rowIndex);
+
+	/*添加选中客户信息*/
+	add_client_to();
+}
+
+/*添加选中客户信息*/
+function add_client_to()
+{
+	var selected = $('#order_client_list').datagrid('getSelected');
+	if (selected)
+	{
+		$('#cle_id'+type).val(selected.cle_id);
+		$('#cle_name'+type).val(selected.cle_name);
+		$('#cle_name_view'+type).html("<a href='###' onclick=window.parent.addTab('业务受理','index.php?c=client&m=accept&system_pagination=0&cle_id="+selected.cle_id+"','menu_icon'); title='客户详情'><img src='image/file.png' /></a>");
+
+		var sec_cle_phone = selected.cle_phone;
+		$("#real_cle_phone"+type).val(sec_cle_phone);
+		//不显示全部号码
+		<{if !$power_phone_view}>
+		if( sec_cle_phone )
+		{
+			sec_cle_phone =  hidden_part_number(sec_cle_phone);
+		}
+		<{/if}>
+		$('#cle_phone'+type).val(sec_cle_phone);
+
+		$('#cle_address'+type).val(selected.cle_address);
+
+		if( selected.cle_id)
+		{
+			<{if $power_use_contact!=1}>
+			//获取对应的联系人信息 - 
+			get_client_contact(selected.cle_id);
+			<{/if}>
+		}
+
+		$("#client_window").window("close");
+		$('#order_client_list').datagrid('clearSelections');
+	}
+}
+</script>

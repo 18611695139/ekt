@@ -1,0 +1,156 @@
+<table class="table table-hover table-bordered table-condensed">
+    <tr><th>组件【地址】属性</th></tr>
+    <tr>
+        <td>
+            <label>标签</label>
+            <input id="label" class="input-block-level" style="margin-bottom: 0" type="text" placeholder="标签" value="地址">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="radio">
+                <input type="checkbox" id="required" value="1"> 是否必填项
+            </label>
+        </td>
+    </tr>
+     <tr>
+        <td>
+            <label class="radio">
+                <input type="checkbox" id="use_provice_city" value="1"> 是否启用省市区级联
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>地址框尺寸</label>
+            <label class="checkbox">
+                <input type="radio" name="size" id="size1" value="span7"> 小尺寸
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="size" id="size2" value="span9" checked> 标准尺寸
+            </label>
+            <label class="checkbox">
+                <input type="radio" name="size" id="size3" value="span11"> 大尺寸
+            </label>
+        </td>
+    </tr>
+</table>
+<script language="JavaScript" type="text/javascript">
+    var selectedWidget = selectedWidget || $();
+    var wgid = selectedWidget.attr('title');
+
+    //设置初始属性值
+    var label = selectedWidget.attr('label') || '地址';
+    var required = selectedWidget.attr('required') || '';
+    var size = selectedWidget.attr('size') || 'span10';
+    var usessq = selectedWidget.attr('usessq') || 0;
+
+    //标签
+    $('#label').val(label)
+            .on('keyup', function() {
+                selectedWidget.find('.control-label').text($(this).val());
+                selectedWidget.attr('label', $(this).val());
+                if (required) {
+                	selectedWidget.find('.control-label').text($(this).val());
+                	selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+    			}
+    });
+    //是否必填
+    $('#required').on('click', function() {
+        if($(this).attr('checked')) {
+            selectedWidget.find('.control-label').append('<span style="color:red;">*</span>');
+            $('#'+wgid).attr('require', 'true');
+            selectedWidget.attr('required', 'required');
+            required = 'required';
+        } else {
+            selectedWidget.find('.control-label').text(selectedWidget.attr('label') || '地址');
+            selectedWidget.removeAttr('required');
+            $('#'+wgid).removeAttr('require');
+            required = '';
+        }
+    });
+    if (required) {
+        $('#required').attr('checked', 'checked');
+    } else {
+        $('#required').removeAttr('checked');
+    }
+            
+    //大小
+    $('input[name="size"]').on('click', function() {
+        $('#'+wgid).removeClass().addClass($(this).val());
+        selectedWidget.attr('size', $(this).val());
+    });
+    $('input[name="size"][value="'+size+'"]').attr('checked', 'checked');
+
+    
+    
+    //是否启用省市区级联
+    $("#use_provice_city").on('click', function() {
+    	 var container = selectedWidget.find('.controls');
+    	 container.empty();
+    	 if($(this).attr('checked')) {
+    	 	container.append('\
+       		 <select name="'+wgid+'_province" id="'+wgid+'_province" style="width:100px;" data-placeholder="--省--"> \
+                <option value=""></option> \
+             </select> \
+             <select name="'+wgid+'_city" id="'+wgid+'_city" style="width:100px;" data-placeholder="--市--"> \
+                <option value=""> </option> \
+             </select> \
+             <select name="'+wgid+'_town" id="'+wgid+'_town" style="width:100px;" data-placeholder="--区--"> \
+                <option value=""> </option> \
+             </select> \
+             <input type="text" name="'+wgid+'" id="'+wgid+'" placeholder="地址">');
+    	 	//get_region_info(1,1,'province'+wgid);
+       	  	/*$('#'+wgid+'_province').on('change',function(){
+       	  		var parent_id = $(this).val();
+       	  		get_region_info(parent_id,2,wgid+'_city',wgid+'_town');
+       	  	}).chosen(option_config);
+       	  	$('#'+wgid+'_city').on('change',function(){
+       	  		var parent_id = $(this).val();
+       	  		get_region_info(parent_id,3,wgid+'_town');
+       	  	}).chosen(option_config);
+       	  	$('#'+wgid+'_town').chosen(option_config);*/
+       	  	 selectedWidget.attr('usessq', 1);
+    	 }else{
+    	 	container.append('<input type="text" name="'+wgid+'" id="'+wgid+'" placeholder="地址">');
+    	 	 selectedWidget.removeAttr('usessq');
+    	 }
+        
+    });
+     if (usessq==1) {
+        $('#use_provice_city').attr('checked', 'checked');
+    } else {
+        $('#use_provice_city').removeAttr('checked');
+    }
+    
+    //获取省市区某级信息
+    function get_region_info(parent_id,region_type,next_field)
+    {
+    	if(arguments[3])
+		{
+			$("#"+arguments[3]+"").chosen('destroy');
+			$("#"+arguments[3]+"").empty();
+			$("#"+arguments[3]+"").append("<option value=''> </option>");  //添加一项option
+			$("#"+arguments[3]+"").chosen(option_config);
+		}
+    	$.ajax({
+			type:'POST',
+			url: "index.php?c=regions&m=get_regions_type",
+			data:{"parent_id":parent_id,"region_type":region_type},
+			dataType:"json",
+			success: function(responce){
+				if(responce['error']=='0')
+				{
+					$("#"+next_field+"").chosen('destroy');
+					$("#"+next_field+"").empty();
+					$("#"+next_field+"").append("<option value=''> </option>");  //添加一项option
+					$.each(responce['content'],function(id,value){
+						$("#"+next_field+"").append("<option value='"+id+"'>"+value+"</option>");  //添加一项option
+					});
+					$("#"+next_field+"").chosen(option_config);
+				}
+			}
+		});
+    	 	
+    }
+</script>
