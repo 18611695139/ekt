@@ -1,0 +1,420 @@
+# 2013-11-05 zgx 客户表添加数据类型字段
+ALTER TABLE `est_client`
+ADD COLUMN `cle_public_type`  tinyint NOT NULL DEFAULT 0 COMMENT '数据类型 0有所属人 1放弃 2收回 3新导入' AFTER `cle_city_name`;
+
+# 2013-11-20 zgx 添加 各阶段客户类型表
+CREATE TABLE `est_client_type` (
+`id`  int NOT NULL AUTO_INCREMENT COMMENT 'id' ,
+`cle_stage`  varchar(20) NOT NULL DEFAULT '' COMMENT '客户阶段' ,
+`cle_type`  int NOT NULL DEFAULT 1 COMMENT '客户类型 1初始 2跟进 3终结' ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='各阶段客户类型表';
+
+# 2013-12-11
+ALTER TABLE `est_fields`
+ADD COLUMN `data_type`  int NOT NULL DEFAULT 1 COMMENT '自定义字段文本类型 1文本框 2下拉选择3文本域4级联5日期框' AFTER `field_list_width`;
+
+#2013-12-13
+ALTER TABLE `est_config`
+ADD COLUMN `use_contact`  int NOT NULL DEFAULT 0 COMMENT '是否使用联系人模块  0是  1否' AFTER `client_amount`;
+
+
+# 2013-12-24 添加 自定义字段 - 级联表
+CREATE TABLE `est_fields_jl` (
+`id`  int NOT NULL AUTO_INCREMENT ,
+`fields_id`  int NOT NULL COMMENT '自定义字段id' ,
+`parent_id`  int NOT NULL DEFAULT 0 COMMENT '父id' ,
+`name`  varchar(50) NOT NULL DEFAULT '' COMMENT '名称' ,
+`type`  tinyint(4) NOT NULL DEFAULT 1 COMMENT '类型 1第一级 2第二级 3第三级' ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='自定义字段 - 级联表';
+
+# 2013-12-30 客户添加两电话字段
+INSERT INTO `est_fields` (`name`, `fields`) VALUES ('办公电话','cle_phone2');
+INSERT INTO `est_fields` (`name`, `fields`) VALUES ('其他电话','cle_phone3');
+
+ALTER TABLE `est_client`
+ADD COLUMN `cle_phone2`  varchar(20) NOT NULL DEFAULT '' COMMENT '办公电话' AFTER `cle_phone`,
+ADD COLUMN `cle_phone3`  varchar(20) NOT NULL DEFAULT '' COMMENT '其他电话' AFTER `cle_phone2`;
+
+# 2014-1-2 
+UPDATE `est_fields` SET `name`='号码状态' WHERE (`id`='10') LIMIT 1;
+UPDATE `est_dictionary` SET `name`='号码状态' WHERE (`id`='6') LIMIT 1;
+
+#2014-1-9 zgx 参数设置表 添加 删除客户时，相应数据处理 字段
+ALTER TABLE `est_config`
+ADD COLUMN `delete_client_relative`  int NOT NULL DEFAULT 1 COMMENT '删除客户时，相应数据处理 1不作处理 2一同删除' AFTER `use_contact`;
+
+# 2014-1-13 zgx 自定义是否必选项字段
+ALTER TABLE `est_fields`
+ADD COLUMN `if_require`  int NOT NULL DEFAULT 1 COMMENT '自定义是否必选项 1非必须 2必选' AFTER `data_type`;
+
+#2014-2-14 zgx 添加表单表
+CREATE TABLE `est_form` (
+`form_id`  int NOT NULL AUTO_INCREMENT COMMENT '表单id' ,
+`form_name`  varchar(150) NOT NULL DEFAULT '' COMMENT '表单名称' ,
+`form_html`  text NOT NULL COMMENT '表单html' ,
+PRIMARY KEY (`form_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='表单表';
+
+#2014-2-19 zgx 
+ALTER TABLE `est_form`
+ADD COLUMN `create_user_id`  int NOT NULL COMMENT '创建人id' AFTER `form_html`,
+ADD COLUMN `create_time`  int NOT NULL COMMENT '创建时间' AFTER `create_user_id`,
+ADD COLUMN `update_user_id`  int NOT NULL COMMENT '最后修改人id' AFTER `create_time`,
+ADD COLUMN `update_time`  int NOT NULL COMMENT '最后修改时间' AFTER `update_user_id`;
+ALTER TABLE `est_form`
+ADD COLUMN `form_gobal_html`  text NOT NULL COMMENT '原始html' AFTER `form_name`;
+
+#2014-2-14 zgx 添加流程节点表
+CREATE TABLE `est_flow_nodes` (
+`node_id`  int NOT NULL AUTO_INCREMENT COMMENT '节点id' ,
+`node_name`  varchar(50) NOT NULL DEFAULT '' COMMENT '节点名称' ,
+`node_form`  int NOT NULL COMMENT '操作表单id' ,
+`participant_type`  int NOT NULL DEFAULT 1 COMMENT '参与人类型1员工2部门3角色' ,
+`node_participant`  varchar(200) NOT NULL DEFAULT '' COMMENT '参与人' ,
+`action`  text NOT NULL COMMENT '动作' ,
+PRIMARY KEY (`node_id`)
+)
+COMMENT='流程节点表';
+ALTER TABLE `est_flow_nodes` 
+ENGINE=InnoDB;
+
+#2014-2-19 zgx
+ALTER TABLE `est_flow_nodes`
+ADD COLUMN `flow_id`  int NOT NULL COMMENT '流程id' AFTER `node_id`,
+CHANGE COLUMN `node_form` `form_id`  int(11) NOT NULL COMMENT '操作表单id' AFTER `node_name`;
+ALTER TABLE `est_flow_nodes`
+ADD COLUMN `node_use_time`  int NOT NULL COMMENT '预计耗时(时为单位)' AFTER `node_name`;
+
+
+#2014-2-17 zgx 添加表单级联自定义选项表
+CREATE TABLE `est_form_cascade` (
+`id`  int NOT NULL AUTO_INCREMENT ,
+`parent_id`  int NOT NULL COMMENT '父id' ,
+`name`  varchar(150) NOT NULL DEFAULT '' COMMENT '选项名称' ,
+`deep`  int NOT NULL COMMENT '第几级(1、2、3)' ,
+`field`  varchar(100) NOT NULL DEFAULT '' COMMENT '字段名' ,
+`form_id`  int NOT NULL COMMENT '表单id' ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='表单级联自定义选项表';
+
+
+#2014-2-19 zgx 添加表单字段表
+CREATE TABLE `est_form_fields` (
+`field_id`  int NOT NULL AUTO_INCREMENT COMMENT '表单字段id' ,
+`form_id`  int NOT NULL COMMENT '表单id' ,
+`fields`  varchar(50) NOT NULL DEFAULT '' COMMENT '字段' ,
+`field_name`  varchar(50) NOT NULL DEFAULT '' COMMENT '字段名称' ,
+`field_type`  tinyint(4) NOT NULL DEFAULT 0 COMMENT '字段类型 0输入框1文本框2多选框3单选框4下拉框5级联框6日期框7附件框8姓名9手机10电话11性别12地址' ,
+`field_if_must`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否必填 0否1是' ,
+`default_value`  varchar(150) NOT NULL DEFAULT '' COMMENT '默认值' ,
+PRIMARY KEY (`field_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='表单字段表';
+
+# 2014-2-19 zgx 添加流程表
+CREATE TABLE `est_flow` (
+`flow_id`  int NOT NULL AUTO_INCREMENT COMMENT '流程id' ,
+`flow_name`  varchar(100) NOT NULL DEFAULT '' COMMENT '流程名称' ,
+`flow_description`  varchar(250) NOT NULL DEFAULT '' COMMENT '流程说明' ,
+`flow_status`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '流程状态 0未启用1启用2过期3禁用' ,
+`valid_from`  datetime NOT NULL COMMENT '有效开始时间' ,
+`valid_to`  datetime NOT NULL  COMMENT '有效结束时间' ,
+`create_user_id`  int NOT NULL COMMENT '创建人id' ,
+`create_time`  int NOT NULL DEFAULT 0 COMMENT '创建时间' ,
+`update_user_id`  int NOT NULL COMMENT '修改人id' ,
+`update_time`  int NOT NULL DEFAULT 0 COMMENT '修改时间' ,
+PRIMARY KEY (`flow_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='流程表';
+
+# 2014-2-19 zgx 添加流程节点详细记录表
+CREATE TABLE `est_flow_detail` (
+`id`  int NOT NULL AUTO_INCREMENT ,
+`flow_id`  int NOT NULL COMMENT '流程id' ,
+`cle_id`  int NOT NULL COMMENT '客户id' ,
+`flow_number`  varchar(30) NOT NULL DEFAULT '' COMMENT '流程编码' ,
+`flow_info_id`  int NOT NULL COMMENT '流程记录id' ,
+`node_id`  int NOT NULL COMMENT '节点id' ,
+`node_status`  int NOT NULL DEFAULT 0 COMMENT '节点处理状态 0未处理1进行中2正常完成3退回4超时完成' ,
+`form_info_id`  int NOT NULL DEFAULT 0 COMMENT '表单记录表id' ,
+`node_start_time`  int NOT NULL DEFAULT 0 COMMENT '开始时间' ,
+`node_end_time`  int NOT NULL DEFAULT 0 COMMENT '完成时间' ,
+`node_over_time`  int NOT NULL DEFAULT 0 COMMENT '超时时间' ,
+`reason`  varchar(200) NOT NULL DEFAULT '' COMMENT '原因' ,
+`back_reason`  varchar(200) NOT NULL DEFAULT '' COMMENT '退回原因' ,
+`deal_user_id`  int NOT NULL COMMENT '处理人id' ,
+`dept_id`  int NOT NULL COMMENT '部门id' ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+COMMENT='流程节点详细记录表';
+
+# 2014-2-20 zgx
+ALTER TABLE `est_form_fields`
+ADD COLUMN `option_type`  varchar(10) NOT NULL DEFAULT '' COMMENT '选项设置方式 custom自定义 database数据库' AFTER `default_value`,
+ADD COLUMN `table`  varchar(10) NOT NULL DEFAULT '' COMMENT '数据库表' AFTER `option_type`,
+ADD COLUMN `option_value`  varchar(10) NOT NULL DEFAULT '' COMMENT '值字段名' AFTER `table`,
+ADD COLUMN `option_text`  varchar(10) NOT NULL DEFAULT '' COMMENT '文本字段名' AFTER `option_value`,
+ADD COLUMN `parent_value`  varchar(10) NOT NULL DEFAULT '' COMMENT '父值字段名(级联)' AFTER `option_text`,
+ADD COLUMN `parent_table`  varchar(10) NOT NULL DEFAULT '' COMMENT '父数据库表(级联)' AFTER `parent_value`,
+ADD COLUMN `parent_table_value`  varchar(10) NOT NULL DEFAULT '' COMMENT '父表字段名(级联)' AFTER `parent_table`,
+ADD COLUMN `series`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '级数(级联) 0默认  2两级 3三级' AFTER `parent_table_value`,
+ADD COLUMN `datefmt`  varchar(30) NOT NULL DEFAULT '' COMMENT '日期框日期格式' AFTER `series`,
+ADD COLUMN `usessq`  tinyint(1) NULL COMMENT '是否使用省市区级联 0否 1是' AFTER `datefmt`;
+
+# 2014-3-3 zgx 参数设置添加呼叫类型字段
+ALTER TABLE `est_config`
+ADD COLUMN `call_type`  int NOT NULL DEFAULT 0 COMMENT '呼叫类型 0呼入呼出 1呼入 2呼出' AFTER `delete_client_relative`;
+
+
+#2014-3-12 zgx 添加系统自动回收、历史信息字段
+ALTER TABLE `est_config`
+ADD COLUMN `auto_back_client`  int NOT NULL DEFAULT 0 COMMENT '否是启用系统自动回收客户功能  0不启用 1启用方案一 2启用方案二' AFTER `call_type`;
+ALTER TABLE `est_config`
+ADD COLUMN `client_has_create_day`  int NOT NULL COMMENT '自动收回临界点(即数据从创建到现在的时间) 单位:天' AFTER `auto_back_client`,
+ADD COLUMN `no_contact_day1`  int NOT NULL COMMENT '临界点内没联系的天数 或 方案一没联系的天数' AFTER `client_has_create_day`,
+ADD COLUMN `no_contact_day2`  int NOT NULL COMMENT '临界点以外没联系的天数' AFTER `no_contact_day1`,
+ADD COLUMN `use_history`  int NOT NULL DEFAULT 0 COMMENT '是否启用历史信息 0否 1是' AFTER `no_contact_day2`,
+ADD COLUMN `created_day`  int NOT NULL COMMENT '历史信息临界点(即数据数据被创建到今的天数)' AFTER `use_history`;
+
+#2014-3-13 zgx 添加客户历史信息表 
+(注：est_client_history要与当前系统est_client字段一样)
+DROP TABLE IF EXISTS `est_client_history`;
+CREATE TABLE `est_client_history` (
+  `cle_id` int(11) NOT NULL COMMENT '客户ID，主键，自增',
+  `cle_name` varchar(50) NOT NULL DEFAULT '' COMMENT '客户姓名',
+  `cle_pingyin` varchar(50) NOT NULL DEFAULT '' COMMENT '客户名称拼音',
+  `cle_dial_number` int(11) NOT NULL DEFAULT '0' COMMENT '通话次数',
+  `cle_phone` varchar(20) NOT NULL DEFAULT '' COMMENT '客户电话',
+  `cle_phone2` varchar(20) NOT NULL DEFAULT '' COMMENT '办公电话',
+  `cle_phone3` varchar(20) NOT NULL DEFAULT '' COMMENT '其他电话',
+  `cle_address` varchar(100) NOT NULL DEFAULT '' COMMENT '详细地址',
+  `cle_info_source` varchar(20) NOT NULL DEFAULT '' COMMENT '信息来源',
+  `cle_stage` varchar(20) NOT NULL DEFAULT '' COMMENT '客户阶段（数据字典配置）',
+  `cle_last_stage` varchar(255) NOT NULL DEFAULT '' COMMENT '上一次的客户阶段',
+  `cle_stage_change_time` date NOT NULL COMMENT '客户阶段改变时间',
+  `cle_recede` tinyint(4) NOT NULL DEFAULT '0' COMMENT '退阶标记：1退阶；当阶段后退时变为1，前进时为0',
+  `cle_if_increment` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否为新增量：0否，1是',
+  `cle_stat` varchar(20) NOT NULL COMMENT '客户状态：未拨打、有效、无效、未呼通、空号错号',
+  `cle_remark` text COMMENT '备注',
+  `cle_1` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段1【客户信息】',
+  `cle_2` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段2【客户信息】',
+  `cle_3` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段3【客户信息】',
+  `cle_4` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段4【客户信息】',
+  `cle_5` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段5【客户信息】',
+  `cle_6` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段6【客户信息】',
+  `cle_7` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段7【客户信息】',
+  `cle_8` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段8【客户信息】',
+  `cle_9` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段9【客户信息】',
+  `cle_10` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段10【客户信息】',
+  `cle_11` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段11【客户信息】',
+  `cle_12` varchar(50) NOT NULL DEFAULT '' COMMENT '配置字段12【客户信息】',
+  `cle_first_connecttime` date NOT NULL COMMENT '首次联系时间',
+  `cle_last_connecttime` date NOT NULL COMMENT '最近一次联系时间',
+  `con_rec_next_time` date NOT NULL COMMENT '下次联系时间',
+  `user_id` int(11) NOT NULL DEFAULT '0' COMMENT '数据所属人',
+  `last_user_id` varchar(255) NOT NULL DEFAULT '0' COMMENT '上一个数据所属人',
+  `dployment_num` int(11) NOT NULL DEFAULT '0' COMMENT '数据调配次数',
+  `dept_id` int(11) NOT NULL DEFAULT '1' COMMENT '数据所属部门',
+  `cle_executor_time` datetime NOT NULL COMMENT '分配或占有时间',
+  `cle_creat_time` date NOT NULL COMMENT '创建时间',
+  `cle_creat_user_id` int(11) NOT NULL DEFAULT '0' COMMENT '创建者ID',
+  `cle_update_time` date NOT NULL COMMENT '更新时间',
+  `cle_update_user_id` int(11) NOT NULL DEFAULT '0' COMMENT '更新人id',
+  `impt_id` int(11) NOT NULL DEFAULT '0' COMMENT '导入批次号',
+  `cle_province_id` int(11) NOT NULL COMMENT '省id',
+  `cle_province_name` varchar(20) NOT NULL DEFAULT '' COMMENT '省 ',
+  `cle_city_id` int(11) NOT NULL COMMENT '市id',
+  `cle_city_name` varchar(20) NOT NULL DEFAULT '' COMMENT '市',
+  `cle_public_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据类型 0有所属人 1放弃 2收回 3新导入',
+  PRIMARY KEY (`cle_id`),
+  KEY `cle_phone` (`cle_phone`),
+  KEY `cle_name` (`cle_name`),
+  KEY `dept_id` (`dept_id`),
+  KEY `user_id` (`user_id`),
+  KEY `cle_pingyin` (`cle_pingyin`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户历史信息表';
+
+
+# 2014-04-2 zgx 参数设置添加数据回到哪配置字段
+ALTER TABLE `est_config` ADD `auto_back_place` TINYINT NOT NULL DEFAULT '0' COMMENT '系统自动回收到位置 0公司 1数据所属部门';
+
+#2014-04-11 zgx 自定义字段添加默认值、级数、级联文本类型3个字段
+ALTER TABLE `est_fields`
+MODIFY COLUMN `data_type`  int(11) NOT NULL DEFAULT 1 COMMENT '自定义字段文本类型 1文本框 2下拉选择3文本域4级联框5日期框7关联多选框' AFTER `field_list_width`,
+ADD COLUMN `default`  varchar(150) NOT NULL DEFAULT '' COMMENT '默认值' AFTER `if_require`,
+ADD COLUMN `jl_series`  tinyint NOT NULL DEFAULT 2 COMMENT '级联级数 2两级 3三级' AFTER `default`,
+ADD COLUMN `jl_field_type`  text NOT NULL COMMENT '最后一级文本类型 0下拉框 1输入框' AFTER `jl_series`;
+
+
+#2014-04-22 zgx 字段表添加日期格式
+ALTER TABLE `est_fields`
+ADD COLUMN `datefmt`  varchar(30) NOT NULL COMMENT '日期格式' AFTER `jl_field_type`;
+
+
+#2014-04-25 zgx 创建工单数据整理表
+CREATE TABLE `est_work_flow` (
+`flow_id`  int NOT NULL COMMENT '流程id' ,
+`flow_info_id`  int NOT NULL COMMENT '流程记录id' ,
+`flow_number`  varchar(50) NOT NULL DEFAULT '' COMMENT '流程编号' ,
+`create_user_id`  int NOT NULL COMMENT '工单创建人id' ,
+`flow_create_time`  int NOT NULL COMMENT '流程创建时间' ,
+`flow_status`  int NOT NULL COMMENT '工单状态（0未开始1运行中2已完成3已结束4已删除）' ,
+`flow_json`  text NOT NULL COMMENT '工单表单字段信息json结构' ,
+`create_time`  datetime NOT NULL COMMENT '整理插入时间' ,
+PRIMARY KEY (`flow_id`, `flow_info_id`),
+KEY `flow_create_time` (`flow_create_time` )
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='工单数据整理表';
+
+#2014-03-18  短信表添加更新结果字段
+ALTER TABLE `est_sms` ADD `if_updated` TINYINT( 1 ) NOT NULL DEFAULT 0 COMMENT '是否已更新结果（0未更新、1已更新）';
+
+#2014-07-18 zgx 通话记录索引、触发器修改
+ALTER TABLE `est_cdr`
+DROP INDEX `call_id` ,
+ADD INDEX `call_id` USING BTREE (`call_id`) ;
+
+DROP TRIGGER `statistics_stage`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` TRIGGER `statistics_stage` AFTER INSERT ON `est_cdr` FOR EACH ROW BEGIN
+IF NEW.user_id!=0
+THEN
+IF NEW.conn_secs=0
+THEN
+SET @conn_success=0;
+ELSE
+SET @conn_success=1;
+END IF;
+IF NEW.call_type=1
+THEN
+SET @conn_out_num=1;
+ELSE
+SET @conn_out_num=0;
+END IF;
+IF NEW.call_type=2 || NEW.call_type=13
+THEN
+SET @conn_in_num=1;
+ELSE
+SET @conn_in_num=0;
+END IF;
+IF NEW.call_type=2 && NEW.conn_secs!=0
+THEN
+SET @conn_success_in=1;
+ELSE
+SET @conn_success_in=0;
+END IF;
+IF NEW.call_type=1 && NEW.conn_secs!=0
+THEN
+SET @conn_success_out=1;
+ELSE
+SET @conn_success_out=0;
+END IF;
+INSERT INTO est_statistics_stage(deal_date,user_id,dept_id,conn_secs,conn_num,conn_success,conn_out_num,conn_in_num,conn_success_in,conn_success_out)VALUES(NEW.start_date,NEW.user_id,NEW.dept_id,NEW.conn_secs,1,@conn_success,@conn_out_num,@conn_in_num,@conn_success_in,@conn_success_out) ON DUPLICATE KEY UPDATE conn_secs=conn_secs+NEW.conn_secs,conn_num=conn_num+1,conn_success=conn_success+@conn_success,conn_out_num=conn_out_num+@conn_out_num,conn_in_num=conn_in_num+@conn_in_num,conn_success_in=conn_success_in+@conn_success_in,conn_success_out=conn_success_out+@conn_success_out;
+UPDATE est_lost_cdr set state=1 WHERE caller = NEW.cus_phone;
+END IF;
+IF NEW.cle_id !=0 && NEW.conn_secs!=0
+THEN
+UPDATE est_client SET cle_dial_number=cle_dial_number+1 WHERE cle_id=NEW.cle_id;
+SELECT callid into @call_id FROM est_contact_record WHERE callid=NEW.call_id limit 1;
+IF @call_id
+THEN
+UPDATE est_contact_record set con_rec_time=FROM_UNIXTIME( NEW.start_time,'%Y-%m-%d %H:%i:%s'),user_id=NEW.user_id,conn_secs=NEW.conn_secs,call_type=NEW.call_type WHERE callid= NEW.call_id;
+ELSE
+INSERT INTO est_contact_record ( cle_id,callid,user_id,conn_secs,call_type,con_rec_time) values (NEW.cle_id,NEW.call_id,NEW.user_id,NEW.conn_secs,NEW.call_type,FROM_UNIXTIME( NEW.start_time,'%Y-%m-%d %H:%i:%s'));
+END IF;
+END IF;
+END;;
+
+ALTER TABLE `est_statistics_stage`
+MODIFY COLUMN `conn_success`  int(11) NOT NULL DEFAULT 0 COMMENT '坐席呼通量：呼入/呼出' AFTER `conn_num`,
+MODIFY COLUMN `conn_success_out`  int(11) NOT NULL DEFAULT 0 COMMENT '坐席呼出接通量' AFTER `conn_success`,
+MODIFY COLUMN `conn_out_num`  int(11) NOT NULL DEFAULT 0 COMMENT '坐席呼出量' AFTER `conn_success_out`,
+MODIFY COLUMN `conn_success_in`  int(11) NOT NULL DEFAULT 0 COMMENT '坐席呼入接通量' AFTER `conn_out_num`,
+MODIFY COLUMN `conn_in_num`  int(11) NOT NULL DEFAULT 0 COMMENT '坐席呼入量' AFTER `conn_success_in`;
+
+#2014-07-29 zgx est_cdr添加挂断原因字段
+ALTER TABLE `est_cdr`
+ADD COLUMN `endresult`  tinyint NOT NULL DEFAULT 0 COMMENT '1振铃放弃 2未接 11用户挂机 12坐席挂断 13转接 14拦截' AFTER `state`;
+
+#2014-12-11 xjh est_form增加删除标记
+ALTER TABLE `est_form`
+ADD COLUMN `is_del`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标记：0，未删除；1已删除，' AFTER `update_time`;
+
+#2015-3-25 zgx est_config添加是否启用转技能组功能字段
+ALTER TABLE `est_config`
+ADD COLUMN `use_transque`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否转启用技能组功能 0否 1是' AFTER `auto_back_place`;
+
+#2015-4-22 zgx 修改est_cdr表中触发器
+DROP TRIGGER `statistics_stage`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` TRIGGER `statistics_stage` AFTER INSERT ON `est_cdr` FOR EACH ROW BEGIN
+IF NEW.user_id!=0
+THEN
+IF NEW.conn_secs=0
+THEN
+SET @conn_success=0;
+ELSE
+SET @conn_success=1;
+END IF;
+IF NEW.call_type=1
+THEN
+SET @conn_out_num=1;
+ELSE
+SET @conn_out_num=0;
+END IF;
+IF NEW.call_type=2 || NEW.call_type=13
+THEN
+SET @conn_in_num=1;
+ELSE
+SET @conn_in_num=0;
+END IF;
+IF NEW.call_type=2 && NEW.conn_secs!=0
+THEN
+SET @conn_success_in=1;
+ELSE
+SET @conn_success_in=0;
+END IF;
+IF NEW.call_type=1 && NEW.conn_secs!=0
+THEN
+SET @conn_success_out=1;
+ELSE
+SET @conn_success_out=0;
+END IF;
+INSERT INTO est_statistics_stage(deal_date,user_id,dept_id,conn_secs,conn_num,conn_success,conn_out_num,conn_in_num,conn_success_in,conn_success_out)VALUES(NEW.start_date,NEW.user_id,NEW.dept_id,NEW.conn_secs,1,@conn_success,@conn_out_num,@conn_in_num,@conn_success_in,@conn_success_out) ON DUPLICATE KEY UPDATE conn_secs=conn_secs+NEW.conn_secs,conn_num=conn_num+1,conn_success=conn_success+@conn_success,conn_out_num=conn_out_num+@conn_out_num,conn_in_num=conn_in_num+@conn_in_num,conn_success_in=conn_success_in+@conn_success_in,conn_success_out=conn_success_out+@conn_success_out;
+IF NEW.result=0
+THEN
+UPDATE est_lost_cdr set state=1,user_id=NEW.user_id,dept_id=NEW.dept_id WHERE caller = NEW.cus_phone;
+END IF;
+END IF;
+IF NEW.cle_id !=0 && NEW.conn_secs!=0
+THEN
+UPDATE est_client SET cle_dial_number=cle_dial_number+1 WHERE cle_id=NEW.cle_id;
+SELECT callid into @call_id FROM est_contact_record WHERE callid=NEW.call_id limit 1;
+IF @call_id
+THEN
+UPDATE est_contact_record set con_rec_time=FROM_UNIXTIME( NEW.start_time,'%Y-%m-%d %H:%i:%s'),user_id=NEW.user_id,conn_secs=NEW.conn_secs,call_type=NEW.call_type WHERE callid= NEW.call_id;
+ELSE
+INSERT INTO est_contact_record ( cle_id,callid,user_id,conn_secs,call_type,con_rec_time) values (NEW.cle_id,NEW.call_id,NEW.user_id,NEW.conn_secs,NEW.call_type,FROM_UNIXTIME( NEW.start_time,'%Y-%m-%d %H:%i:%s'));
+END IF;
+END IF;
+END;;

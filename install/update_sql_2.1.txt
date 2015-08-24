@@ -1,0 +1,74 @@
+# ekt外呼系统
+
+###2.1 ekt版本2.0升级到2.1 sql语句的修改
+
+ALTER TABLE `est_knowledge_class` ADD `k_class_sort` INT NOT NULL DEFAULT '0' COMMENT '排序（同级节点之间排序）';
+UPDATE `est_knowledge_class` SET `k_class_sort` = `k_class_id` WHERE 1 ;
+
+##客服 删除主题
+DELETE FROM `est_fields` WHERE (`fields`='serv_theme') LIMIT 1;
+ALTER TABLE `est_service`
+MODIFY COLUMN `serv_type`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '服务类型' AFTER `serv_id`,
+DROP COLUMN `serv_theme`;
+
+##工作量统计表 添加 呼入、呼出数
+ALTER TABLE `est_statistics_stage`
+ADD COLUMN `conn_out_num`  int NOT NULL DEFAULT 0 COMMENT '呼出数' AFTER `conn_success`,
+ADD COLUMN `conn_in_num`  int NOT NULL DEFAULT 0 COMMENT '呼入数' AFTER `conn_out_num`;
+
+##修改 用户表 user_workbench_layout字段长度
+ALTER TABLE `est_users`
+MODIFY COLUMN `user_workbench_layout`  varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '工作桌面div布局' AFTER `user_login_state`;
+
+ALTER TABLE `est_config`
+ADD COLUMN `connect_type`  varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'swf' COMMENT '通道连接方式 swf：flash  amq：消息队列（网络条件不好的时候用）' AFTER `change_dept_dealData`;
+
+
+ALTER TABLE `est_users`
+ADD COLUMN `user_channel`  varchar(5) NULL DEFAULT '0' AFTER `user_cti_server`;
+
+INSERT INTO `est_dictionary` (`id`, `name`, `type`) VALUES ('6', '客户状态', '1');
+
+ALTER TABLE `est_client_log`
+CHANGE COLUMN `conents` `contents`  text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '操作内容' AFTER `cle_id`;
+
+
+##est_cdr表 触发器修改
+DROP TRIGGER `statistics_stage`;
+DELIMITER //
+CREATE DEFINER=`root`@`%` TRIGGER `statistics_stage` AFTER INSERT ON `est_cdr` FOR EACH ROW BEGIN
+IF NEW.user_id!=0
+THEN
+IF NEW.conn_secs=0
+THEN
+SET @conn_success=0;
+ELSE
+SET @conn_success=1;
+END IF;
+IF NEW.call_type=1
+THEN
+SET @conn_out_num=1;
+ELSE
+SET @conn_out_num=0;
+END IF;
+IF NEW.call_type=2 || NEW.call_type=13
+THEN
+SET @conn_in_num=1;
+ELSE
+SET @conn_in_num=0;
+END IF;
+INSERT INTO est_statistics_stage(deal_date,user_id,dept_id,conn_secs,conn_num,conn_success,conn_out_num,conn_in_num)VALUES(NEW.start_date,NEW.user_id,NEW.dept_id,NEW.conn_secs,1,@conn_success,@conn_out_num,@conn_in_num) ON DUPLICATE KEY UPDATE conn_secs=conn_secs+NEW.conn_secs,conn_num=conn_num+1,conn_success=conn_success+@conn_success,conn_out_num=conn_out_num+@conn_out_num,conn_in_num=conn_in_num+@conn_in_num;
+END IF;
+IF NEW.cle_id !=0 && NEW.conn_secs!=0
+THEN
+SELECT callid into @call_id FROM est_contact_record WHERE callid=NEW.call_id limit 1;
+IF @call_id
+THEN
+UPDATE est_contact_record set con_rec_time=FROM_UNIXTIME( NEW.start_time,'%Y-%m-%d %H:%i:%s'),user_id=NEW.user_id,conn_secs=NEW.conn_secs,call_type=NEW.call_type WHERE callid= NEW.call_id;
+ELSE
+INSERT INTO est_contact_record ( cle_id,callid,user_id,conn_secs,call_type,con_rec_time) values (NEW.cle_id,NEW.call_id,NEW.user_id,NEW.conn_secs,NEW.call_type,FROM_UNIXTIME( NEW.start_time,'%Y-%m-%d %H:%i:%s'));
+END IF;
+END IF;
+END
+//
+DELIMITER;

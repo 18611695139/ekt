@@ -1,0 +1,9 @@
+{
+    "name": "icsoc/ekt",
+    "type": "project",
+    "description": "主动营销系统",
+    "require": {
+        "guzzle/guzzle": "~3.7",
+        "elasticsearch/elasticsearch": "~1.0"
+    }
+}

@@ -1,0 +1,22 @@
+﻿# ekt外呼系统
+
+###2.4 ekt版本2.3升级到2.4 sql语句的修改
+
+##2013-09-17 zgx 订单两表 添加索引
+ALTER TABLE `est_order`
+ADD INDEX `user_id` (`user_id`) ;
+
+ALTER TABLE `est_order`
+ADD INDEX `order_accept_time` (`order_accept_time`) ;
+
+ALTER TABLE `est_order_product`
+ADD INDEX `order_id` (`order_id`) ;
+
+##2013-10-12 dzg 客户限制数量
+ALTER TABLE `est_config` ADD `client_amount` INT( 10 ) NOT NULL;
+
+##2013-10-18 zgx 记录导入过程中的不合法数据表
+ALTER TABLE `est_import_error_data`
+CHANGE COLUMN `cle_provice_id` `cle_province_id`  int(11) NOT NULL DEFAULT 0 COMMENT '省ID【客户信息】' AFTER `cle_phone`,
+CHANGE COLUMN `cle_provice` `cle_province_name`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '省【客户信息】' AFTER `cle_province_id`,
+CHANGE COLUMN `cle_city` `cle_city_name`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '市【客户信息】' AFTER `cle_city_id`;

@@ -1,0 +1,146 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<project name="sservice" basedir="/var/www/html/" default="verify">
+    <target name="check" description="检查系统环境">
+        <echo msg="检查系统环境..." />
+
+        <available extension="mbstring" property="mbstring.ext.loaded" />
+        <if>
+            <equals arg1="${mbstring.ext.loaded}" arg2="true" casesensitive="false" />
+            <then>
+                <echo msg="mbstring扩展已安装" />
+            </then>
+            <else>
+                <property name="mbstring.unloaded" value="true" />
+            </else>
+        </if>
+        <fail if="mbstring.unloaded" msg="PHP扩展mbstring未安装,先安装该扩展再执行安装程序" />
+
+        <available extension="json" property="json.ext.loaded" />
+        <if>
+            <equals arg1="${json.ext.loaded}" arg2="true" casesensitive="false" />
+            <then>
+                <echo msg="json扩展已安装" />
+            </then>
+            <else>
+                <property name="json.unloaded" value="true" />
+            </else>
+        </if>
+        <fail if="json.unloaded" msg="PHP扩展json未安装,先安装该扩展再执行安装程序" />
+    </target>
+
+    <target name="install" description="安装系统">
+        <echo msg="设置安装参数..." />
+        <input propertyName="winip">
+            请输入通信服务器内网IP地址:</input>
+        <input propertyName="deploy_type" defaultValue="svn" validArgs="svn,source">
+            请输入部署程序的方式:</input>
+        <if>
+            <equals arg1="${deploy_type}" arg2="svn" casesensitive="false" />
+            <then>
+                <phingcall target="svn.build" />
+            </then>
+        </if>
+        <if>
+            <equals arg1="${deploy_type}" arg2="source" casesensitive="false" />
+            <then>
+                <phingcall target="source.build"/>
+            </then>
+        </if>
+    </target>
+
+    <!-- Target: config 设置变量，配置不同参数-->
+    <target name="config" description="配置参数">
+        <echo msg="开始配置配置文件参数..." />
+
+        <echo msg="开始配置数据库服务器..." />
+        <input propertyName="db.master.ip" defaultValue="127.0.0.1">
+            请输入数据库服务器的IP地址:</input>
+        <input propertyName="db.master.user" defaultValue="root">
+            请输入数据库服务器的用户名:</input>
+        <input propertyName="db.master.password" defaultValue="passw0rd">
+            请输入数据库服务器的密码:</input>
+        <input propertyName="db.master.dbname">
+            请输入数据库名称:</input>
+
+        <reflexive file="${project.basedir}/${phing.project.name}/config.inc.php">
+            <filterchain>
+                <replaceregexp>
+                    <!-- Target: set winport -->
+                    <regexp pattern="(.+phone_serverip.+= ).+" replace="\1'${winip}';"/>
+                    <regexp pattern="(.+my_host.+= ).+" replace="\1'${db.master.ip}';"/>
+                    <regexp pattern="(.+my_user.+= ).+" replace="\1'${db.master.user}';"/>
+                    <regexp pattern="(.+my_password.+= ).+" replace="\1'${db.master.password}';"/>
+                    <regexp pattern="(.+my_database.+= ).+" replace="\1'${db.master.dbname}';"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <echo msg="配置完成!"/>
+    </target>
+
+    <!-- Target: svn install -->
+    <target name="svn.build" description="从svn安装">
+        <input propertyName="svn_url" defaultValue="192.168.1.39">
+            请输入SVN地址:</input>
+        <input propertyName="svn_user" defaultValue="deploy">
+            请输入SVN用户:</input>
+        <input propertyName="svn_pass">
+            请输入SVN密码:</input>
+
+        <echo msg="开始安装sservice系统..." />
+        <echo msg="从SVN地址[https://${svn_url}/svn/sservice/1.0/sservice]检出代码..." />
+        <svncheckout
+                svnpath="svn"
+                username="${svn_user}"
+                password="${svn_pass}"
+                nocache="true"
+                repositoryurl="https://${svn_url}/svn/sservice/1.0/sservice"
+                todir="./${phing.project.name}"
+                trustServerCert="true"
+                />
+
+        <echo msg="开始安装同步服务服务端系统sync_service..." />
+        <echo msg="从SVN地址[https://${svn_url}/svn/sservice/1.0/sync_service]检出代码..." />
+        <svncheckout
+                svnpath="svn"
+                username="${svn_user}"
+                password="${svn_pass}"
+                nocache="true"
+                repositoryurl="https://${svn_url}/svn/sservice/1.0/sync_service"
+                todir="/usr/local/sync_service"
+                trustServerCert="true"
+                />
+        <echo msg="同步服务服务端系统sync_service安装完成!" />
+
+        <echo msg="开始修改sync_client系统中配置文件中参数..." />
+        <reflexive file="/usr/local/sync_service/config.inc.php">
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="(.+my_host.+= ).+" replace="\1'${db.master.ip}';"/>
+                    <regexp pattern="(.+my_user.+= ).+" replace="\1'${db.master.user}';"/>
+                    <regexp pattern="(.+my_password.+= ).+" replace="\1'${db.master.password}';"/>
+                    <regexp pattern="(.+my_database.+= ).+" replace="\1'${db.master.dbname}';"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <echo msg="修改完成!" />
+    </target>
+
+    <target name="cron" description="任务计划">
+        <echo msg="开始设置任务计划..." />
+        <append destFile="/etc/crontab" text="* * * * * root php /usr/local/sync_service/sync_service.php >> /usr/local/sync_service/sync_service.log&#xA;"/>
+        <append destFile="/etc/crontab" text="10 1 * * * root php /usr/local/sync_service/sync_service_del_file.php >> /usr/local/sync_service/sync_service_del.log&#xA;"/>
+        <echo msg="设置完成" />
+    </target>
+
+    <!-- Target: source install -->
+    <target name="source.build" description="从源码安装">
+
+    </target>
+
+    <target name="verify" description="确认参数是否设置正确" depends="check,install,config,cron">
+        <echo msg="开始验证配置参数..."/>
+
+    </target>
+
+</project>

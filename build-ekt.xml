@@ -1,0 +1,304 @@
+<?xml version="1.0"  encoding="UTF-8" ?>
+
+<project name="ekt" basedir="/var/www/html/" default="verify">
+    <target name="check" description="检查系统环境">
+        <echo msg="检查系统环境..." />
+
+        <available extension="mbstring" property="mbstring.ext.loaded" />
+        <if>
+            <equals arg1="${mbstring.ext.loaded}" arg2="true" casesensitive="false" />
+            <then>
+                <echo msg="mbstring扩展已安装" />
+            </then>
+            <else>
+                <property name="mbstring.unloaded" value="true" />
+            </else>
+        </if>
+        <fail if="mbstring.unloaded" msg="PHP扩展mbstring未安装,先安装该扩展再执行安装程序" />
+
+        <available extension="json" property="json.ext.loaded" />
+        <if>
+            <equals arg1="${json.ext.loaded}" arg2="true" casesensitive="false" />
+            <then>
+                <echo msg="json扩展已安装" />
+            </then>
+            <else>
+                <property name="json.unloaded" value="true" />
+            </else>
+        </if>
+        <fail if="json.unloaded" msg="PHP扩展json未安装,先安装该扩展再执行安装程序" />
+
+        <available extension="memcached" property="memcached.ext.loaded" />
+        <if>
+            <equals arg1="${memcached.ext.loaded}" arg2="true" casesensitive="false" />
+            <then>
+                <echo msg="memcached扩展已安装" />
+            </then>
+            <else>
+                <property name="memcached.unloaded" value="true" />
+            </else>
+        </if>
+        <fail if="memcached.unloaded" msg="PHP扩展memcached未安装,先安装该扩展再执行安装程序" />
+
+        <available extension="gd" property="gd.ext.loaded" />
+        <if>
+            <equals arg1="${gd.ext.loaded}" arg2="true" casesensitive="false" />
+            <then>
+                <echo msg="gd扩展已安装" />
+            </then>
+            <else>
+                <property name="gd.unloaded" value="true" />
+            </else>
+        </if>
+        <fail if="gd.unloaded" msg="PHP扩展gd未安装,先安装该扩展再执行安装程序" />
+
+        <available extension="gd" property="stomp.ext.loaded" />
+        <if>
+            <equals arg1="${stomp.ext.loaded}" arg2="true" casesensitive="false" />
+            <then>
+                <echo msg="stomp扩展已安装" />
+            </then>
+            <else>
+                <property name="stomp.unloaded" value="true" />
+            </else>
+        </if>
+        <fail if="stomp.unloaded" msg="PHP扩展stomp未安装,先安装该扩展再执行安装程序" />
+    </target>
+
+    <target name="install" description="安装系统">
+        <echo msg="设置安装参数..." />
+        <input propertyName="install_type" defaultValue="2" validArgs="1,2,3">
+            请输入安装的类型(1-saas安装 2-单机安装 3-saas开号):</input>
+        <input propertyName="winip" defaultValue="127.0.0.1">
+            请输入通信服务器IP地址:</input>
+        <input propertyName="winport" defaultValue="80">
+            请输入通信服务器WEB端口:</input>
+        <input propertyName="system_name" defaultValue="sservice">
+            请输入通信服务器RPC服务名称:</input>
+        <input propertyName="sip_prefix" defaultValue="true" validArgs="true,false">
+            请输入是否使用软电话前缀:</input>
+        <input propertyName="local_code" defaultValue="010">
+            请输入本地区号:</input>
+        <input propertyName="vcc_code" defaultValue="wintel">
+            请输入企业代码:</input>
+
+        <input propertyName="deploy_type" defaultValue="git" validArgs="git,source">
+            请输入部署程序的方式:</input>
+        <if>
+            <equals arg1="${deploy_type}" arg2="git" casesensitive="false" />
+            <then>
+                <phingcall target="git.build" />
+            </then>
+        </if>
+        <if>
+            <equals arg1="${deploy_type}" arg2="source" casesensitive="false" />
+            <then>
+                <phingcall target="source.build"/>
+            </then>
+        </if>
+    </target>
+
+    <!-- Target: config 设置变量，配置不同参数-->
+    <target name="config" description="配置参数">
+        <echo msg="配置配置文件参数..." />
+
+        <reflexive file="${project.basedir}/${phing.project.name}/app/config/myconfig.php">
+            <filterchain>
+                <replaceregexp>
+                    <!-- Target: set winport -->
+                    <regexp pattern="(.+cti_server.+= ).+" replace="\1'${winip}';"/>
+                    <regexp pattern="(.+default_tel_server.+= ).+" replace="\1'${winip}';"/>
+                    <regexp pattern="(.+sip_prefix.+= ).+" replace="\1${sip_prefix};"/>
+                    <regexp pattern="(.+local_code.+= ).+" replace="\1'${local_code}';"/>
+                    <regexp pattern="(.+vcc_code.+= ).+" replace="\1'${vcc_code}';"/>
+                    <regexp pattern="(.+rpc_interface.+= ).+" replace="\1'http://${winip}:${winport}/sservice/rpcserv.php';"/>
+                    <regexp pattern="(.+record_interface.+= ).+" replace="\1'http://${winip}:${winport}/sservice/record_download.php';"/>
+                    <regexp pattern="(.+api_interface.+= ).+" replace="\1'http://${winip}:${winport}/sservice/api.php';"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+
+        <echo msg="开始配置数据库..." />
+        <available file="${project.basedir}/${phing.project.name}/install/db_install.sql" property="sql.file.exist" value="true" />
+        <if>
+            <equals arg1="${sql.file.exist}" arg2="false" casesensitive="false" />
+            <then>
+                <property name="sql.file.notexist" value="true" />
+            </then>
+        </if>
+        <fail if="sql.file.notexist" msg="${project.basedir}/${phing.project.name}/install/下没有数据库安装文件db_install.sql,请将wintels.sql拷贝到${project.basedir}/${phing.project.name}/install/下" />
+
+        <echo msg="开始配置主数据库服务器..." />
+        <input propertyName="db.master.ip" defaultValue="127.0.0.1">
+            请输入主数据库服务器的IP地址:</input>
+        <input propertyName="db.master.user" defaultValue="root">
+            请输入主数据库服务器的用户名:</input>
+        <input propertyName="db.master.password" defaultValue="passw0rd">
+            请输入主数据库服务器的密码:</input>
+
+        <echo msg="开始配置从数据库服务器..." />
+        <input propertyName="db.slave.ip" defaultValue="${db.master.ip}">
+            请输入从数据库服务器的IP地址:</input>
+        <input propertyName="db.slave.user" defaultValue="root">
+            请输入从数据库服务器的用户名:</input>
+        <input propertyName="db.slave.password" defaultValue="passw0rd">
+            请输入从数据库服务器的密码:</input>
+    </target>
+
+    <!-- Target: git install -->
+    <target name="git.build" description="从git安装">
+        <echo msg="开始安装ekt系统..." />
+        <echo msg="从SVN地址[http://60.10.131.82:9080/svn/ekt/2.0]检出代码..." />
+        <gitclone
+            repository="http://60.10.131.82:9080/louxin/ekt.git"
+            targetPath="${phing.project.name}" />
+
+        <echo msg="开始创建系统目录..."/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/themes/captcha"/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/themes/lock"/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/themes/uploadfile"/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/app/logs"/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/app/cache"/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/app/notice"/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/app/meta/smarty_template"/>
+
+        <echo msg="开始修改系统目录权限..."/>
+        <chown file="${project.basedir}/${phing.project.name}/themes/captcha" user="apache.apache"/>
+        <chown file="${project.basedir}/${phing.project.name}/themes/lock" user="apache.apache"/>
+        <chown file="${project.basedir}/${phing.project.name}/themes/uploadfile" user="apache.apache"/>
+        <chown file="${project.basedir}/${phing.project.name}/app/logs" user="apache.apache"/>
+        <chown file="${project.basedir}/${phing.project.name}/app/cache" user="apache.apache"/>
+        <chown file="${project.basedir}/${phing.project.name}/app/notice" user="apache.apache"/>
+        <chown file="${project.basedir}/${phing.project.name}/app/meta/smarty_template" user="apache.apache"/>
+        <echo msg="ekt系统安装完成!" />
+
+        <echo msg="开始安装同步服务客户端系统sync_client..." />
+        <echo msg="从SVN地址[https://${git_url}/svn/sservice/1.0/sync_client]检出代码..." />
+        <svncheckout
+                svnpath="svn"
+                username="${git_user}"
+                password="${git_pass}"
+                nocache="true"
+                repositoryurl="https://${git_url}/svn/sservice/1.0/sync_client"
+                todir="/usr/local/sync_client"
+                trustServerCert="true"
+                />
+        <echo msg="同步服务客户端系统sync_client安装完成!" />
+    </target>
+
+    <!-- Target: install&config database -->
+    <target name="sql.install" description="安装数据库">
+        <echo msg="开始导入主数据库..." />
+        <exec command="mysql -h${db.master.ip} -u${db.master.user} -p${db.master.password} &lt; ${project.basedir}/${phing.project.name}/install/db_session_install.sql"
+              checkreturn="true"
+                />
+        <exec command="mysql -h${db.master.ip} -u${db.master.user} -p${db.master.password} &lt; ${project.basedir}/${phing.project.name}/install/db_install.sql"
+              checkreturn="true"
+                />
+        <echo msg="导入完成!" />
+
+        <echo msg="开始导入从数据库..." />
+        <if>
+            <equals arg1="${db.master.ip}" arg2="${db.slave.ip}" casesensitive="false" />
+            <then>
+                <echo msg="主数据库和从数据库地址一样,无需创建从数据库" />
+            </then>
+            <else>
+                <exec command="mysql -h${db.slave.ip} -u${db.slave.user} -p${db.slave.password} &lt; ${project.basedir}/${phing.project.name}/install/db_install.sql"
+                      checkreturn="true"
+                        />
+            </else>
+        </if>
+        <echo msg="导入完成!" />
+
+        <echo msg="开始修改ekt系统中配置文件中数据库参数..." />
+        <reflexive file="${project.basedir}/${phing.project.name}/app/config/database.php">
+            <filterchain>
+                <replaceregexp>
+                    <!-- Target: set winport -->
+                    <regexp pattern="(.+default.+hostname.+= ).+" replace="\1'${db.master.ip}';"/>
+                    <regexp pattern="(.+default.+username.+= ).+" replace="\1'${db.master.user}';"/>
+                    <regexp pattern="(.+default.+password.+= ).+" replace="\1'${db.master.password}';"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <echo msg="修改完成" />
+
+        <echo msg="开始修改数据库中该企业对应的参数..." />
+        <append destFile="${project.basedir}/${phing.project.name}/install/update_ccod.sql"
+                text="UPDATE cc_ccods SET db_main_ip='${db.master.ip}',db_slave_ip='${db.slave.ip}',db_name='ekt',db_user='${db.master.user}',db_password='${db.master.password}',db_system='ekt',role_action='kffw,cpgl,ddgl' WHERE vcc_id=1"
+                />
+        <pdosqlexec url="mysql:host=${db.master.ip};dbname=wintels" userid="${db.master.user}" password="${db.master.password}">
+            <fileset dir="${project.basedir}/${phing.project.name}/install">
+                <include name="update_ccod.sql" />
+            </fileset>
+        </pdosqlexec>
+        <echo msg="修改完成" />
+
+        <echo msg="开始修改sync_client系统中配置文件中参数..." />
+        <if>
+            <equals arg1="${install_type}" arg2="1" casesensitive="false" />
+            <then>
+                <reflexive file="/usr/local/sync_client/config.inc.php">
+                    <filterchain>
+                        <replaceregexp>
+                            <regexp pattern="(.+rpc_serv_addr.+= ).+" replace="\1'http://${winip}:${winport}/${system_name}/rpcserv.php';"/>
+                            <regexp pattern="(.+api_interface.+= ).+" replace="\1'http://${winip}:${winport}/${system_name}/api.php';"/>
+                            <regexp pattern="(.+type.+= ).+" replace="\1${install_type};"/>
+                            <regexp pattern="(.+saas_host.+= ).+" replace="\1'${db.master.ip}';"/>
+                            <regexp pattern="(.+saas_user.+= ).+" replace="\1'${db.master.user}';"/>
+                            <regexp pattern="(.+saas_password.+= ).+" replace="\1'${db.master.password}';"/>
+                        </replaceregexp>
+                    </filterchain>
+                </reflexive>
+            </then>
+            <else>
+                <reflexive file="/usr/local/sync_client/config.inc.php">
+                    <filterchain>
+                        <replaceregexp>
+                            <regexp pattern="(.+rpc_serv_addr.+= ).+" replace="\1'http://${winip}:${winport}/${system_name}/rpcserv.php';"/>
+                            <regexp pattern="(.+api_interface.+= ).+" replace="\1'http://${winip}:${winport}/${system_name}/api.php';"/>
+                            <regexp pattern="(.+type.+= ).+" replace="\1${install_type};"/>
+                            <regexp pattern="(.+my_host.+= ).+" replace="\1'${db.master.ip}';"/>
+                            <regexp pattern="(.+my_user.+= ).+" replace="\1'${db.master.user}';"/>
+                            <regexp pattern="(.+my_password.+= ).+" replace="\1'${db.master.password}';"/>
+                            <regexp pattern="(.+my_database.+= ).+" replace="\1'ekt';"/>
+                            <regexp pattern="(.+system.+= ).+" replace="\1'ekt';"/>
+                        </replaceregexp>
+                    </filterchain>
+                </reflexive>
+            </else>
+        </if>
+        <echo msg="修改完成" />
+
+    </target>
+
+    <target name="other" description="">
+        <echo msg="开始设置任务计划..." />
+        <append destFile="/etc/crontab">
+            <fileset dir="${project.basedir}/${phing.project.name}/install/">
+                <include name="crontab.txt" />
+            </fileset>
+        </append>
+        <echo msg="设置完成" />
+    </target>
+
+    <!-- Target: source install -->
+    <target name="source.build" description="从源码安装">
+        <echo msg="创建系统目录..."/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/themes/captcha"/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/app/log"/>
+        <mkdir dir="${project.basedir}/${phing.project.name}/app/meta/smarty_template"/>
+
+        <echo msg="修改系统目录权限..."/>
+        <chown file="${project.basedir}/${phing.project.name}/themes/captcha" user="apache.apache"/>
+        <chown file="${project.basedir}/${phing.project.name}/app/log" user="apache.apache"/>
+        <chown file="${project.basedir}/${phing.project.name}/app/meta/smarty_template" user="apache.apache"/>
+    </target>
+
+    <target name="verify" description="确认参数是否设置正确" depends="check,install,config,sql.install,other">
+        <echo msg="开始验证配置参数..."/>
+
+    </target>
+
+</project>

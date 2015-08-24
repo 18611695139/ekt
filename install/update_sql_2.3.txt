@@ -1,0 +1,53 @@
+# ekt外呼系统
+
+###2.3 ekt版本2.2升级到2.3 sql语句的修改
+
+##客户表索引更改
+ALTER TABLE `est_contact`
+ADD INDEX `con_name` (`con_name`) ;
+
+ALTER TABLE `est_client`
+ADD INDEX `cle_pingyin` (`cle_pingyin`) ;
+
+
+##去掉 est_cdr 表的call_id 的唯一索引
+ALTER TABLE est_lost_cdr DROP INDEX call_id;
+
+##给号码加上唯一索引（若est_lost_cdr表caller字段是否有重复数据，可能会报错）
+ALTER TABLE `est_lost_cdr`
+ADD UNIQUE INDEX `caller` (`caller`);
+
+##添加未接来电统计表
+CREATE TABLE `est_statistics_lost_cdr` (
+`lost_date`  date NOT NULL COMMENT '日期' ,
+`missed_num`  int NOT NULL DEFAULT 0 COMMENT '未接来电数' ,
+`fen_num`  int NOT NULL DEFAULT 0 COMMENT '已分配数' ,
+`deal_num`  int NOT NULL DEFAULT 0 COMMENT '已处理数' ,
+PRIMARY KEY (`lost_date`)
+)
+COMMENT='未接来电统计表';
+ALTER TABLE `est_statistics_lost_cdr`
+ENGINE=InnoDB;
+
+##est_lost_cdr表 添加触发器
+DELIMITER //
+CREATE TRIGGER `statistics_lost_cdr` AFTER INSERT ON `est_lost_cdr` FOR EACH ROW BEGIN
+IF NEW.caller!=''
+THEN
+IF NEW.user_id!=0
+THEN
+SET @fen_num=1;
+ELSE
+SET @fen_num=0;
+END IF;
+IF NEW.state=1
+THEN
+SET @deal_num=1;
+ELSE
+SET @deal_num=0;
+END IF;
+INSERT INTO est_statistics_lost_cdr(lost_date,missed_num,fen_num,deal_num)VALUES(NEW.start_date,1,@fen_num,@deal_num) ON DUPLICATE KEY UPDATE missed_num=missed_num+1,fen_num=fen_num+@fen_num,deal_num=deal_num+@deal_num;
+END IF;
+END
+//
+DELIMITER;
